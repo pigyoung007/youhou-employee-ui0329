@@ -702,7 +702,7 @@ export function ContractManagementPage({ onBack, onCreateOrder, contractPrefill,
                   </CardContent>
                 </Card>
 
-                {/* 签约方人��确认 - 3方签署 */}
+                {/* 签约方人员确认 - 3方签署 */}
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-sm font-medium">签约方人员确认</p>

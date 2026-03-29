@@ -83,7 +83,7 @@ const trainingProjects = [
     students: 256,
     rating: 4.8,
     features: ["国家认证", "实操为主", "推荐就业", "小班教学"],
-    courses: ["婴幼儿喂养", "早期教育", "日常护理", "���食添加", "生长发育", "疾病预防"],
+    courses: ["婴幼儿喂养", "早期教育", "日常护理", "辅食添加", "生长发育", "疾病预防"],
     nextClass: "2026年2月20日",
     schedule: "周一至周五 9:00-17:00",
   },
@@ -157,7 +157,7 @@ export function CareerPerformancePage() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-foreground">{performanceData.totalStudents}</p>
-                  <p className="text-xs text-muted-foreground">我的学��</p>
+                  <p className="text-xs text-muted-foreground">我的学员</p>
                 </div>
               </div>
             </CardContent>

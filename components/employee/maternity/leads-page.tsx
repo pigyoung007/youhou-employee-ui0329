@@ -183,7 +183,7 @@ const completedInterviews = [
       { time: "00:15", speaker: "雇主", content: "你好，我是赵女士。" },
       { time: "00:20", speaker: "阿姨", content: "您好，我是李阿姨，很高兴认识您。" },
       { time: "00:30", speaker: "雇主", content: "李阿姨，请问您做月嫂多少年了？" },
-      { time: "00:38", speaker: "阿姨", content: "我从事月嫂工作已经8年了，服��过60多个家庭。" },
+      { time: "00:38", speaker: "阿姨", content: "我从事月嫂工作已经8年了，服务过60多个家庭。" },
       { time: "01:05", speaker: "雇主", content: "那您对新生儿黄疸有什么护理经验吗？" },
       { time: "01:15", speaker: "阿姨", content: "新生儿黄疸分为生理性和病理性，生理性黄疸一般在出生后2-3天出现..." },
     ],
@@ -1218,7 +1218,7 @@ export function MaternityLeadsPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="月嫂">月嫂</SelectItem>
-                  <SelectItem value="育儿嫂">���儿嫂</SelectItem>
+                  <SelectItem value="育儿嫂">育儿嫂</SelectItem>
                   <SelectItem value="住家保姆">住家保姆</SelectItem>
                 </SelectContent>
               </Select>

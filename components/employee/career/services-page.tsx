@@ -182,7 +182,7 @@ export function CareerServicesPage() {
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="w-full bg-muted/50 p-1 rounded-xl">
             <TabsTrigger value="projects" className="flex-1 rounded-lg data-[state=active]:bg-white">
-              培���项目
+              培训项目
             </TabsTrigger>
             <TabsTrigger value="certificates" className="flex-1 rounded-lg data-[state=active]:bg-white">
               证书类型

@@ -185,7 +185,7 @@ const recommendedCaregivers = [
     age: 42,
     hometown: "四川成都",
     experience: "5年",
-    salary: "12800-15800元/26���",
+    salary: "12800-15800元/26天",
     rating: 4.8,
     skills: ["新生儿护理", "产妇护理"],
     status: "confirmed",

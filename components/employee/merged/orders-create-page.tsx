@@ -57,7 +57,7 @@ export interface OrderPrefillData {
   caregiverName?: string
   contractId?: string
   orderId?: string
-  fromContract?: boolean // 标识是否来自合��管理
+  fromContract?: boolean // 标识是否来自合同管理
 }
 
 export interface OrderToContractData {
@@ -438,7 +438,7 @@ export function OrderCreatePage({ onBack, orderType = 'service', prefillData, on
                       </div>
                       {[
                         { name: '育婴师初级', price: 2000 },
-                        { name: '育婴师���级', price: 2500 },
+                        { name: '育婴师中级', price: 2500 },
                         { name: '育婴师高级', price: 3200 },
                         { name: '月嫂初级', price: 2800 },
                         { name: '月嫂高级', price: 3800 },

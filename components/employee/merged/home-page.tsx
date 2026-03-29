@@ -35,7 +35,7 @@ const quickActions = {
     { id: "journal", name: "写日报", icon: FileText, color: "bg-pink-500" },
     { id: "leads", name: "线索跟进", icon: Users, color: "bg-amber-500" },
     { id: "orders", name: "订单管理", icon: ClipboardList, color: "bg-teal-500" },
-    { id: "inventory", name: "���存管理", icon: Package, color: "bg-purple-500" },
+    { id: "inventory", name: "库存管理", icon: Package, color: "bg-purple-500" },
     { id: "contracts", name: "合同管理", icon: FileSignature, color: "bg-blue-500" },
     { id: "gift", name: "礼包申请", icon: Gift, color: "bg-rose-500" },
   ],
@@ -45,7 +45,6 @@ const quickActions = {
   ],
 }
 
-// 将 technician 改为 bei_yi_sheng
 const quickActionsByRole = {
   career: quickActions.career,
   maternity_consultant: quickActions.maternity_consultant,
@@ -91,12 +90,11 @@ const scheduleItems = {
     { time: "14:30", title: "配单确认", desc: "为陈女士确认月嫂", color: "bg-teal-500" },
   ],
   technician: [
-    { time: "09:00", title: "李女士��后回访", desc: "剖腹产第3天，检查伤口恢复", color: "bg-pink-500" },
+    { time: "09:00", title: "李女士产后回访", desc: "剖腹产第3天，检查伤口恢复", color: "bg-pink-500" },
     { time: "15:00", title: "王女士产康评估", desc: "盆底肌评估与训练计划", color: "bg-teal-500" },
   ],
 }
 
-// 将 technician 改为 bei_yi_sheng
 const scheduleByRole = {
   career: scheduleItems.career,
   maternity_consultant: scheduleItems.maternity_consultant,

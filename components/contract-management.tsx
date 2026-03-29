@@ -592,7 +592,7 @@ export function ContractManagement({ role, userId, showHeader = true, filterByUs
                         ) : (
                           <Badge className="bg-amber-100 text-amber-700 border-0 text-xs">
                             <Clock className="w-3 h-3 mr-1" />
-                            待��署
+                            待签署
                           </Badge>
                         )}
                       </div>

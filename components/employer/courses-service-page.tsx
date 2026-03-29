@@ -51,7 +51,7 @@ const courses = [
   {
     id: 2,
     name: "科学坐月子",
-    desc: "月子期间饮食搭配、日常护理、运动恢复��指南",
+    desc: "月子期间饮食搭配、日常护理、运动恢复等指南",
     lessons: 16,
     price: "¥149",
     originalPrice: "¥299",
