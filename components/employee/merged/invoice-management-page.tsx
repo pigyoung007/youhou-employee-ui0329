@@ -315,7 +315,7 @@ export function InvoiceManagementPage({ onBack }: InvoicePageProps) {
 
       {/* Submit Drawer */}
       <Sheet open={showRequestDialog} onOpenChange={setShowRequestDialog}>
-        <SheetContent side="right" className="w-[85vw] max-w-sm p-0 flex flex-col h-full">
+        <SheetContent side="right" className="w-[85vw] max-w-sm flex flex-col py-0 h-full">
           <SheetHeader className="mb-4">
             <SheetTitle>开票申请</SheetTitle>
           </SheetHeader>

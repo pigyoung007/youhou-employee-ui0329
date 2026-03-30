@@ -236,12 +236,12 @@ export function CareerLeadsPage() {
 
       {/* Lead Detail Sheet */}
       <Sheet open={!!selectedLead} onOpenChange={() => setSelectedLead(null)}>
-        <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>线索详情</SheetTitle>
           </SheetHeader>
           {selectedLead && (
-            <div className="py-4 space-y-4 overflow-y-auto h-[calc(85vh-140px)]">
+            <div className="flex-1 min-h-0 py-4 space-y-4 overflow-y-auto">
               {/* Basic Info */}
               <div className="flex items-center gap-3 p-4 bg-violet-50 rounded-xl">
                 <div className="w-14 h-14 bg-violet-100 rounded-full flex items-center justify-center">
@@ -359,11 +359,11 @@ export function CareerLeadsPage() {
 
       {/* Add Lead Sheet */}
       <Sheet open={showAddLead} onOpenChange={setShowAddLead}>
-        <SheetContent side="bottom" className="h-[70vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>新增线索</SheetTitle>
           </SheetHeader>
-          <div className="py-4 space-y-4 overflow-y-auto h-[calc(70vh-140px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-4 overflow-y-auto">
             <div>
               <Label>姓名</Label>
               <Input placeholder="请输入姓名" />
@@ -413,7 +413,7 @@ export function CareerLeadsPage() {
 
       {/* Add Follow Up Sheet */}
       <Sheet open={showAddFollowUp} onOpenChange={setShowAddFollowUp}>
-        <SheetContent side="bottom" className="h-[50vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>添加跟进记录</SheetTitle>
           </SheetHeader>

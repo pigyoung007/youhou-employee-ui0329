@@ -233,11 +233,11 @@ export function TalentLearningPage() {
 
       {/* Course Detail Sheet */}
       <Sheet open={!!selectedCourse} onOpenChange={() => setSelectedCourse(null)}>
-        <SheetContent side="bottom" className="h-[70vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-3 border-b border-border">
             <SheetTitle className="text-base">{selectedCourse?.name}</SheetTitle>
           </SheetHeader>
-          <div className="py-3 space-y-3 overflow-y-auto h-[calc(70vh-80px)]">
+          <div className="flex-1 min-h-0 py-3 space-y-3 overflow-y-auto">
             <div className="bg-amber-50 rounded-xl px-4 py-3 flex items-center gap-4">
               <div className="relative w-14 h-14 shrink-0">
                 <svg className="w-14 h-14 -rotate-90">
@@ -286,17 +286,17 @@ export function TalentLearningPage() {
 
       {/* All Courses Sheet */}
       <Sheet open={showAllCourses} onOpenChange={setShowAllCourses}>
-        <SheetContent side="bottom" className="h-[75vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border"><SheetTitle>课程目录</SheetTitle></SheetHeader>
-          <div className="py-4 space-y-3 overflow-y-auto h-[calc(75vh-100px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-3 overflow-y-auto">
             {allCourses.map((c) => (
               <Card key={c.id} className={`border-0 shadow-sm ${c.purchased ? "" : "opacity-70"}`}>
-                <CardContent className="p-3 flex items-center justify-between">
-                  <div>
-                    <h3 className="font-medium text-sm text-foreground">{c.name}</h3>
-                    <p className="text-xs text-muted-foreground mt-1">{c.purchased ? <span className="text-teal-600">已购买</span> : <span>¥{c.price}</span>}</p>
+                <CardContent className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 p-3">
+                  <div className="min-w-0">
+                    <h3 className="text-sm font-medium text-foreground break-words">{c.name}</h3>
+                    <p className="mt-1 text-xs text-muted-foreground">{c.purchased ? <span className="text-teal-600">已购买</span> : <span>¥{c.price}</span>}</p>
                   </div>
-                  {c.purchased ? <Badge variant="secondary" className="bg-teal-100 text-teal-700 text-[10px]">已购</Badge> : <Button size="sm" variant="outline" className="text-xs h-7 bg-transparent">了解详情</Button>}
+                  {c.purchased ? <Badge variant="secondary" className="shrink-0 bg-teal-100 text-[10px] text-teal-700">已购</Badge> : <Button size="sm" variant="outline" className="h-7 shrink-0 bg-transparent text-xs">了解详情</Button>}
                 </CardContent>
               </Card>
             ))}
@@ -306,7 +306,7 @@ export function TalentLearningPage() {
 
       {/* Certificate Detail */}
       <Sheet open={!!selectedCert} onOpenChange={() => setSelectedCert(null)}>
-        <SheetContent side="bottom" className="h-auto max-h-[65vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-3 border-b border-border"><SheetTitle className="text-base">证书详情</SheetTitle></SheetHeader>
           {selectedCert && (
             <div className="py-3 space-y-3 overflow-y-auto">
@@ -322,9 +322,12 @@ export function TalentLearningPage() {
                   { l: "发证日期", v: selectedCert.issueDate },
                   { l: "有效期至", v: selectedCert.validUntil },
                 ].map((item) => (
-                  <div key={item.l} className="flex items-center justify-between py-2 border-b border-border/50 last:border-b-0">
-                    <span className="text-xs text-muted-foreground">{item.l}</span>
-                    <span className="text-xs font-medium text-foreground">{item.v}</span>
+                  <div
+                    key={item.l}
+                    className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 border-b border-border/50 py-2 last:border-b-0"
+                  >
+                    <span className="text-xs text-muted-foreground break-words">{item.l}</span>
+                    <span className="text-right text-xs font-medium text-foreground break-words">{item.v}</span>
                   </div>
                 ))}
               </div>
@@ -336,7 +339,7 @@ export function TalentLearningPage() {
 
       {/* Pending Certificate Conditions */}
       <Sheet open={!!selectedPending} onOpenChange={() => setSelectedPending(null)}>
-        <SheetContent side="bottom" className="h-auto max-h-[55vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-3 border-b border-border"><SheetTitle className="text-base">获取条件</SheetTitle></SheetHeader>
           {selectedPending && (
             <div className="py-3 space-y-3 overflow-y-auto">
@@ -366,9 +369,9 @@ export function TalentLearningPage() {
 
       {/* Transform Sheet */}
       <Sheet open={showTransform} onOpenChange={setShowTransform}>
-        <SheetContent side="bottom" className="h-auto max-h-[70vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-3 border-b border-border"><SheetTitle className="text-base">申请转为家政员</SheetTitle></SheetHeader>
-          <div className="py-3 space-y-3 overflow-y-auto max-h-[calc(70vh-100px)]">
+          <div className="min-h-0 flex-1 space-y-3 overflow-y-auto py-3">
             <div className="bg-teal-50 rounded-xl p-3">
               <div className="flex items-start gap-2">
                 <AlertCircle className="w-4 h-4 text-teal-600 shrink-0 mt-0.5" />

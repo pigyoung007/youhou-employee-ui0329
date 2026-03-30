@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Calendar } from "@/components/ui/calendar"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { OrderConsultantLines } from "@/components/order-consultant-lines"
 import {
   CalendarDays,
   MapPin,
@@ -32,6 +33,8 @@ const orders = [
     endDate: "2026-02-10",
     duration: "26天",
     salary: "15800元",
+    maternityConsultant: "张丽",
+    careerConsultant: "陈明",
   },
   {
     id: "ORD20251220002",
@@ -44,6 +47,8 @@ const orders = [
     endDate: "2026-03-13",
     duration: "26天",
     salary: "15800元",
+    maternityConsultant: "刘婷",
+    careerConsultant: "",
   },
   {
     id: "ORD20251110003",
@@ -56,6 +61,8 @@ const orders = [
     endDate: "2025-12-06",
     duration: "26天",
     salary: "15800元",
+    maternityConsultant: "张丽",
+    careerConsultant: "王强",
   },
 ]
 
@@ -169,6 +176,11 @@ export function DomesticOrdersPage() {
                     </div>
                     {getStatusBadge(order.status)}
                   </div>
+                  <OrderConsultantLines
+                    maternityConsultant={order.maternityConsultant}
+                    careerConsultant={order.careerConsultant}
+                    className="my-2"
+                  />
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <User className="w-4 h-4" />
@@ -294,12 +306,12 @@ export function DomesticOrdersPage() {
 
       {/* Order Detail Sheet */}
       <Sheet open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
-        <SheetContent side="bottom" className="h-[70vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>订单详情</SheetTitle>
           </SheetHeader>
           {selectedOrder && (
-            <div className="py-4 space-y-4 overflow-y-auto h-[calc(70vh-100px)]">
+            <div className="flex-1 min-h-0 py-4 space-y-4 overflow-y-auto">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">订单编号</span>
                 <span className="text-sm font-medium text-foreground">{selectedOrder.id}</span>
@@ -311,6 +323,14 @@ export function DomesticOrdersPage() {
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">服务状态</span>
                 {getStatusBadge(selectedOrder.status)}
+              </div>
+
+              <div className="rounded-lg border border-border/60 bg-muted/30 p-3">
+                <OrderConsultantLines
+                  maternityConsultant={selectedOrder.maternityConsultant}
+                  careerConsultant={selectedOrder.careerConsultant}
+                  className="text-xs"
+                />
               </div>
               
               <div className="border-t border-border pt-4 space-y-3">

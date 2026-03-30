@@ -208,11 +208,11 @@ export function StudentProfilePage({ onSwitchRole, onBackToEntry }: StudentProfi
 
       {/* Benefits Sheet */}
       <Sheet open={showBenefits} onOpenChange={setShowBenefits}>
-        <SheetContent side="bottom" className="h-[60vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>学员权益</SheetTitle>
           </SheetHeader>
-          <div className="py-4 space-y-4 overflow-y-auto h-[calc(60vh-100px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-4 overflow-y-auto">
             <div className="grid grid-cols-2 gap-3">
               {studentBenefits.map((benefit, index) => {
                 const Icon = benefit.icon

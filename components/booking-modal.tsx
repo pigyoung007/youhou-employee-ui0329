@@ -80,9 +80,9 @@ export function BookingModal({ onClose, caregiverName, onSuccess }: BookingModal
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center">
+    <div className="fixed inset-0 z-50 flex justify-end">
       <div className="absolute inset-0 bg-foreground/60" onClick={onClose} />
-      <div className="relative bg-card w-full max-w-md rounded-t-3xl max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300">
+      <div className="relative flex h-dvh max-h-dvh w-full max-w-md flex-col overflow-hidden border-l bg-card shadow-xl animate-in slide-in-from-right duration-300">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-border sticky top-0 bg-card z-10">
           <div>
@@ -95,7 +95,7 @@ export function BookingModal({ onClose, caregiverName, onSuccess }: BookingModal
         </div>
 
         {/* Content */}
-        <div className="p-5 overflow-y-auto max-h-[calc(85vh-140px)]">
+        <div className="min-h-0 flex-1 overflow-y-auto p-5">
           {step === "schedule" && (
             <div className="space-y-3">
               <p className="text-sm text-muted-foreground mb-4">请选择您需要的服务周期</p>

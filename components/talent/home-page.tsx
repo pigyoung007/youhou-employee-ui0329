@@ -1,20 +1,14 @@
 "use client"
 
-import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import {
-  Star, Award, ChevronRight, Calendar, DollarSign, Bell, MapPin,
-  TrendingUp, Clock, Share2, Download, X, Heart, Phone, Shield,
-  Briefcase, GraduationCap, CheckCircle, User,
+  Star, Award, ChevronRight, Calendar, Bell, MapPin,
+  TrendingUp, Clock, Heart, Phone, Shield,
+  Briefcase, GraduationCap, CheckCircle,
 } from "lucide-react"
-import { Switch } from "@/components/ui/switch"
-import { Slider } from "@/components/ui/slider"
-import { Label } from "@/components/ui/label"
-import Image from "next/image"
 
 const profileData = {
   name: "李秀英",
@@ -58,13 +52,6 @@ interface TalentHomePageProps {
 }
 
 export function TalentHomePage({ onOpenService }: TalentHomePageProps) {
-  const [showShareSettings, setShowShareSettings] = useState(false)
-  const [showPoster, setShowPoster] = useState(false)
-  const [shareConfig, setShareConfig] = useState({
-    showPhoto: true, showSalary: true, showPhone: false,
-    showWorkHistory: true, maxViews: 200, validDays: 30,
-  })
-
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -113,13 +100,6 @@ export function TalentHomePage({ onOpenService }: TalentHomePageProps) {
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex gap-2 mt-3">
-              <Button size="sm" variant="outline" className="flex-1 text-xs bg-transparent" onClick={() => setShowShareSettings(true)}>
-                <Share2 className="w-3 h-3 mr-1" />
-                分享简历
-              </Button>
-            </div>
           </CardContent>
         </Card>
       </div>
@@ -206,188 +186,6 @@ export function TalentHomePage({ onOpenService }: TalentHomePageProps) {
         </Card>
       </main>
 
-      {/* Share Settings Sheet */}
-      <Sheet open={showShareSettings} onOpenChange={setShowShareSettings}>
-        <SheetContent side="bottom" className="h-auto max-h-[75vh] rounded-t-2xl">
-          <SheetHeader className="pb-3 border-b border-border">
-            <SheetTitle className="text-base">简历分享设置</SheetTitle>
-          </SheetHeader>
-          <div className="py-3 space-y-3 overflow-y-auto max-h-[calc(75vh-120px)]">
-            <div className="space-y-3">
-              <h4 className="font-semibold text-foreground text-sm">展示内容</h4>
-              {[
-                { key: "showPhoto", icon: User, label: "显示照片", desc: "在简历中展示个人照片" },
-                { key: "showSalary", icon: DollarSign, label: "显示薪资", desc: "在简历中展示期望薪资" },
-                { key: "showPhone", icon: Phone, label: "显示电话", desc: "在简历中展示联系电话" },
-                { key: "showWorkHistory", icon: Briefcase, label: "显示工作经历", desc: "在简历中展示服务历史" },
-              ].map((item) => (
-                <div key={item.key} className="flex items-center justify-between p-3 bg-muted/50 rounded-xl">
-                  <div className="flex items-center gap-3">
-                    <item.icon className="w-5 h-5 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm font-medium text-foreground">{item.label}</p>
-                      <p className="text-xs text-muted-foreground">{item.desc}</p>
-                    </div>
-                  </div>
-                  <Switch
-                    checked={(shareConfig as any)[item.key]}
-                    onCheckedChange={(checked) => setShareConfig({ ...shareConfig, [item.key]: checked })}
-                  />
-                </div>
-              ))}
-            </div>
-            <div className="space-y-3">
-              <h4 className="font-semibold text-foreground text-sm">分享限制</h4>
-              <div className="p-3 bg-muted/50 rounded-xl space-y-3">
-                <div className="flex items-center justify-between">
-                  <Label className="text-sm">最大查看次数</Label>
-                  <span className="text-sm font-medium text-amber-600">{shareConfig.maxViews}次</span>
-                </div>
-                <Slider value={[shareConfig.maxViews]} onValueChange={([v]) => setShareConfig({ ...shareConfig, maxViews: v })} min={50} max={500} step={50} />
-              </div>
-              <div className="p-3 bg-muted/50 rounded-xl space-y-3">
-                <div className="flex items-center justify-between">
-                  <Label className="text-sm">有效期</Label>
-                  <span className="text-sm font-medium text-amber-600">{shareConfig.validDays}天</span>
-                </div>
-                <Slider value={[shareConfig.validDays]} onValueChange={([v]) => setShareConfig({ ...shareConfig, validDays: v })} min={7} max={180} step={7} />
-              </div>
-            </div>
-            <Button className="w-full bg-amber-500 hover:bg-amber-600" onClick={() => { setShowShareSettings(false); setShowPoster(true) }}>
-              <Share2 className="w-4 h-4 mr-2" />
-              生成简历海报
-            </Button>
-          </div>
-        </SheetContent>
-      </Sheet>
-
-      {/* Resume Poster */}
-      {showPoster && (
-        <div className="fixed inset-0 z-50 bg-black/70 flex items-end sm:items-center justify-center">
-          <div className="relative w-full max-w-sm mx-auto flex flex-col max-h-[100dvh]">
-            <div className="shrink-0 flex justify-end px-4 py-2">
-              <button onClick={() => setShowPoster(false)} className="text-white/80 hover:text-white">
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-            <div className="overflow-y-auto px-4 pb-4">
-              <div className="bg-white rounded-2xl overflow-hidden shadow-2xl">
-                {/* Header */}
-                <div className="bg-gradient-to-br from-amber-500 via-orange-500 to-amber-600 px-4 py-4 text-white relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
-                  <div className="relative z-10 flex items-center gap-3">
-                    {shareConfig.showPhoto ? (
-                      <Avatar className="w-16 h-16 border-2 border-white/30 shadow-lg shrink-0">
-                        <AvatarImage src={profileData.avatar || "/placeholder.svg"} />
-                        <AvatarFallback className="bg-amber-100 text-amber-600 text-lg">{profileData.name[0]}</AvatarFallback>
-                      </Avatar>
-                    ) : (
-                      <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center border-2 border-white/30 shrink-0">
-                        <span className="text-xl font-bold">{profileData.name[0]}</span>
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <h2 className="text-lg font-bold">{profileData.name}</h2>
-                        <Badge className="bg-white/20 text-white text-[10px] border-0">{profileData.level}</Badge>
-                      </div>
-                      {shareConfig.showSalary && <p className="text-white/90 text-xs font-medium">{profileData.salary}</p>}
-                      <div className="flex items-center gap-1.5 mt-1 text-white/80 text-[11px]">
-                        <span>{profileData.age}岁</span>
-                        <span className="w-1 h-1 bg-white/50 rounded-full" />
-                        <span>{profileData.hometown}</span>
-                        <span className="w-1 h-1 bg-white/50 rounded-full" />
-                        <span>{profileData.experience}经验</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {/* Body */}
-                <div className="p-3 space-y-3">
-                  <div className="grid grid-cols-3 gap-2">
-                    {[
-                      { icon: GraduationCap, label: "学历", val: profileData.education },
-                      { icon: MapPin, label: "现居", val: profileData.currentCity },
-                      { icon: Clock, label: "入职", val: profileData.joinDate.slice(0, 7) },
-                    ].map((item) => (
-                      <div key={item.label} className="bg-amber-50 rounded-lg p-2 text-center">
-                        <item.icon className="w-3.5 h-3.5 text-amber-500 mx-auto mb-0.5" />
-                        <p className="text-[10px] text-muted-foreground">{item.label}</p>
-                        <p className="text-xs font-semibold text-foreground">{item.val}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-semibold text-foreground mb-1.5 flex items-center gap-1"><Award className="w-3.5 h-3.5 text-amber-500" />资质证书</h4>
-                    <div className="flex flex-wrap gap-1">
-                      {profileData.certificates.map((cert, i) => (
-                        <Badge key={i} variant="secondary" className="bg-amber-100 text-amber-700 text-[10px] font-normal">{cert}</Badge>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-semibold text-foreground mb-1.5 flex items-center gap-1"><Star className="w-3.5 h-3.5 text-amber-500" />技能特长</h4>
-                    <div className="flex flex-wrap gap-1">
-                      {profileData.skills.map((s, i) => <Badge key={i} variant="outline" className="text-[10px] font-normal">{s}</Badge>)}
-                    </div>
-                  </div>
-                  {shareConfig.showWorkHistory && (
-                    <div>
-                      <h4 className="text-xs font-semibold text-foreground mb-1.5 flex items-center gap-1"><Briefcase className="w-3.5 h-3.5 text-amber-500" />服务经历</h4>
-                      <div className="space-y-1">
-                        {profileData.workHistory.map((w, i) => (
-                          <div key={i} className="flex items-center justify-between bg-muted/50 rounded-lg p-2">
-                            <div>
-                              <p className="text-xs font-medium text-foreground">{w.employer}</p>
-                              <p className="text-[10px] text-muted-foreground">{w.period}</p>
-                            </div>
-                            <div className="flex items-center gap-0.5">
-                              <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                              <span className="text-xs font-medium">{w.rating}</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {shareConfig.showPhone && (
-                    <div className="flex items-center gap-2 bg-green-50 rounded-lg p-2">
-                      <Phone className="w-4 h-4 text-green-600" />
-                      <span className="text-sm font-medium text-green-700">{profileData.phone}</span>
-                    </div>
-                  )}
-                </div>
-                {/* Footer */}
-                <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-3 py-3 text-white">
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="w-6 h-6 bg-amber-500 rounded-md flex items-center justify-center shrink-0"><Heart className="w-4 h-4 text-white" /></div>
-                        <div><h3 className="font-bold text-xs">优厚家庭服务</h3></div>
-                      </div>
-                      <div className="space-y-0.5 text-[10px] text-white/70">
-                        <p className="flex items-center gap-1"><Shield className="w-2.5 h-2.5 shrink-0" />人社部认证 - 行业协会会员</p>
-                        <p className="flex items-center gap-1"><Phone className="w-2.5 h-2.5 shrink-0" />400-888-8888</p>
-                      </div>
-                    </div>
-                    <div className="text-center shrink-0">
-                      <div className="w-14 h-14 bg-white rounded-lg p-0.5">
-                        <Image src="/youhou-service-qrcode.jpg" alt="客服二维码" width={52} height={52} className="w-full h-full object-cover rounded" />
-                      </div>
-                      <p className="text-[9px] text-white/50 mt-0.5">扫码联系</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/* Actions */}
-              <div className="mt-3 flex gap-3">
-                <Button variant="outline" size="sm" className="flex-1 bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={() => setShowPoster(false)}>返回修改</Button>
-                <Button size="sm" className="flex-1 bg-amber-500 hover:bg-amber-600"><Download className="w-4 h-4 mr-1" />保存海报</Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

@@ -235,7 +235,7 @@ export function StudentCertificatePage() {
 
       {/* Certificate Detail Sheet */}
       <Sheet open={!!selectedCert} onOpenChange={() => setSelectedCert(null)}>
-        <SheetContent side="bottom" className="h-[70vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>证书详情</SheetTitle>
           </SheetHeader>
@@ -280,7 +280,7 @@ export function StudentCertificatePage() {
 
       {/* Pending Certificate Detail Sheet */}
       <Sheet open={!!selectedPending} onOpenChange={() => setSelectedPending(null)}>
-        <SheetContent side="bottom" className="h-[60vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>获取条件</SheetTitle>
           </SheetHeader>
@@ -318,11 +318,11 @@ export function StudentCertificatePage() {
 
       {/* Transform Sheet */}
       <Sheet open={showTransform} onOpenChange={setShowTransform}>
-        <SheetContent side="bottom" className="h-[70vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>申请转为家政员</SheetTitle>
           </SheetHeader>
-          <div className="py-4 space-y-4 overflow-y-auto h-[calc(70vh-140px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-4 overflow-y-auto">
             <div className="bg-teal-50 rounded-xl p-4">
               <div className="flex items-start gap-2">
                 <AlertCircle className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />

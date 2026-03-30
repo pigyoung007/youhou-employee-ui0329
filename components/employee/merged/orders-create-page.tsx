@@ -54,10 +54,14 @@ export interface OrderPrefillData {
   amount?: number
   startDate?: string
   endDate?: string
+  /** 预产期（母婴单） */
+  dueDate?: string
   caregiverName?: string
   contractId?: string
   orderId?: string
   fromContract?: boolean // 标识是否来自合同管理
+  /** 仅创建收据/账单（与新建订单第 3 步一致） */
+  receiptOnly?: boolean
 }
 
 export interface OrderToContractData {
@@ -87,7 +91,8 @@ interface BillItem {
 }
 
 export function OrderCreatePage({ onBack, orderType = 'service', prefillData, onOpenContract }: OrderCreatePageProps) {
-  const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(1)
+  const isReceiptOnly = !!prefillData?.receiptOnly
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(() => (isReceiptOnly ? 3 : 1))
   const [formData, setFormData] = useState<OrderFormData>({
     customer: prefillData?.customerName ?? '',
     serviceType: 'nanny',
@@ -137,6 +142,11 @@ export function OrderCreatePage({ onBack, orderType = 'service', prefillData, on
   // 更新账单
   const handleUpdateBill = (id: string, updates: Partial<BillItem>) => {
     setBills(bills.map(b => b.id === id ? { ...b, ...updates } : b))
+  }
+
+  const handleReceiptSubmit = () => {
+    alert("收据已保存")
+    onBack()
   }
 
   // 提交订单
@@ -251,13 +261,16 @@ export function OrderCreatePage({ onBack, orderType = 'service', prefillData, on
               <ChevronLeft className="w-5 h-5" />
             </button>
             <div>
-              <h1 className="font-semibold text-base">创建订单</h1>
-              <p className="text-[11px] text-muted-foreground">{stepTitles[currentStep - 1]}</p>
+              <h1 className="font-semibold text-base">{isReceiptOnly ? "新建收据" : "创建订单"}</h1>
+              <p className="text-[11px] text-muted-foreground">
+                {isReceiptOnly ? "付款账单" : stepTitles[currentStep - 1]}
+              </p>
             </div>
           </div>
         </div>
 
         {/* Progress Steps */}
+        {!isReceiptOnly && (
         <div className="px-3 py-2 border-t border-border">
           <div className="flex items-center justify-between gap-1">
             {[1, 2, 3, 4].map((step) => (
@@ -279,6 +292,7 @@ export function OrderCreatePage({ onBack, orderType = 'service', prefillData, on
             ))}
           </div>
         </div>
+        )}
       </div>
 
       {/* Content Area */}
@@ -663,17 +677,28 @@ export function OrderCreatePage({ onBack, orderType = 'service', prefillData, on
                   </CardContent>
                 </Card>
 
-                <div className="flex gap-2">
-                  <Button variant="outline" className="h-10 px-6 bg-transparent" onClick={() => setCurrentStep(2)}>
-                    上一步
-                  </Button>
-                  <Button variant="outline" className="h-10 px-6 bg-transparent">
-                    保存草稿
-                  </Button>
-                  <Button className="flex-1 h-10 bg-primary hover:bg-primary/90 text-primary-foreground" onClick={() => setCurrentStep(4)}>
-                    下一步
-                  </Button>
-                </div>
+                {isReceiptOnly ? (
+                  <div className="flex gap-2">
+                    <Button variant="outline" className="flex-1 h-10 bg-transparent" onClick={onBack}>
+                      取消
+                    </Button>
+                    <Button className="flex-1 h-10 bg-primary hover:bg-primary/90 text-primary-foreground" onClick={handleReceiptSubmit}>
+                      完成
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <Button variant="outline" className="h-10 px-6 bg-transparent" onClick={() => setCurrentStep(2)}>
+                      上一步
+                    </Button>
+                    <Button variant="outline" className="h-10 px-6 bg-transparent">
+                      保存草稿
+                    </Button>
+                    <Button className="flex-1 h-10 bg-primary hover:bg-primary/90 text-primary-foreground" onClick={() => setCurrentStep(4)}>
+                      下一步
+                    </Button>
+                  </div>
+                )}
               </>
             ) : (
               <>
@@ -782,17 +807,28 @@ export function OrderCreatePage({ onBack, orderType = 'service', prefillData, on
                   </CardContent>
                 </Card>
 
-                <div className="flex gap-2">
-                  <Button variant="outline" className="h-10 px-6 bg-transparent" onClick={() => setCurrentStep(2)}>
-                    上一步
-                  </Button>
-                  <Button variant="outline" className="h-10 px-6 bg-transparent">
-                    保存草稿
-                  </Button>
-                  <Button className="flex-1 h-10 bg-primary hover:bg-primary/90 text-primary-foreground" onClick={() => setCurrentStep(4)}>
-                    下一步
-                  </Button>
-                </div>
+                {isReceiptOnly ? (
+                  <div className="flex gap-2">
+                    <Button variant="outline" className="flex-1 h-10 bg-transparent" onClick={onBack}>
+                      取消
+                    </Button>
+                    <Button className="flex-1 h-10 bg-primary hover:bg-primary/90 text-primary-foreground" onClick={handleReceiptSubmit}>
+                      完成
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <Button variant="outline" className="h-10 px-6 bg-transparent" onClick={() => setCurrentStep(2)}>
+                      上一步
+                    </Button>
+                    <Button variant="outline" className="h-10 px-6 bg-transparent">
+                      保存草稿
+                    </Button>
+                    <Button className="flex-1 h-10 bg-primary hover:bg-primary/90 text-primary-foreground" onClick={() => setCurrentStep(4)}>
+                      下一步
+                    </Button>
+                  </div>
+                )}
               </>
             )}
           </div>

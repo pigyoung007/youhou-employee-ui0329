@@ -249,7 +249,7 @@ export function WorkJournalPage({ onBack }: WorkJournalPageProps) {
 
       {/* Write Journal Drawer */}
       <Sheet open={showEditor} onOpenChange={setShowEditor}>
-        <SheetContent side="right" className="w-[90vw] max-w-md p-0 flex flex-col h-full">
+        <SheetContent side="right" className="w-[90vw] max-w-md flex flex-col py-0 h-full">
           <div className="flex flex-col h-full">
             {/* Header */}
             <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-border shrink-0">
@@ -393,7 +393,7 @@ export function WorkJournalPage({ onBack }: WorkJournalPageProps) {
 
       {/* Journal Detail Drawer */}
       <Sheet open={!!selectedJournal} onOpenChange={() => setSelectedJournal(null)}>
-        <SheetContent side="right" className="w-[90vw] max-w-md p-0 flex flex-col h-full">
+        <SheetContent side="right" className="w-[90vw] max-w-md flex flex-col py-0 h-full">
           <div className="flex flex-col h-full">
             <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-border shrink-0">
               <SheetTitle className="text-base font-semibold">日志详情</SheetTitle>

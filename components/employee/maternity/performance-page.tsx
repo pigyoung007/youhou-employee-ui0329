@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { OrderConsultantLines } from "@/components/order-consultant-lines"
 import {
   TrendingUp,
   Users,
@@ -223,6 +224,11 @@ export function MaternityPerformancePage() {
                   <div className="text-sm text-muted-foreground mb-2">
                     {order.employer} - {order.caregiver}
                   </div>
+                  <OrderConsultantLines
+                    maternityConsultant={order.maternityConsultant}
+                    careerConsultant={order.careerConsultant}
+                    className="mb-2"
+                  />
                   <div className="flex items-center justify-between text-xs">
                     <span className="flex items-center gap-1 text-muted-foreground">
                       <Clock className="w-3 h-3" />
@@ -292,7 +298,7 @@ export function MaternityPerformancePage() {
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>订单管理</SheetTitle>
           </SheetHeader>
-          <div className="py-4 space-y-3 overflow-y-auto h-[calc(100vh-100px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-3 overflow-y-auto">
             {orders.map((order) => (
               <Card key={order.id} className="border-0 shadow-sm">
                 <CardContent className="p-4">
@@ -308,6 +314,11 @@ export function MaternityPerformancePage() {
                   <div className="text-sm text-muted-foreground mb-2">
                     雇主：{order.employer} | 阿姨：{order.caregiver}
                   </div>
+                  <OrderConsultantLines
+                    maternityConsultant={order.maternityConsultant}
+                    careerConsultant={order.careerConsultant}
+                    className="mb-2"
+                  />
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">
                       {order.startDate} - {order.endDate}
@@ -323,7 +334,7 @@ export function MaternityPerformancePage() {
 
       {/* Promotion Sheet */}
       <Sheet open={showPromotion} onOpenChange={setShowPromotion}>
-        <SheetContent side="bottom" className="h-[50vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>选择海报模板</SheetTitle>
           </SheetHeader>

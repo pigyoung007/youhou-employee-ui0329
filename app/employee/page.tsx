@@ -97,6 +97,16 @@ export default function EmployeePortal() {
     setSubPage("order-create")
   }
 
+  const openOrderCreateFromCustomer = (prefill: OrderPrefillData) => {
+    setOrderPrefill({ ...prefill, receiptOnly: false })
+    setSubPage("order-create")
+  }
+
+  const openReceiptCreateFromCustomer = (prefill: OrderPrefillData) => {
+    setOrderPrefill({ ...prefill, receiptOnly: true })
+    setSubPage("order-create")
+  }
+
   const handleCreateContractFromOrder = (data: OrderToContractData) => {
     setContractPrefill({
       customerName: data.customerName,
@@ -141,7 +151,10 @@ export default function EmployeePortal() {
             <GiftManagementPage onBack={handleBack} />
           )}
           {subPage === "leads" && (
-            <MergedLeadsPage />
+            <MergedLeadsPage
+              onNewOrder={openOrderCreateFromCustomer}
+              onNewReceipt={openReceiptCreateFromCustomer}
+            />
           )}
           {subPage === "leads-management" && (
             <LeadsManagementPage onBack={handleBack} />
@@ -206,7 +219,9 @@ export default function EmployeePortal() {
         <div className={activeTab === "leads" ? "block" : "hidden"}>
           <LeadsManagementPage 
             employeeRole={employeeRole === "career" ? "career" : "maternity_consultant"} 
-            onBack={() => setActiveTab("home")} 
+            onBack={() => setActiveTab("home")}
+            onNewOrder={openOrderCreateFromCustomer}
+            onNewReceipt={openReceiptCreateFromCustomer}
           />
         </div>
         
@@ -261,6 +276,9 @@ export default function EmployeePortal() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         employeeRole={employeeRole}
+        onBackToEntry={() => {
+          window.location.href = "/"
+        }}
       />
     </div>
   )

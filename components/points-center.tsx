@@ -179,11 +179,11 @@ export function PointsCenter({ open, onClose }: PointsCenterProps) {
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
+    <div className="fixed inset-0 z-50 flex justify-end">
       <div className="absolute inset-0 bg-foreground/60" onClick={onClose} />
-      <div className="relative bg-card w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[90vh] overflow-hidden animate-in slide-in-from-bottom duration-300">
+      <div className="relative flex h-dvh max-h-dvh w-full max-w-md flex-col overflow-hidden border-l bg-card shadow-xl animate-in slide-in-from-right duration-300">
         {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-br from-primary via-primary to-primary/80 px-5 pt-5 pb-6 relative overflow-hidden z-10">
+        <div className="relative z-10 shrink-0 overflow-hidden bg-gradient-to-br from-primary via-primary to-primary/80 px-5 pt-5 pb-6">
           <button
             onClick={onClose}
             className="absolute top-4 right-4 p-2 rounded-full bg-primary-foreground/10 hover:bg-primary-foreground/20 transition-colors"
@@ -235,7 +235,7 @@ export function PointsCenter({ open, onClose }: PointsCenterProps) {
         </div>
 
         {/* Content */}
-        <div className="overflow-y-auto max-h-[calc(90vh-220px)]">
+        <div className="min-h-0 flex-1 overflow-y-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="w-full justify-start px-4 pt-4 pb-2 bg-transparent gap-2">
               <TabsTrigger

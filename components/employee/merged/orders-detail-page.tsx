@@ -357,7 +357,7 @@ export function OrderDetailPage({ orderId, onBack }: OrderDetailPageProps) {
 
       {/* Upload Receipt Drawer */}
       <Sheet open={showUploadReceipt} onOpenChange={setShowUploadReceipt}>
-        <SheetContent side="right" className="w-[85vw] max-w-sm p-0">
+        <SheetContent side="right" className="w-[85vw] max-w-sm py-0">
           <div className="px-4 py-4 space-y-4">
             <SheetTitle>上传回款凭证</SheetTitle>
             
@@ -390,7 +390,7 @@ export function OrderDetailPage({ orderId, onBack }: OrderDetailPageProps) {
 
       {/* Create Contract Drawer */}
       <Sheet open={showCreateContract} onOpenChange={setShowCreateContract}>
-        <SheetContent side="right" className="w-[85vw] max-w-sm p-0">
+        <SheetContent side="right" className="w-[85vw] max-w-sm py-0">
           <div className="px-4 py-4 space-y-4">
             <SheetTitle>基于订单创建合同</SheetTitle>
             
@@ -441,7 +441,7 @@ export function OrderDetailPage({ orderId, onBack }: OrderDetailPageProps) {
 
       {/* Evaluation Drawer */}
       <Sheet open={showEvaluation} onOpenChange={setShowEvaluation}>
-        <SheetContent side="right" className="w-[85vw] max-w-sm p-0">
+        <SheetContent side="right" className="w-[85vw] max-w-sm py-0">
           <div className="px-4 py-4 space-y-4">
             <SheetTitle>对家政员的评价</SheetTitle>
             

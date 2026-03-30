@@ -277,11 +277,11 @@ export function StudentLearningPage() {
 
       {/* Course Detail Sheet */}
       <Sheet open={!!selectedCourse} onOpenChange={() => setSelectedCourse(null)}>
-        <SheetContent side="bottom" className="h-[80vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>{selectedCourse?.name}</SheetTitle>
           </SheetHeader>
-          <div className="py-4 space-y-4 overflow-y-auto h-[calc(80vh-80px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-4 overflow-y-auto">
             {/* Progress Overview */}
             <div className="bg-muted/50 rounded-xl p-4">
               <div className="flex items-center justify-between mb-2">
@@ -337,7 +337,7 @@ export function StudentLearningPage() {
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>课程目录</SheetTitle>
           </SheetHeader>
-          <div className="py-4 space-y-3 overflow-y-auto h-[calc(100vh-100px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-3 overflow-y-auto">
             {allCourses.map((course) => (
               <Card key={course.id} className={`border-0 shadow-sm ${course.purchased ? "" : "opacity-70"}`}>
                 <CardContent className="p-3">
@@ -375,7 +375,7 @@ export function StudentLearningPage() {
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>职业发展</SheetTitle>
           </SheetHeader>
-          <div className="py-4 space-y-4 overflow-y-auto h-[calc(100vh-100px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-4 overflow-y-auto">
             <p className="text-sm text-muted-foreground">
               完成课程学习并通过考试，即可获得对应的职业证书，开启职业发展之路。
             </p>
@@ -420,11 +420,11 @@ export function StudentLearningPage() {
 
       {/* Transform Application Sheet */}
       <Sheet open={showTransform} onOpenChange={setShowTransform}>
-        <SheetContent side="bottom" className="h-[70vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>申请转型为阿姨</SheetTitle>
           </SheetHeader>
-          <div className="py-4 space-y-4 overflow-y-auto h-[calc(70vh-140px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-4 overflow-y-auto">
             <div className="bg-amber-50 rounded-xl p-4">
               <div className="flex items-start gap-2">
                 <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />

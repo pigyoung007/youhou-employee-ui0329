@@ -322,11 +322,11 @@ export function CareerPerformancePage() {
 
       {/* Promotion Sheet - Step 1: Select Template */}
       <Sheet open={showPromotion && !selectedTemplate} onOpenChange={setShowPromotion}>
-        <SheetContent side="bottom" className="h-[60vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>选择海报模板</SheetTitle>
           </SheetHeader>
-          <div className="py-4 space-y-3 overflow-y-auto h-[calc(60vh-100px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-3 overflow-y-auto">
             {posterTemplates.filter(t => t.type === "课程推广").map((template) => (
               <Card 
                 key={template.id} 
@@ -353,7 +353,7 @@ export function CareerPerformancePage() {
 
       {/* Promotion Sheet - Step 2: Select Project */}
       <Sheet open={!!selectedTemplate && !selectedProject} onOpenChange={(open) => !open && setSelectedTemplate(null)}>
-        <SheetContent side="bottom" className="h-[70vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <div className="flex items-center gap-2">
               <Button 
@@ -367,7 +367,7 @@ export function CareerPerformancePage() {
               <SheetTitle>选择培训项目</SheetTitle>
             </div>
           </SheetHeader>
-          <div className="py-4 space-y-3 overflow-y-auto h-[calc(70vh-100px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-3 overflow-y-auto">
             {trainingProjects.map((project) => (
               <Card 
                 key={project.id} 
@@ -615,14 +615,14 @@ export function CareerPerformancePage() {
 
       {/* Contracts Sheet */}
       <Sheet open={showContracts} onOpenChange={setShowContracts}>
-        <SheetContent side="bottom" className="h-[90vh] rounded-t-2xl overflow-hidden">
+        <SheetContent side="right" className="flex flex-col min-h-0 overflow-hidden">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle className="flex items-center gap-2">
               <FileSignature className="w-5 h-5 text-violet-500" />
               合同管理
             </SheetTitle>
           </SheetHeader>
-          <div className="overflow-y-auto h-[calc(90vh-80px)] py-4">
+          <div className="flex-1 min-h-0 overflow-y-auto py-4">
             <ContractManagement role="consultant" showHeader={false} />
           </div>
         </SheetContent>

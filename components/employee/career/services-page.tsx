@@ -284,12 +284,12 @@ export function CareerServicesPage() {
 
       {/* Project Detail Sheet */}
       <Sheet open={!!selectedProject} onOpenChange={() => setSelectedProject(null)}>
-        <SheetContent side="bottom" className="h-[80vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>{selectedProject?.name}</SheetTitle>
           </SheetHeader>
           {selectedProject && (
-            <div className="py-4 space-y-4 overflow-y-auto h-[calc(80vh-140px)]">
+            <div className="flex-1 min-h-0 py-4 space-y-4 overflow-y-auto">
               {/* Price */}
               <div className="bg-gradient-to-r from-violet-50 to-purple-50 rounded-xl p-4">
                 <div className="flex items-baseline gap-2">
@@ -375,12 +375,12 @@ export function CareerServicesPage() {
 
       {/* Certificate Detail Sheet */}
       <Sheet open={!!selectedCert} onOpenChange={() => setSelectedCert(null)}>
-        <SheetContent side="bottom" className="h-[60vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>{selectedCert?.name}</SheetTitle>
           </SheetHeader>
           {selectedCert && (
-            <div className="py-4 space-y-4 overflow-y-auto h-[calc(60vh-100px)]">
+            <div className="flex-1 min-h-0 py-4 space-y-4 overflow-y-auto">
               <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 text-center">
                 <div className="w-16 h-16 mx-auto bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mb-3">
                   <GraduationCap className="w-8 h-8 text-white" />

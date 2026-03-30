@@ -140,7 +140,7 @@ export function MergedEmployeeProfilePage({
 
       {/* Role Switcher Drawer */}
       <Sheet open={showRoleSwitcher} onOpenChange={setShowRoleSwitcher}>
-        <SheetContent side="right" className="w-[85vw] max-w-sm p-0 flex flex-col h-full">
+        <SheetContent side="right" className="w-[85vw] max-w-sm flex flex-col py-0 h-full">
           <SheetHeader className="px-4 py-3 border-b">
             <SheetTitle className="text-sm">切换角色</SheetTitle>
           </SheetHeader>

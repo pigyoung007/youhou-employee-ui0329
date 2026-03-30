@@ -270,11 +270,11 @@ export function DomesticWorkbenchPage() {
 
       {/* Daily Log Sheet */}
       <Sheet open={showDailyLog} onOpenChange={setShowDailyLog}>
-        <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>填写护理日报</SheetTitle>
           </SheetHeader>
-          <div className="py-4 space-y-6 overflow-y-auto h-[calc(85vh-140px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-6 overflow-y-auto">
             {/* Baby Section */}
             <div>
               <div className="flex items-center gap-2 mb-3">
@@ -377,7 +377,7 @@ export function DomesticWorkbenchPage() {
 
       {/* Meal Upload Sheet */}
       <Sheet open={showMealUpload} onOpenChange={setShowMealUpload}>
-        <SheetContent side="bottom" className="h-[60vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>上传餐食照片</SheetTitle>
           </SheetHeader>
@@ -412,7 +412,7 @@ export function DomesticWorkbenchPage() {
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>打卡记录</SheetTitle>
           </SheetHeader>
-          <div className="py-4 space-y-3 overflow-y-auto h-[calc(100vh-100px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-3 overflow-y-auto">
             {punchRecords.map((record, index) => (
               <Card key={index} className="border-0 shadow-sm">
                 <CardContent className="p-3">

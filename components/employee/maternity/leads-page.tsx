@@ -480,12 +480,12 @@ export function MaternityLeadsPage() {
 
       {/* Lead Detail Sheet */}
       <Sheet open={!!selectedLead} onOpenChange={() => setSelectedLead(null)}>
-        <SheetContent side="bottom" className="h-[90vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>雇主详情</SheetTitle>
           </SheetHeader>
           {selectedLead && (
-            <div className="py-4 space-y-4 overflow-y-auto h-[calc(90vh-140px)]">
+            <div className="flex-1 min-h-0 py-4 space-y-4 overflow-y-auto">
               {/* Basic Info */}
               <div className="flex items-center gap-3 p-4 bg-rose-50 rounded-xl">
                 <div className="w-14 h-14 bg-rose-100 rounded-full flex items-center justify-center">
@@ -711,7 +711,7 @@ export function MaternityLeadsPage() {
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>推荐阿姨</SheetTitle>
           </SheetHeader>
-          <div className="py-4 space-y-3 overflow-y-auto h-[calc(100vh-180px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-3 overflow-y-auto">
             {availableCaregivers.map((caregiver) => (
               <Card 
                 key={caregiver.id} 
@@ -780,7 +780,7 @@ export function MaternityLeadsPage() {
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>更换阿姨</SheetTitle>
           </SheetHeader>
-          <div className="py-4 space-y-3 overflow-y-auto h-[calc(100vh-180px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-3 overflow-y-auto">
             <p className="text-sm text-muted-foreground mb-4">
               选择新的阿姨替换当前推荐的阿姨，更换后将通知雇主重新确认。
             </p>
@@ -1030,12 +1030,12 @@ export function MaternityLeadsPage() {
 
       {/* Interview Record View */}
       <Sheet open={showInterviewRecord} onOpenChange={setShowInterviewRecord}>
-        <SheetContent side="bottom" className="h-[90vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>面试回放</SheetTitle>
           </SheetHeader>
           {selectedInterview && (
-            <div className="py-4 space-y-4 overflow-y-auto h-[calc(90vh-100px)]">
+            <div className="flex-1 min-h-0 py-4 space-y-4 overflow-y-auto">
               {/* Video Player */}
               <div className="bg-gray-900 rounded-xl aspect-video flex items-center justify-center relative">
                 <div className="text-center text-white">
@@ -1114,12 +1114,12 @@ export function MaternityLeadsPage() {
 
       {/* Call Record Detail Sheet */}
       <Sheet open={showCallRecordDetail} onOpenChange={setShowCallRecordDetail}>
-        <SheetContent side="bottom" className="h-[80vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>通话记录详情</SheetTitle>
           </SheetHeader>
           {selectedCallRecord && (
-            <div className="py-4 space-y-4 overflow-y-auto h-[calc(80vh-100px)]">
+            <div className="flex-1 min-h-0 py-4 space-y-4 overflow-y-auto">
               {/* Audio Player */}
               <Card className="border-0 shadow-sm bg-gradient-to-r from-green-50 to-emerald-50">
                 <CardContent className="p-4">
@@ -1175,11 +1175,11 @@ export function MaternityLeadsPage() {
 
       {/* Add Lead Sheet */}
       <Sheet open={showAddLead} onOpenChange={setShowAddLead}>
-        <SheetContent side="bottom" className="h-[80vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>新增雇主线索</SheetTitle>
           </SheetHeader>
-          <div className="py-4 space-y-4 overflow-y-auto h-[calc(80vh-140px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-4 overflow-y-auto">
             <div>
               <Label>雇主姓名</Label>
               <Input placeholder="请输入姓名" />
@@ -1238,14 +1238,14 @@ export function MaternityLeadsPage() {
 
       {/* Contracts Sheet */}
       <Sheet open={showContracts} onOpenChange={setShowContracts}>
-        <SheetContent side="bottom" className="h-[90vh] rounded-t-2xl overflow-hidden">
+        <SheetContent side="right" className="flex flex-col min-h-0 overflow-hidden">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle className="flex items-center gap-2">
               <FileSignature className="w-5 h-5 text-rose-500" />
               合同管理
             </SheetTitle>
           </SheetHeader>
-          <div className="overflow-y-auto h-[calc(90vh-80px)] py-4">
+          <div className="flex-1 min-h-0 overflow-y-auto py-4">
             <ContractManagement role="consultant" showHeader={false} />
           </div>
         </SheetContent>

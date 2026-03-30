@@ -8,23 +8,254 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
-  Search, ChevronRight, BookOpen, Clock, Award, Star,
-  Send, Share2, Briefcase, User, GraduationCap,
+  Search, ChevronRight, Clock, Award, Star,
+  Share2, Briefcase, GraduationCap, ImageIcon, FileText, X, Users, BookOpen, User,
 } from "lucide-react"
+import { ScheduleOverviewBar, type ScheduleOverviewSegment } from "@/components/employee/schedule-overview-bar"
+import {
+  NannyScheduleTabContent,
+  resolveScheduleBannerTone,
+  resolveScheduleStatusHint,
+} from "@/components/employee/nanny-schedule-tab-content"
 import { SharePosterModal } from "@/components/share-poster-modal"
+import { NannyResumeShareView, domesticWorkerToResumeData } from "@/components/nanny-resume-share-view"
+import { cn } from "@/lib/utils"
+
+/** 在学课程（列表与详情共用） */
+interface StudentCurrentCourse {
+  name: string
+  category: string
+  teacher: string
+  startDate: string
+  endDate: string
+  attendedHours: number
+  totalHours: number
+  progress: number
+  nextClass?: string
+}
 
 const students = [
-  { id: 1, name: "张小红", phone: "138****1234", avatar: "/chinese-woman-portrait.jpg", course: "母婴护理师（初级）", level: "初级", progress: 75, status: "在学", totalOrders: 0, totalIncome: 0, joinDate: "2025-10-15", type: "student" as const },
-  { id: 2, name: "王大姐", phone: "137****9012", avatar: "/experienced-chinese-maternity-nurse-woman-portrait.jpg", course: "育婴师培训", level: "中级", progress: 100, status: "已结业", totalOrders: 0, totalIncome: 0, joinDate: "2025-08-10", type: "student" as const },
-  { id: 3, name: "刘小芳", phone: "135****7890", avatar: "/friendly-chinese-caregiver-woman-portrait.jpg", course: "催乳师培训", level: "初级", progress: 40, status: "在学", totalOrders: 0, totalIncome: 0, joinDate: "2026-01-05", type: "student" as const },
+  {
+    id: 1,
+    name: "张小红",
+    phone: "138****1234",
+    avatar: "/chinese-woman-portrait.jpg",
+    course: "母婴护理师（初级）",
+    level: "初级",
+    progress: 75,
+    status: "在学",
+    totalOrders: 0,
+    totalIncome: 0,
+    joinDate: "2025-10-15",
+    type: "student" as const,
+    age: 28,
+    gender: "女",
+    idCardMasked: "640***********1026",
+    city: "银川市金凤区",
+    education: "大专",
+    studentNo: "XY20251015001",
+    consultant: "张顾问",
+    source: "抖音广告",
+    wechat: "wx_zhxh",
+    currentCourses: [
+      {
+        name: "母婴护理师（初级）",
+        category: "技能培训",
+        teacher: "张老师",
+        startDate: "2025-10-16",
+        endDate: "2026-02-28",
+        attendedHours: 36,
+        totalHours: 48,
+        progress: 75,
+        nextClass: "每周三 09:00 · 实操教室 A",
+      },
+      {
+        name: "母乳喂养与辅食基础（选修）",
+        category: "公开课",
+        teacher: "李老师",
+        startDate: "2025-11-01",
+        endDate: "2026-01-15",
+        attendedHours: 8,
+        totalHours: 12,
+        progress: 66,
+        nextClass: "每周五 14:00 · 线上直播",
+      },
+    ] satisfies StudentCurrentCourse[],
+  },
+  {
+    id: 2,
+    name: "王大姐",
+    phone: "137****9012",
+    avatar: "/experienced-chinese-maternity-nurse-woman-portrait.jpg",
+    course: "育婴师培训",
+    level: "中级",
+    progress: 100,
+    status: "已结业",
+    totalOrders: 0,
+    totalIncome: 0,
+    joinDate: "2025-08-10",
+    type: "student" as const,
+    age: 42,
+    gender: "女",
+    idCardMasked: "640***********8891",
+    city: "兰州市城关区",
+    education: "高中",
+    studentNo: "XY20250810002",
+    consultant: "李顾问",
+    source: "朋友推荐",
+    wechat: "wx_wdj",
+    currentCourses: [
+      {
+        name: "育婴师培训（中级）",
+        category: "技能培训",
+        teacher: "王老师",
+        startDate: "2025-08-12",
+        endDate: "2025-12-20",
+        attendedHours: 56,
+        totalHours: 56,
+        progress: 100,
+        nextClass: "已全部结课",
+      },
+    ] satisfies StudentCurrentCourse[],
+  },
+  {
+    id: 3,
+    name: "刘小芳",
+    phone: "135****7890",
+    avatar: "/friendly-chinese-caregiver-woman-portrait.jpg",
+    course: "催乳师培训",
+    level: "初级",
+    progress: 40,
+    status: "在学",
+    totalOrders: 0,
+    totalIncome: 0,
+    joinDate: "2026-01-05",
+    type: "student" as const,
+    age: 35,
+    gender: "女",
+    idCardMasked: "640***********4455",
+    city: "西安市雁塔区",
+    education: "中专",
+    studentNo: "XY20260105003",
+    consultant: "张顾问",
+    source: "小红书",
+    wechat: "wx_lxf",
+    currentCourses: [
+      {
+        name: "催乳师培训（初级）",
+        category: "技能培训",
+        teacher: "赵老师",
+        startDate: "2026-01-08",
+        endDate: "2026-04-30",
+        attendedHours: 16,
+        totalHours: 40,
+        progress: 40,
+        nextClass: "每周二/四 10:00 · 小班课",
+      },
+    ] satisfies StudentCurrentCourse[],
+  },
 ]
 
 const domesticWorkers = [
-  { id: 101, name: "李阿姨", phone: "138****1234", avatar: "/professional-chinese-nanny-woman-portrait-warm-smi.jpg", workerType: "月嫂", level: "金牌", age: 45, hometown: "湖南长沙", experience: "8年", salary: "15800-18800元/26天", rating: 4.9, totalOrders: 28, completedOrders: 27, available: true, type: "domestic" as const },
-  { id: 102, name: "张阿姨", phone: "139****5678", avatar: "/friendly-chinese-caregiver-woman-portrait.jpg", workerType: "育婴师", level: "银牌", age: 42, hometown: "四川成都", experience: "5年", salary: "10800-12800元/26天", rating: 4.8, totalOrders: 15, completedOrders: 14, available: false, type: "domestic" as const },
-  { id: 103, name: "王阿姨", phone: "137****9012", avatar: "/experienced-chinese-maternity-nurse-woman-portrait.jpg", workerType: "月嫂", level: "钻石", age: 48, hometown: "江西南昌", experience: "10年", salary: "18800-22800元/26天", rating: 5.0, totalOrders: 35, completedOrders: 35, available: true, type: "domestic" as const },
+  {
+    id: 101,
+    name: "李阿姨",
+    phone: "138****1234",
+    avatar: "/professional-chinese-nanny-woman-portrait-warm-smi.jpg",
+    workerType: "月嫂",
+    level: "金牌",
+    starTitle: "一星月嫂",
+    workerStatus: "待岗",
+    age: 45,
+    hometown: "湖南长沙",
+    experience: "8年",
+    salary: "15800-18800元/26天",
+    totalOrders: 28,
+    completedOrders: 27,
+    available: true,
+    type: "domestic" as const,
+    scheduleSegments: [
+      { kind: "booked" as const, start: { month: 1, day: 11 }, end: { month: 2, day: 10 } },
+      { kind: "training" as const, start: { month: 2, day: 11 }, end: { month: 3, day: 8 } },
+      { kind: "available" as const, start: { month: 3, day: 9 }, end: { month: 5, day: 18 } },
+      { kind: "booked" as const, start: { month: 5, day: 19 }, end: { month: 8, day: 31 } },
+    ] satisfies ScheduleOverviewSegment[],
+  },
+  {
+    id: 102,
+    name: "张阿姨",
+    phone: "139****5678",
+    avatar: "/friendly-chinese-caregiver-woman-portrait.jpg",
+    workerType: "育婴师",
+    level: "银牌",
+    starTitle: "二星育婴师",
+    workerStatus: "服务中",
+    age: 42,
+    hometown: "四川成都",
+    experience: "5年",
+    salary: "10800-12800元/26天",
+    totalOrders: 15,
+    completedOrders: 14,
+    available: false,
+    type: "domestic" as const,
+    scheduleSegments: [
+      { kind: "booked" as const, start: { month: 1, day: 1 }, end: { month: 1, day: 25 } },
+      { kind: "available" as const, start: { month: 1, day: 26 }, end: { month: 8, day: 31 } },
+    ] satisfies ScheduleOverviewSegment[],
+  },
+  {
+    id: 103,
+    name: "王阿姨",
+    phone: "137****9012",
+    avatar: "/experienced-chinese-maternity-nurse-woman-portrait.jpg",
+    workerType: "月嫂",
+    level: "钻石",
+    starTitle: "三星月嫂",
+    workerStatus: "培训中",
+    age: 48,
+    hometown: "江西南昌",
+    experience: "10年",
+    salary: "18800-22800元/26天",
+    totalOrders: 35,
+    completedOrders: 35,
+    available: true,
+    type: "domestic" as const,
+    scheduleSegments: [
+      { kind: "training" as const, start: { month: 1, day: 5 }, end: { month: 2, day: 28 } },
+      { kind: "available" as const, start: { month: 3, day: 1 }, end: { month: 4, day: 10 } },
+      { kind: "booked" as const, start: { month: 4, day: 11 }, end: { month: 8, day: 31 } },
+    ] satisfies ScheduleOverviewSegment[],
+  },
+]
+
+/** 按客户匹配家政员：选择客户后带出意向并参与筛选 */
+const matchCustomers = [
+  {
+    id: "mc1",
+    name: "王女士",
+    phone: "138****1234",
+    intention: "高意向",
+    serviceType: "月嫂",
+    budget: "15000-18000元/26天",
+    dueDate: "2026-03-15",
+  },
+  {
+    id: "mc2",
+    name: "李先生",
+    phone: "139****5678",
+    intention: "中意向",
+    serviceType: "育儿嫂",
+    budget: "12000-15000元/26天",
+    dueDate: "2026-04-20",
+  },
 ]
 
 const detailData = {
@@ -57,22 +288,33 @@ function getStatusColor(status: string) {
   return "bg-violet-100 text-violet-700"
 }
 
+function scheduleSummaryDays(worker: (typeof domesticWorkers)[0]) {
+  if (worker.workerStatus === "服务中") return { idleDays: 0, onJobDays: 26, vacationDays: 0 }
+  if (worker.workerStatus === "培训中") return { idleDays: 8, onJobDays: 0, vacationDays: 0 }
+  return { idleDays: 3, onJobDays: 0, vacationDays: 0 }
+}
+
 
 
 function getPersonInfoFields(person: any) {
   if (person.type === "student") {
     return [
-      { label: "客户全名", value: person.name },
-      { label: "客户星级", value: "四星" },
+      { label: "学员姓名", value: person.name },
+      { label: "学号", value: person.studentNo ?? "-" },
       { label: "手机", value: person.phone },
-      { label: "微信号", value: "wx_" + person.name },
-      { label: "客户来源", value: "线上咨询" },
+      { label: "微信号", value: person.wechat ?? `wx_${person.name}` },
+      { label: "身份证", value: person.idCardMasked ?? "-" },
+      { label: "性别", value: person.gender ?? "女" },
+      { label: "年龄", value: person.age != null ? `${person.age}岁` : "-" },
+      { label: "学历", value: person.education ?? "-" },
+      { label: "所在城市", value: person.city ?? "-" },
       { label: "民族", value: "汉族" },
-      { label: "性别", value: "女" },
-      { label: "所属母婴顾问", value: "张顾问" },
-      { label: "课程", value: person.course },
+      { label: "客户来源", value: person.source ?? "线上咨询" },
+      { label: "职业顾问/教务", value: person.consultant ?? "张顾问" },
+      { label: "主修班次", value: person.course },
+      { label: "学级", value: person.level },
       { label: "入学时间", value: person.joinDate },
-      { label: "学习进度", value: person.progress + "%" },
+      { label: "整体进度", value: `${person.progress ?? 0}%` },
       { label: "状态", value: person.status },
     ]
   }
@@ -92,7 +334,8 @@ function getPersonInfoFields(person: any) {
     { label: "籍贯", value: person.hometown },
     { label: "从业经验", value: person.experience },
     { label: "薪资", value: person.salary },
-    { label: "评分", value: person.rating + "分" },
+    { label: "家政员星级", value: person.starTitle || `${person.level}${person.workerType}` },
+    { label: "状态", value: person.workerStatus || (person.available ? "待岗" : "服务中") },
   ]
 }
 
@@ -106,18 +349,41 @@ export function TalentPoolPage() {
   const [detailTab, setDetailTab] = useState("info")
   const [showPoster, setShowPoster] = useState(false)
   const [posterPerson, setPosterPerson] = useState<any | null>(null)
+  const [showResumeShare, setShowResumeShare] = useState(false)
+  const [resumeShareWorker, setResumeShareWorker] = useState<(typeof domesticWorkers)[0] | null>(null)
+  const [selectedMatchCustomer, setSelectedMatchCustomer] = useState<(typeof matchCustomers)[0] | null>(null)
+  const [dueDateFilter, setDueDateFilter] = useState("")
+  const [showMatchCustomerSheet, setShowMatchCustomerSheet] = useState(false)
 
-  const handleShare = (e: React.MouseEvent, person: any) => {
-    e.stopPropagation()
+  const openPosterShare = (person: (typeof domesticWorkers)[0]) => {
     setPosterPerson(person)
     setShowPoster(true)
   }
 
+  const openResumeShare = (person: (typeof domesticWorkers)[0]) => {
+    setResumeShareWorker(person)
+    setShowResumeShare(true)
+  }
+
   const filteredStudents = students
     .filter(s => activeFilter === "all" || s.status === activeFilter)
-    .filter(s => !searchQuery || s.name.includes(searchQuery) || s.phone.includes(searchQuery))
+    .filter(
+      s =>
+        !searchQuery ||
+        s.name.includes(searchQuery) ||
+        s.phone.includes(searchQuery) ||
+        (s.studentNo && s.studentNo.includes(searchQuery)) ||
+        (s.city && s.city.includes(searchQuery)),
+    )
 
   const filteredWorkers = domesticWorkers
+    .filter((w) => {
+      if (selectedMatchCustomer) {
+        if (selectedMatchCustomer.serviceType.includes("月嫂") && w.workerType !== "月嫂") return false
+        if (selectedMatchCustomer.serviceType.includes("育儿") && w.workerType !== "育婴师") return false
+      }
+      return true
+    })
     .filter(w => {
       if (activeFilter === "all") return true
       if (activeFilter === "年龄") return w.age >= 40 && w.age <= 50
@@ -143,7 +409,17 @@ export function TalentPoolPage() {
       </header>
 
       <main className="px-3 py-2.5 space-y-2">
-        <Tabs value={activeTab} onValueChange={v => { setActiveTab(v as any); setActiveFilter("all") }}>
+        <Tabs
+          value={activeTab}
+          onValueChange={(v) => {
+            setActiveTab(v as "student" | "domestic")
+            setActiveFilter("all")
+            if (v !== "domestic") {
+              setSelectedMatchCustomer(null)
+              setDueDateFilter("")
+            }
+          }}
+        >
           <TabsList className="w-full bg-muted/50 p-0.5 rounded-lg h-8">
             <TabsTrigger value="student" className="flex-1 rounded-md text-xs h-7 data-[state=active]:bg-white">
               <GraduationCap className="w-3.5 h-3.5 mr-1" />学员
@@ -156,8 +432,59 @@ export function TalentPoolPage() {
 
         <div className="relative">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-          <Input placeholder="搜索姓名或手机号" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-8 h-8 text-xs" />
+          <Input
+            placeholder="搜索姓名、手机、学号或城市"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-8 h-8 text-xs"
+          />
         </div>
+
+        {activeTab === "domestic" && (
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant={selectedMatchCustomer ? "default" : "outline"}
+                className="h-8 text-[11px] bg-violet-500 hover:bg-violet-600 text-white"
+                onClick={() => setShowMatchCustomerSheet(true)}
+              >
+                <Users className="w-3.5 h-3.5 mr-1" />
+                {selectedMatchCustomer ? `已选：${selectedMatchCustomer.name}` : "选择匹配客户"}
+              </Button>
+              {selectedMatchCustomer && (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  className="h-8 text-[10px] text-muted-foreground"
+                  onClick={() => {
+                    setSelectedMatchCustomer(null)
+                    setDueDateFilter("")
+                  }}
+                >
+                  清除客户
+                </Button>
+              )}
+            </div>
+            {selectedMatchCustomer && (
+              <div className="rounded-lg border border-dashed border-violet-300 bg-violet-50/80 px-2.5 py-2 text-[10px] leading-relaxed text-foreground">
+                <span className="font-medium text-violet-800">自动匹配 · 客户意向：</span>
+                {selectedMatchCustomer.intention} · {selectedMatchCustomer.serviceType} · 预算 {selectedMatchCustomer.budget}
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-muted-foreground shrink-0 whitespace-nowrap">预产期</span>
+              <Input
+                type="date"
+                className="h-8 flex-1 text-[11px]"
+                value={dueDateFilter}
+                onChange={(e) => setDueDateFilter(e.target.value)}
+              />
+            </div>
+          </div>
+        )}
 
         <div className="flex gap-1.5 overflow-x-auto pb-0.5">
           {filters.map(filter => (
@@ -181,7 +508,7 @@ export function TalentPoolPage() {
 
         {/* 档期日期选择器 */}
         <Sheet open={showDatePicker} onOpenChange={setShowDatePicker}>
-          <SheetContent side="bottom" className="h-auto rounded-t-2xl p-0">
+          <SheetContent side="right" className="flex min-h-0 flex-col py-0">
             <div className="p-4 space-y-4">
               <SheetTitle className="text-sm">选择档期日期</SheetTitle>
               <div className="space-y-3">
@@ -211,27 +538,91 @@ export function TalentPoolPage() {
           </SheetContent>
         </Sheet>
 
-        {activeTab === "student" && filteredStudents.map(student => (
+        <Sheet open={showMatchCustomerSheet} onOpenChange={setShowMatchCustomerSheet}>
+          <SheetContent side="right" className="flex min-h-0 flex-col py-0">
+            <div className="space-y-3 p-4">
+              <SheetTitle className="text-sm">选择客户</SheetTitle>
+              <p className="text-[11px] text-muted-foreground">选择后将带出客户意向，并用于自动匹配家政员筛选</p>
+              <div className="space-y-2">
+                {matchCustomers.map((c) => (
+                  <button
+                    key={c.id}
+                    type="button"
+                    className="w-full rounded-lg border border-border p-3 text-left text-xs transition-colors hover:bg-muted/50"
+                    onClick={() => {
+                      setSelectedMatchCustomer(c)
+                      setDueDateFilter(c.dueDate)
+                      setShowMatchCustomerSheet(false)
+                    }}
+                  >
+                    <p className="font-semibold text-foreground">
+                      {c.name}{" "}
+                      <span className="font-normal text-muted-foreground">{c.phone}</span>
+                    </p>
+                    <p className="mt-1 text-[10px] text-muted-foreground">
+                      {c.intention} · {c.serviceType} · 预算 {c.budget}
+                    </p>
+                    <p className="mt-0.5 text-[10px] text-primary">预产期 {c.dueDate}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+
+        {activeTab === "student" && filteredStudents.map((student) => (
           <Card key={student.id} className="border-0 shadow-sm cursor-pointer" onClick={() => openDetail(student)}>
             <CardContent className="p-3">
-              <div className="flex items-center gap-2.5 mb-2">
-                <Avatar className="w-9 h-9">
+              <div className="flex items-start gap-2.5 mb-2">
+                <Avatar className="w-9 h-9 shrink-0">
                   <AvatarImage src={student.avatar || "/placeholder.svg"} />
                   <AvatarFallback className="text-[10px]">{student.name[0]}</AvatarFallback>
                 </Avatar>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-1.5">
                     <h3 className="font-semibold text-xs">{student.name}</h3>
                     <Badge className={`text-[9px] px-1.5 py-0 ${getStatusColor(student.status)}`}>{student.status}</Badge>
+                    <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-muted-foreground/30">
+                      {student.level}
+                    </Badge>
                   </div>
-                  <p className="text-[10px] text-muted-foreground">{student.course}</p>
+                  <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[10px] text-muted-foreground">
+                    <span className="inline-flex items-center gap-0.5">
+                      <User className="h-3 w-3 shrink-0 opacity-70" />
+                      {student.age}岁 · {student.gender}
+                    </span>
+                    <span className="text-border">|</span>
+                    <span>{student.city}</span>
+                    <span className="text-border">|</span>
+                    <span>{student.consultant}</span>
+                  </div>
+                  <p className="mt-1 font-mono text-[9px] text-muted-foreground">学号 {student.studentNo}</p>
                 </div>
-                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                <ChevronRight className="mt-1 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
               </div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] text-muted-foreground shrink-0">进度</span>
-                <Progress value={student.progress} className="flex-1 h-1.5" />
-                <span className="text-[10px] font-medium shrink-0">{student.progress}%</span>
+
+              <div className="border-border/60 bg-muted/30 mb-2 space-y-2 rounded-lg border px-2 py-2">
+                <div className="flex items-center gap-1 text-[10px] font-semibold text-foreground">
+                  <BookOpen className="h-3 w-3 text-primary" />
+                  在学课程
+                </div>
+                <div className="space-y-2">
+                  {student.currentCourses.map((c) => (
+                    <div key={c.name} className="rounded-md border border-border/50 bg-background/80 px-2 py-1.5">
+                      <p className="text-[11px] font-medium leading-snug text-foreground">{c.name}</p>
+                      <p className="mt-0.5 text-[10px] text-muted-foreground">
+                        {c.teacher} · {c.attendedHours}/{c.totalHours} 课时
+                        {c.nextClass ? ` · ${c.nextClass}` : ""}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-2 flex items-center gap-2">
+                <span className="shrink-0 text-[10px] text-muted-foreground">整体进度</span>
+                <Progress value={student.progress} className="h-1.5 flex-1" />
+                <span className="shrink-0 text-[10px] font-medium tabular-nums">{student.progress}%</span>
               </div>
               <div className="flex items-center gap-1.5 pt-2 border-t border-border/50">
                 <Button size="sm" variant="outline" className="flex-1 text-[10px] h-6 bg-transparent" onClick={e => e.stopPropagation()}>
@@ -242,40 +633,98 @@ export function TalentPoolPage() {
           </Card>
         ))}
 
-        {activeTab === "domestic" && filteredWorkers.map(worker => (
-          <Card key={worker.id} className="border-0 shadow-sm cursor-pointer" onClick={() => openDetail(worker)}>
-            <CardContent className="p-3">
-              <div className="flex items-center gap-2.5 mb-1.5">
-                <Avatar className="w-10 h-10">
+        {activeTab === "domestic" && filteredWorkers.map((worker) => (
+          <Card
+            key={worker.id}
+            className="cursor-pointer border-0 shadow-sm ring-1 ring-border/40"
+            onClick={() => openDetail(worker)}
+          >
+            <CardContent className="space-y-0 px-3.5 py-4">
+              <div className="flex gap-3">
+                <Avatar className="h-11 w-11 shrink-0 ring-1 ring-border/50">
                   <AvatarImage src={worker.avatar || "/placeholder.svg"} />
-                  <AvatarFallback className="text-[10px]">{worker.name[0]}</AvatarFallback>
+                  <AvatarFallback className="text-xs">{worker.name[0]}</AvatarFallback>
                 </Avatar>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <h3 className="font-semibold text-xs">{worker.name}</h3>
-                    <Badge className={`text-[9px] px-1.5 py-0 ${getLevelColor(worker.level)}`}>{worker.level}{worker.workerType}</Badge>
+                <div className="min-w-0 flex-1 space-y-2">
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="text-sm font-semibold leading-snug text-foreground">{worker.name}</h3>
+                    <Badge
+                      className={`shrink-0 text-[10px] font-normal ${worker.available ? "bg-teal-100 text-teal-800" : "bg-muted text-muted-foreground"}`}
+                    >
+                      {worker.workerStatus}
+                    </Badge>
                   </div>
-                  <p className="text-[10px] text-muted-foreground">{worker.age}岁 · {worker.hometown} · {worker.experience}</p>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-xs font-bold text-primary">{worker.salary}</span>
-                    <span className="flex items-center gap-0.5 text-amber-500 text-[10px]">
-                      <Star className="w-2.5 h-2.5 fill-amber-400" />{worker.rating}
-                    </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    <Badge
+                      variant="outline"
+                      className="border-primary/35 px-2 py-0 text-[10px] font-normal text-primary"
+                    >
+                      {worker.starTitle}
+                    </Badge>
+                    <Badge className={`px-2 py-0 text-[10px] font-normal ${getLevelColor(worker.level)}`}>
+                      {worker.level}
+                      {worker.workerType}
+                    </Badge>
+                  </div>
+                  <p className="text-[11px] leading-relaxed text-muted-foreground">
+                    {worker.age}岁 · {worker.hometown} · {worker.experience}
+                  </p>
+                  <p className="text-sm font-bold tabular-nums text-primary">{worker.salary}</p>
+                </div>
+              </div>
+
+              <div className="mt-3 rounded-xl border border-border/50 bg-muted/15 px-3 py-2">
+                <ScheduleOverviewBar year={2026} segments={worker.scheduleSegments} density="compact" />
+              </div>
+
+              <div className="mt-2 space-y-1.5 border-t border-border/45 pt-2">
+                <div className="flex items-stretch justify-center">
+                  <div className="min-w-0 flex-1 px-0.5 text-center">
+                    <p className="text-sm font-bold tabular-nums leading-none text-foreground">{worker.totalOrders}</p>
+                    <p className="mt-1 text-[10px] leading-none text-muted-foreground">派单</p>
+                  </div>
+                  <div className="my-0.5 w-px shrink-0 bg-border/50" aria-hidden />
+                  <div className="min-w-0 flex-1 px-0.5 text-center">
+                    <p className="text-sm font-bold tabular-nums leading-none text-foreground">{worker.completedOrders}</p>
+                    <p className="mt-1 text-[10px] leading-none text-muted-foreground">完成</p>
+                  </div>
+                  <div className="my-0.5 w-px shrink-0 bg-border/50" aria-hidden />
+                  <div className="min-w-0 flex-1 px-0.5 text-center">
+                    <p className="truncate text-xs font-semibold leading-none text-teal-600">{worker.workerStatus}</p>
+                    <p className="mt-1 text-[10px] leading-none text-muted-foreground">状态</p>
                   </div>
                 </div>
-                <Badge className={`text-[9px] shrink-0 ${worker.available ? "bg-teal-100 text-teal-700" : "bg-gray-100 text-gray-600"}`}>
-                  {worker.available ? "可派单" : "服务中"}
-                </Badge>
-              </div>
-              <div className="grid grid-cols-3 gap-1 py-1.5 border-t border-border/50 text-[10px] text-center mb-1.5">
-                <div><span className="font-bold text-xs">{worker.totalOrders}</span> <span className="text-muted-foreground">派单</span></div>
-                <div><span className="font-bold text-xs">{worker.completedOrders}</span> <span className="text-muted-foreground">完成</span></div>
-                <div><span className="font-bold text-xs text-teal-600">{worker.available ? "空闲" : "在岗"}</span> <span className="text-muted-foreground">状态</span></div>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Button size="sm" variant="outline" className="flex-1 text-[10px] h-6 bg-transparent" onClick={e => handleShare(e, worker)}>
-                  <Share2 className="w-3 h-3 mr-0.5" />分享
-                </Button>
+
+                <div onClick={(e) => e.stopPropagation()}>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-7 w-full rounded-md border-border/60 bg-background text-[11px] font-medium"
+                      >
+                        <Share2 className="mr-1 h-3 w-3 shrink-0" />
+                        分享
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-44">
+                      <DropdownMenuItem
+                        className="text-xs"
+                        onSelect={() => openPosterShare(worker)}
+                      >
+                        <ImageIcon className="w-3.5 h-3.5" />
+                        海报分享
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="text-xs"
+                        onSelect={() => openResumeShare(worker)}
+                      >
+                        <FileText className="w-3.5 h-3.5" />
+                        简历分享
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -292,54 +741,170 @@ export function TalentPoolPage() {
             subtitle: `${posterPerson.level}${posterPerson.workerType}`,
             desc: `${posterPerson.age}岁 | ${posterPerson.hometown} | ${posterPerson.experience}经验`,
             price: posterPerson.salary,
-            tags: [posterPerson.level, posterPerson.workerType, posterPerson.available ? "可派单" : "服务中"],
+            tags: [posterPerson.level, posterPerson.workerType, posterPerson.workerStatus],
             avatar: posterPerson.avatar,
-            rating: posterPerson.rating,
             reviews: posterPerson.totalOrders,
           }}
         />
       )}
 
-      <Sheet open={!!selectedPerson} onOpenChange={() => setSelectedPerson(null)}>
-        <SheetContent side="right" className="w-[90vw] max-w-md p-0 flex flex-col h-full">
-          <SheetTitle className="sr-only">人才详情</SheetTitle>
-          <div className="flex flex-col h-full">
-            <div className="px-4 pt-4 pb-2.5 border-b border-border shrink-0">
-              <div className="flex items-center gap-2.5">
-                <Avatar className="w-9 h-9">
-                  <AvatarImage src={selectedPerson?.avatar || "/placeholder.svg"} />
-                  <AvatarFallback className="text-[10px]">{selectedPerson?.name?.[0]}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-sm">{selectedPerson?.name}</h3>
-                  <p className="text-[11px] text-muted-foreground">
-                    {selectedPerson?.type === "student" ? selectedPerson?.course : selectedPerson?.level + selectedPerson?.workerType}
-                  </p>
-                </div>
-              </div>
+      <Sheet open={showResumeShare} onOpenChange={setShowResumeShare}>
+        <SheetContent
+          side="right"
+          className="flex h-dvh max-h-dvh w-full max-w-md flex-col gap-0 overflow-hidden p-0"
+        >
+          <div className="border-border flex shrink-0 items-center justify-between border-b px-4 py-3">
+            <SheetTitle className="text-base font-semibold">简历分享</SheetTitle>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setShowResumeShare(false)}
+              aria-label="关闭"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3">
+            {resumeShareWorker && (
+              <NannyResumeShareView data={domesticWorkerToResumeData(resumeShareWorker)} />
+            )}
+          </div>
+          <div className="border-border bg-background shrink-0 space-y-2 border-t p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+            <p className="text-muted-foreground text-center text-[10px]">
+              预览内容与「客户详情 · 家政员档案 · 简历」一致
+            </p>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="h-9 flex-1 text-xs"
+                onClick={() => {
+                  void navigator.clipboard?.writeText(
+                    `https://youhou.com/share/resume/${resumeShareWorker?.id ?? "xxx"}`,
+                  )
+                }}
+              >
+                复制链接
+              </Button>
+              <Button
+                type="button"
+                className="h-9 flex-1 bg-primary text-xs text-primary-foreground hover:bg-primary/90"
+                onClick={() => alert("正在打开微信分享…")}
+              >
+                分享到微信
+              </Button>
             </div>
+          </div>
+        </SheetContent>
+      </Sheet>
 
-            {selectedPerson && (
-              <div className="px-4 pt-2 shrink-0">
-                <Tabs value={detailTab} onValueChange={setDetailTab}>
-                  {selectedPerson?.type === "student" ? (
-                    <TabsList className="w-full bg-muted/50 p-0.5 rounded-lg h-8 grid grid-cols-4">
-                      <TabsTrigger value="info" className="text-xs h-7 rounded-md data-[state=active]:bg-white">基本信息</TabsTrigger>
-                      <TabsTrigger value="course" className="text-xs h-7 rounded-md data-[state=active]:bg-white">课程</TabsTrigger>
-                      <TabsTrigger value="exam" className="text-xs h-7 rounded-md data-[state=active]:bg-white">成绩</TabsTrigger>
-                      <TabsTrigger value="cert" className="text-xs h-7 rounded-md data-[state=active]:bg-white">证书</TabsTrigger>
-                    </TabsList>
-                  ) : (
-                    <TabsList className="w-full bg-muted/50 p-0.5 rounded-lg h-8 grid grid-cols-5 overflow-x-auto">
-                      <TabsTrigger value="info" className="text-xs h-7 rounded-md data-[state=active]:bg-white whitespace-nowrap">基本信息</TabsTrigger>
-                      <TabsTrigger value="resume" className="text-xs h-7 rounded-md data-[state=active]:bg-white whitespace-nowrap">简历</TabsTrigger>
-                      <TabsTrigger value="schedule" className="text-xs h-7 rounded-md data-[state=active]:bg-white whitespace-nowrap">档期</TabsTrigger>
-                      <TabsTrigger value="rating" className="text-xs h-7 rounded-md data-[state=active]:bg-white whitespace-nowrap">等级</TabsTrigger>
-                      <TabsTrigger value="records" className="text-xs h-7 rounded-md data-[state=active]:bg-white whitespace-nowrap">服务</TabsTrigger>
-                    </TabsList>
-                  )}
-                </Tabs>
-              </div>
+      <Sheet open={!!selectedPerson} onOpenChange={() => setSelectedPerson(null)}>
+        <SheetContent side="right" className="flex h-full w-[90vw] max-w-md flex-col bg-background py-0">
+          <SheetTitle className="sr-only">人才详情</SheetTitle>
+          <div className="flex h-full flex-col">
+            {!selectedPerson ? null : selectedPerson.type === "domestic" ? (
+              <>
+                <div className="shrink-0 px-4 pt-4">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-11 w-11 ring-2 ring-rose-100 ring-offset-2 ring-offset-background">
+                      <AvatarImage src={selectedPerson.avatar || "/placeholder.svg"} />
+                      <AvatarFallback className="text-sm">{selectedPerson.name[0]}</AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-base font-semibold text-foreground">{selectedPerson.name}</h3>
+                      <p className="text-xs text-muted-foreground">
+                        {selectedPerson.starTitle} · {selectedPerson.level}
+                        {selectedPerson.workerType}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="shrink-0 px-4 pt-3">
+                  <div className="rounded-2xl border border-rose-100 bg-gradient-to-br from-rose-50 via-rose-50/95 to-pink-50/70 px-4 py-3.5 shadow-sm">
+                    <p className="text-[10px] font-medium text-rose-900/65">家政员档案</p>
+                    <p className="mt-0.5 text-lg font-bold tracking-tight text-rose-950">{selectedPerson.name}</p>
+                    <p className="mt-1.5 text-xs text-rose-900/85">
+                      {selectedPerson.workerType} · {selectedPerson.level} · {selectedPerson.workerStatus}
+                    </p>
+                    <div className="mt-2.5 flex flex-wrap gap-1.5">
+                      <span className="rounded-full bg-white/80 px-2.5 py-0.5 text-[10px] font-medium text-rose-900 shadow-sm ring-1 ring-rose-100/80">
+                        {selectedPerson.starTitle}
+                      </span>
+                      <span className="rounded-full bg-white/70 px-2.5 py-0.5 text-[10px] font-medium text-rose-900/90 shadow-sm ring-1 ring-rose-100/60">
+                        {selectedPerson.salary}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="shrink-0 border-b border-border px-4 pb-2 pt-3">
+                  <div className="flex gap-0.5 overflow-x-auto rounded-xl bg-muted/45 p-1">
+                    {[
+                      { id: "info", label: "基本信息" },
+                      { id: "resume", label: "简历" },
+                      { id: "schedule", label: "档期" },
+                      { id: "rating", label: "等级" },
+                      { id: "records", label: "服务" },
+                    ].map((t) => (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => setDetailTab(t.id)}
+                        className={cn(
+                          "h-8 shrink-0 whitespace-nowrap rounded-lg px-3 text-xs transition-all",
+                          detailTab === t.id
+                            ? "bg-background font-semibold text-foreground shadow-sm"
+                            : "font-normal text-muted-foreground",
+                        )}
+                      >
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="border-border shrink-0 border-b px-4 pb-2.5 pt-4">
+                  <div className="flex items-center gap-2.5">
+                    <Avatar className="h-9 w-9">
+                      <AvatarImage src={selectedPerson?.avatar || "/placeholder.svg"} />
+                      <AvatarFallback className="text-[10px]">{selectedPerson?.name?.[0]}</AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-sm font-semibold">{selectedPerson?.name}</h3>
+                      <p className="text-[11px] text-muted-foreground">
+                        {[selectedPerson?.studentNo, selectedPerson?.course, selectedPerson?.consultant]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="shrink-0 px-4 pt-2">
+                  <div className="grid h-8 grid-cols-4 gap-0.5 rounded-lg bg-muted/50 p-0.5">
+                    {[
+                      { id: "info", label: "基本信息" },
+                      { id: "course", label: "在学课程" },
+                      { id: "exam", label: "成绩" },
+                      { id: "cert", label: "证书" },
+                    ].map((t) => (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => setDetailTab(t.id)}
+                        className={cn(
+                          "h-7 rounded-md text-xs transition-colors",
+                          detailTab === t.id ? "bg-background font-semibold text-foreground shadow-sm" : "text-muted-foreground",
+                        )}
+                      >
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
             )}
 
             {selectedPerson && (
@@ -347,32 +912,47 @@ export function TalentPoolPage() {
                 {selectedPerson?.type === "student" ? (
                   <>
                     {detailTab === "info" && (
-                      <div className="grid grid-cols-2 gap-2">
-                        {infoFields.map(item => (
-                          <div key={item.label} className="bg-muted/50 rounded-lg p-2.5">
-                            <p className="text-[10px] text-muted-foreground">{item.label}</p>
-                            <p className="font-medium text-xs mt-0.5">{item.value}</p>
+                      <div className="space-y-3">
+                        {infoFields.map((item) => (
+                          <div key={item.label} className="drawer-kv-row">
+                            <span className="text-muted-foreground text-xs leading-snug">{item.label}</span>
+                            <p className="break-words text-xs font-medium leading-relaxed text-foreground">
+                              {item.value}
+                            </p>
                           </div>
                         ))}
                       </div>
                     )}
-                    {detailTab === "course" && (
-                      <div className="space-y-2">
-                        <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
-                          <p className="text-xs font-semibold text-blue-900">已报课程</p>
-                          <p className="text-xs text-blue-700 mt-1">高级月嫂培训班 (2024年)</p>
-                        </div>
-                        <div className="bg-muted/50 rounded-lg p-2.5 space-y-1">
-                          <p className="text-[10px] text-muted-foreground">授课老师: 张老师</p>
-                          <p className="text-[10px] text-muted-foreground">课程类型: 技能培训</p>
-                          <p className="text-[10px] text-muted-foreground">开课: 2025-03-01</p>
-                          <p className="text-[10px] text-muted-foreground">结束: 2025-03-15</p>
-                          <div className="mt-2">
-                            <p className="text-[10px] text-muted-foreground mb-1">学习进度</p>
-                            <Progress value={80} className="h-1.5" />
-                            <p className="text-[10px] font-medium mt-1">32/40课时</p>
-                          </div>
-                        </div>
+                    {detailTab === "course" && Array.isArray(selectedPerson.currentCourses) && (
+                      <div className="space-y-3">
+                        {selectedPerson.currentCourses.map((c: StudentCurrentCourse) => (
+                          <Card key={c.name} className="border border-border shadow-sm">
+                            <CardContent className="space-y-2 p-3">
+                              <div className="flex items-start justify-between gap-2">
+                                <p className="text-sm font-semibold leading-snug">{c.name}</p>
+                                <Badge variant="secondary" className="shrink-0 text-[9px]">
+                                  {c.category}
+                                </Badge>
+                              </div>
+                              <p className="text-[10px] text-muted-foreground">授课老师：{c.teacher}</p>
+                              <p className="text-[10px] text-muted-foreground">
+                                开课 {c.startDate} — 结课 {c.endDate}
+                              </p>
+                              {c.nextClass ? (
+                                <p className="text-[10px] font-medium text-primary">下次课：{c.nextClass}</p>
+                              ) : null}
+                              <div>
+                                <div className="mb-1 flex justify-between text-[10px] text-muted-foreground">
+                                  <span>学习进度</span>
+                                  <span className="tabular-nums">
+                                    {c.attendedHours}/{c.totalHours} 课时（{c.progress}%）
+                                  </span>
+                                </div>
+                                <Progress value={c.progress} className="h-1.5" />
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
                       </div>
                     )}
                     {detailTab === "exam" && (
@@ -427,126 +1007,77 @@ export function TalentPoolPage() {
                 ) : (
                   <>
                     {detailTab === "info" && (
-                      <div className="grid grid-cols-2 gap-2">
-                        {infoFields.map(item => (
-                          <div key={item.label} className="bg-muted/50 rounded-lg p-2.5">
-                            <p className="text-[10px] text-muted-foreground">{item.label}</p>
-                            <p className="font-medium text-xs mt-0.5">{item.value}</p>
+                      <div className="space-y-3">
+                        {infoFields.map((item) => (
+                          <div key={item.label} className="drawer-kv-row">
+                            <span className="text-muted-foreground text-xs leading-snug">{item.label}</span>
+                            <p className="break-words text-xs font-medium leading-relaxed text-foreground">
+                              {item.value}
+                            </p>
                           </div>
                         ))}
                       </div>
                     )}
-                    {detailTab === "resume" && (
-                      <div className="space-y-2">
-                        <div className="bg-amber-50 rounded-lg p-3">
-                          <h4 className="text-xs font-semibold mb-2">工作生活照</h4>
-                          <div className="aspect-video bg-gradient-to-br from-amber-100 to-orange-100 rounded-lg flex items-center justify-center">
-                            <span className="text-[10px] text-amber-600">工作照片</span>
+                    {detailTab === "resume" && selectedPerson?.type === "domestic" && (
+                      <div className="space-y-3">
+                        <NannyResumeShareView
+                          data={domesticWorkerToResumeData(selectedPerson)}
+                          dense
+                        />
+                        <div className="border-border space-y-2 border-t pt-3">
+                          <p className="text-muted-foreground text-center text-[10px]">分享方式</p>
+                          <div className="flex gap-2">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="h-9 flex-1 text-xs"
+                              onClick={() => openPosterShare(selectedPerson)}
+                            >
+                              <ImageIcon className="mr-1 h-3.5 w-3.5" />
+                              海报分享
+                            </Button>
+                            <Button
+                              type="button"
+                              className="h-9 flex-1 bg-primary text-xs text-primary-foreground hover:bg-primary/90"
+                              onClick={() => openResumeShare(selectedPerson)}
+                            >
+                              <FileText className="mr-1 h-3.5 w-3.5" />
+                              简历分享
+                            </Button>
                           </div>
-                        </div>
-                        <div>
-                          <h4 className="text-xs font-semibold mb-1">视频介绍</h4>
-                          <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center">
-                            <span className="text-[10px] text-gray-500">视频介绍</span>
-                          </div>
-                        </div>
-                        <div>
-                          <h4 className="text-xs font-semibold mb-1">资格证书</h4>
-                          <div className="flex flex-wrap gap-1">
-                            <Badge className="bg-green-100 text-green-700 text-[10px]">母婴护理师证</Badge>
-                            <Badge className="bg-blue-100 text-blue-700 text-[10px]">催乳师证</Badge>
-                            <Badge className="bg-violet-100 text-violet-700 text-[10px]">育婴师证</Badge>
-                          </div>
-                        </div>
-                        <div>
-                          <h4 className="text-xs font-semibold mb-1">辅食作品</h4>
-                          <div className="grid grid-cols-3 gap-1">
-                            <div className="aspect-square bg-orange-50 rounded flex items-center justify-center text-[9px] text-orange-400">辅食1</div>
-                            <div className="aspect-square bg-orange-50 rounded flex items-center justify-center text-[9px] text-orange-400">辅食2</div>
-                            <div className="aspect-square bg-orange-50 rounded flex items-center justify-center text-[9px] text-orange-400">辅食3</div>
-                          </div>
-                        </div>
-                        <div>
-                          <h4 className="text-xs font-semibold mb-1">客户好评</h4>
-                          <div className="space-y-1.5">
-                            <div className="bg-green-50 rounded p-2 border border-green-100">
-                              <p className="text-[10px] text-green-800">
-                                &ldquo;阿姨非常专业，护理细心周到，强烈推荐！&rdquo;
-                              </p>
-                              <p className="text-[9px] text-green-600 mt-1">— 王女士 2025-02</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div>
-                          <h4 className="text-xs font-semibold mb-1">工作经历</h4>
-                          <div className="text-[10px] text-muted-foreground space-y-1">
-                            <p>2020-2025: 银川市金凤区李女士家 月嫂服务</p>
-                            <p>2018-2020: 银川市兴庆区张女士家 育婴服务</p>
-                          </div>
-                        </div>
-                        {/* 分享按钮 */}
-                        <div className="pt-2 border-t border-border">
-                          <Button
-                            className="w-full h-9 bg-pink-500 hover:bg-pink-600 text-white text-xs"
-                            onClick={(e) => handleShare(e, selectedPerson)}
-                          >
-                            <Share2 className="w-3.5 h-3.5 mr-1.5" />
-                            生成分享链接
-                          </Button>
                         </div>
                       </div>
                     )}
-                    {detailTab === "schedule" && (
-                      <div className="space-y-2">
-                        <div className="grid grid-cols-3 gap-2">
-                          <Card className="border-0 shadow-sm">
-                            <CardContent className="p-2 text-center">
-                              <p className="text-sm font-bold text-green-600">待岗</p>
-                              <p className="text-[9px] text-muted-foreground">3天</p>
-                            </CardContent>
-                          </Card>
-                          <Card className="border-0 shadow-sm">
-                            <CardContent className="p-2 text-center">
-                              <p className="text-sm font-bold text-amber-600">上户中</p>
-                              <p className="text-[9px] text-muted-foreground">26天</p>
-                            </CardContent>
-                          </Card>
-                          <Card className="border-0 shadow-sm">
-                            <CardContent className="p-2 text-center">
-                              <p className="text-sm font-bold text-gray-600">休假</p>
-                              <p className="text-[9px] text-muted-foreground">0天</p>
-                            </CardContent>
-                          </Card>
-                        </div>
-                        <div className="bg-green-50 rounded-lg p-2.5 border border-green-200">
-                          <p className="text-xs font-semibold text-green-900">当前状态: 待岗</p>
-                          <p className="text-[10px] text-green-700 mt-1">可立即派单服务</p>
-                        </div>
-                      </div>
+                    {detailTab === "schedule" && selectedPerson?.type === "domestic" && (
+                      <NannyScheduleTabContent
+                        segments={selectedPerson.scheduleSegments}
+                        year={2026}
+                        {...scheduleSummaryDays(selectedPerson)}
+                        currentStatus={selectedPerson.workerStatus}
+                        statusHint={resolveScheduleStatusHint(selectedPerson.workerStatus)}
+                        bannerTone={resolveScheduleBannerTone(selectedPerson.workerStatus)}
+                        bookings={[
+                          { id: "b1", name: "张女士", range: "2026-03-20 ~ 2026-04-20", st: "已确认" },
+                          { id: "b2", name: "李女士", range: "2026-04-25 ~ 2026-05-25", st: "待确认" },
+                        ]}
+                      />
                     )}
-                    {detailTab === "rating" && (
+                    {detailTab === "rating" && selectedPerson?.type === "domestic" && (
                       <div className="space-y-2">
-                        <div className="grid grid-cols-2 gap-2">
-                          <Card className="border-0 shadow-sm">
-                            <CardContent className="p-2.5 text-center">
-                              <div className="flex items-center justify-center gap-1 mb-1">
-                                {[...Array(5)].map((_, i) => (
-                                  <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
-                                ))}
-                              </div>
-                              <p className="text-xs font-bold">五星级</p>
-                            </CardContent>
-                          </Card>
-                          <Card className="border-0 shadow-sm">
-                            <CardContent className="p-2.5">
-                              <p className="text-[10px] text-muted-foreground">评分</p>
-                              <p className="text-lg font-bold text-primary mt-1">4.9分</p>
-                            </CardContent>
-                          </Card>
-                        </div>
+                        <Card className="border-0 shadow-sm">
+                          <CardContent className="p-3 space-y-2">
+                            <p className="text-[10px] text-muted-foreground">家政员星级</p>
+                            <p className="text-sm font-semibold">{selectedPerson.starTitle}</p>
+                            <p className="text-[10px] text-muted-foreground">
+                              等级类型：{selectedPerson.level}
+                              {selectedPerson.workerType}
+                            </p>
+                            <p className="text-[10px] text-muted-foreground">当前状态：{selectedPerson.workerStatus}</p>
+                          </CardContent>
+                        </Card>
                         <div className="bg-amber-50 rounded-lg p-2.5 border border-amber-200">
-                          <p className="text-xs font-semibold text-amber-900 mb-1">等级调整</p>
-                          <p className="text-[10px] text-amber-700">晋升为金牌</p>
+                          <p className="text-xs font-semibold text-amber-900 mb-1">等级调整记录</p>
+                          <p className="text-[10px] text-amber-700">晋升为{selectedPerson.level}</p>
                           <p className="text-[10px] text-muted-foreground mt-1">2025-01-15</p>
                         </div>
                       </div>

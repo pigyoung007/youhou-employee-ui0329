@@ -204,7 +204,7 @@ export function BeiYiShengVisitPage({ onBack }: BeiYiShengVisitPageProps) {
 
       {/* Task Detail Drawer */}
       <Sheet open={!!selectedTask} onOpenChange={() => setSelectedTask(null)}>
-        <SheetContent side="right" className="w-[90vw] max-w-md p-0 flex flex-col h-full">
+        <SheetContent side="right" className="w-[90vw] max-w-md flex flex-col py-0 h-full">
           {selectedTask && (
             <div className="flex flex-col h-full">
               <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-border shrink-0">
@@ -357,7 +357,7 @@ export function BeiYiShengVisitPage({ onBack }: BeiYiShengVisitPageProps) {
 
       {/* Check-in Drawer */}
       <Sheet open={isCheckingIn} onOpenChange={setIsCheckingIn}>
-        <SheetContent side="right" className="w-[85vw] max-w-sm p-0">
+        <SheetContent side="right" className="w-[85vw] max-w-sm py-0">
           <div className="px-4 py-4 space-y-4">
             <SheetTitle>上户签到</SheetTitle>
 

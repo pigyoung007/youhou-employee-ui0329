@@ -253,7 +253,7 @@ export function GiftManagementPage({ onBack }: GiftManagementPageProps) {
 
       {/* New Application Drawer */}
       <Sheet open={showNewDialog} onOpenChange={setShowNewDialog}>
-        <SheetContent side="right" className="w-[85vw] max-w-sm p-0 flex flex-col">
+        <SheetContent side="right" className="w-[85vw] max-w-sm flex flex-col py-0">
           <SheetHeader className="px-4 py-3 border-b">
             <SheetTitle className="text-sm">申请礼包</SheetTitle>
           </SheetHeader>
@@ -292,7 +292,7 @@ export function GiftManagementPage({ onBack }: GiftManagementPageProps) {
 
       {/* Application Detail Drawer */}
       <Sheet open={!!selectedApp} onOpenChange={() => setSelectedApp(null)}>
-        <SheetContent side="right" className="w-[85vw] max-w-sm p-0 flex flex-col">
+        <SheetContent side="right" className="w-[85vw] max-w-sm flex flex-col py-0">
           <SheetHeader className="px-4 py-3 border-b">
             <SheetTitle className="text-sm">{selectedApp?.giftType}</SheetTitle>
           </SheetHeader>

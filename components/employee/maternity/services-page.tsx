@@ -188,12 +188,12 @@ export function MaternityServicesPage() {
 
       {/* Project Detail Sheet */}
       <Sheet open={!!selectedProject} onOpenChange={() => setSelectedProject(null)}>
-        <SheetContent side="bottom" className="h-[80vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>{selectedProject?.name}</SheetTitle>
           </SheetHeader>
           {selectedProject && (
-            <div className="py-4 space-y-4 overflow-y-auto h-[calc(80vh-140px)]">
+            <div className="flex-1 min-h-0 py-4 space-y-4 overflow-y-auto">
               {/* Icon & Description */}
               <div className="text-center">
                 <div className="w-20 h-20 mx-auto bg-gradient-to-br from-rose-100 to-pink-50 rounded-2xl flex items-center justify-center mb-3">

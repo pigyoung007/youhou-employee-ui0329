@@ -15,6 +15,12 @@ import {
   MessageSquare, Mic, Baby, Calendar, X,
 } from "lucide-react"
 import { CustomerDetailDrawer } from '@/components/customer-detail-drawer'
+import type { OrderPrefillData } from '@/components/employee/merged/orders-create-page'
+
+interface MergedLeadsPageProps {
+  onNewOrder?: (prefill: OrderPrefillData) => void
+  onNewReceipt?: (prefill: OrderPrefillData) => void
+}
 
 const trainingLeads = [
   { id: 1, name: "张女士", phone: "138****1234", category: "月嫂培训", source: "抖音广告", intention: "高意向", lastContact: "2026-01-21", note: "咨询月嫂培训课程，预计下月报名", type: "training", followUps: [{ date: "2026-01-21", content: "初次电话沟通，客户对月嫂培训很感兴趣" }, { date: "2026-01-19", content: "发送课程资料，客户表示会仔细了解" }] },
@@ -29,7 +35,24 @@ const employerLeads = [
 
 const intentionTags = ["高意向", "中意向", "低意向", "已报名", "已签约", "已流失"]
 
-export function MergedLeadsPage() {
+function mergedLeadToOrderPrefill(lead: (typeof trainingLeads)[0] | (typeof employerLeads)[0]): OrderPrefillData {
+  if ("category" in lead) {
+    return {
+      customerName: lead.name,
+      serviceType: lead.category || "培训课程",
+    }
+  }
+  const e = lead
+  const serviceLabel = e.serviceType === "月嫂" ? "月嫂服务" : `${e.serviceType}服务`
+  return {
+    customerName: e.name,
+    serviceType: serviceLabel,
+    startDate: e.dueDate,
+    dueDate: e.dueDate,
+  }
+}
+
+export function MergedLeadsPage({ onNewOrder, onNewReceipt }: MergedLeadsPageProps = {}) {
   const [activeLeadType, setActiveLeadType] = useState<"all" | "training" | "employer">("all")
   const [searchQuery, setSearchQuery] = useState("")
   const [activeFilter, setActiveFilter] = useState("all")
@@ -154,6 +177,60 @@ export function MergedLeadsPage() {
       <CustomerDetailDrawer
         open={!!selectedLead}
         onClose={() => setSelectedLead(null)}
+        onNewOrder={
+          onNewOrder && selectedLead
+            ? () => {
+                onNewOrder(mergedLeadToOrderPrefill(selectedLead))
+                setSelectedLead(null)
+              }
+            : undefined
+        }
+        onNewReceipt={
+          onNewReceipt && selectedLead
+            ? () => {
+                onNewReceipt(mergedLeadToOrderPrefill(selectedLead))
+                setSelectedLead(null)
+              }
+            : undefined
+        }
+        detailMode={selectedLead?.type === 'training' ? 'training' : 'service'}
+        defaultArchive={selectedLead?.type === 'training' ? 'student' : 'customer'}
+        studentArchive={
+          selectedLead?.type === 'training'
+            ? {
+                courseCategory: selectedLead.category,
+                courseName: `${selectedLead.category} · 系统班`,
+                progressPercent: selectedLead.intention === '高意向' ? 72 : selectedLead.intention === '中意向' ? 48 : 25,
+                examStatus: selectedLead.intention === '已报名' ? '已通过理论考' : '待考',
+                enrollDate: '2025-10-12',
+                studyHours: selectedLead.intention === '高意向' ? '36/48 课时' : '12/48 课时',
+                certificate: '暂无',
+                tags: ['学习中', selectedLead.intention === '高意向' ? '重点跟进' : ''].filter(Boolean),
+              }
+            : undefined
+        }
+        domesticArchive={
+          selectedLead?.type === 'employer'
+            ? {
+                displayName: '待匹配服务人员',
+                serviceType: (selectedLead as { serviceType?: string }).serviceType || '月嫂',
+                level: '待评级',
+                workStatus: '雇主需求对接中',
+                ordersCompleted: 0,
+                rating: 0,
+                lastServiceDate: undefined,
+                consultant: '张顾问',
+                tags: ['匹配池', '未指派'],
+              }
+            : undefined
+        }
+        availableArchives={
+          selectedLead?.type === 'training'
+            ? ['customer', 'student']
+            : selectedLead?.type === 'employer'
+              ? ['customer', 'domestic']
+              : ['customer', 'student', 'domestic']
+        }
         customer={selectedLead ? {
           id: String(selectedLead.id),
           name: selectedLead.name,
@@ -161,22 +238,31 @@ export function MergedLeadsPage() {
           wechat: 'wx_' + selectedLead.name,
           consultant: '张顾问',
           status: '入库',
-          statusProgress: 36,
-          tags: selectedLead.intention === '高意向' ? ['高净值', '复购客户'] : ['潜在客户'],
+          statusProgress: selectedLead.type === 'training'
+            ? (selectedLead.intention === '已报名' ? 75 : selectedLead.intention === '高意向' ? 62 : 45)
+            : 36,
+          tags: selectedLead.intention === '高意向' ? ['高意向', '重点跟进'] : ['潜在客户'],
           fullName: selectedLead.name,
           starLevel: selectedLead.intention === '高意向' ? 5 : 4,
-          source: (selectedLead as any).source || '线上咨询',
+          source: (selectedLead as { source?: string }).source || '线上咨询',
           ethnicity: '汉族',
           gender: '女',
           maternityConsultant: '张顾问',
           referralInfo: selectedLead.note || '-',
-          dueDate: selectedLead.type === 'training' ? undefined : (selectedLead as any).dueDate,
+          profileCompleteness: selectedLead.type === 'training'
+            ? (selectedLead.intention === '高意向' ? 55 : 40)
+            : undefined,
+          dueDate: selectedLead.type === 'training' ? undefined : (selectedLead as { dueDate?: string }).dueDate,
+          trainingIntent: selectedLead.type === 'training' ? (selectedLead.note || `${selectedLead.category}意向`) : undefined,
+          leadStageLabel: selectedLead.type === 'training' ? selectedLead.intention : undefined,
+          nextFollowUp: selectedLead.lastContact,
+          trainingNotes: selectedLead.type === 'training' ? (selectedLead.note || '-') : undefined,
         } : null}
       />
 
       {/* Add Lead Drawer */}
       <Sheet open={showAddLead} onOpenChange={setShowAddLead}>
-        <SheetContent side="right" className="w-[85vw] max-w-sm p-0 flex flex-col h-full">
+        <SheetContent side="right" className="w-[85vw] max-w-sm flex flex-col py-0 h-full">
           <div className="flex flex-col h-full">
             <div className="px-4 pt-4 pb-3 border-b border-border shrink-0">
               <SheetTitle className="text-sm">新增线索</SheetTitle>
@@ -196,7 +282,7 @@ export function MergedLeadsPage() {
 
       {/* Add Follow Up Drawer */}
       <Sheet open={showAddFollowUp} onOpenChange={setShowAddFollowUp}>
-        <SheetContent side="right" className="w-[85vw] max-w-sm p-0 flex flex-col h-full">
+        <SheetContent side="right" className="w-[85vw] max-w-sm flex flex-col py-0 h-full">
           <div className="flex flex-col h-full">
             <div className="px-4 pt-4 pb-3 border-b border-border shrink-0">
               <SheetTitle className="text-sm">添加跟进记录</SheetTitle>

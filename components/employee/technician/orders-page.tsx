@@ -23,6 +23,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog"
+import { OrderConsultantLines } from "@/components/order-consultant-lines"
 
 export function TechnicianOrdersPage() {
   const [activeTab, setActiveTab] = useState("pending")
@@ -42,6 +43,8 @@ export function TechnicianOrdersPage() {
         price: 680,
         note: "产后3个月，首次体验",
         session: "1/10",
+        maternityConsultant: "张丽",
+        careerConsultant: "陈明",
       },
       {
         id: 2,
@@ -54,6 +57,8 @@ export function TechnicianOrdersPage() {
         price: 580,
         note: "产后6个月，盆底肌松弛",
         session: "2/12",
+        maternityConsultant: "刘婷",
+        careerConsultant: "",
       },
     ],
     accepted: [
@@ -68,6 +73,8 @@ export function TechnicianOrdersPage() {
         price: 480,
         status: "confirmed",
         session: "3/6",
+        maternityConsultant: "张丽",
+        careerConsultant: "王强",
       },
     ],
     completed: [
@@ -83,6 +90,8 @@ export function TechnicianOrdersPage() {
         rating: 5,
         comment: "技术很专业，效果明显",
         session: "8/10",
+        maternityConsultant: "赵敏",
+        careerConsultant: "周洋",
       },
     ],
   }
@@ -168,6 +177,10 @@ export function TechnicianOrdersPage() {
                         <span>{order.customer}</span>
                         <span className="text-muted-foreground">{order.phone}</span>
                       </div>
+                      <OrderConsultantLines
+                        maternityConsultant={order.maternityConsultant}
+                        careerConsultant={order.careerConsultant}
+                      />
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Calendar className="w-4 h-4" />
                         <span>{order.date}</span>
@@ -234,6 +247,10 @@ export function TechnicianOrdersPage() {
                         联系
                       </Button>
                     </div>
+                    <OrderConsultantLines
+                      maternityConsultant={order.maternityConsultant}
+                      careerConsultant={order.careerConsultant}
+                    />
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Calendar className="w-4 h-4" />
                       <span>{order.date}</span>
@@ -278,6 +295,10 @@ export function TechnicianOrdersPage() {
                       <span className="mx-1">|</span>
                       <span>{order.customer}</span>
                     </div>
+                    <OrderConsultantLines
+                      maternityConsultant={order.maternityConsultant}
+                      careerConsultant={order.careerConsultant}
+                    />
                   </div>
                   {order.rating && (
                     <div className="mt-3 p-3 bg-amber-50 rounded-lg">
@@ -334,6 +355,14 @@ export function TechnicianOrdersPage() {
                 <div className="flex justify-between items-start">
                   <span className="text-muted-foreground">服务地址</span>
                   <span className="text-right max-w-[60%]">{selectedOrder.address}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">母婴顾问</span>
+                  <span>{selectedOrder.maternityConsultant?.trim() ? selectedOrder.maternityConsultant : "—"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">职业顾问</span>
+                  <span>{selectedOrder.careerConsultant?.trim() ? selectedOrder.careerConsultant : "—"}</span>
                 </div>
                 {selectedOrder.note && (
                   <div className="pt-2 border-t">

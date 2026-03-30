@@ -9,7 +9,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import {
   Star, Award, ChevronRight, Settings, Heart, HelpCircle,
   FileText, Shield, Bell, LogOut, Wallet, Calendar,
-  UserCheck, BookOpen, Phone, MapPin, Edit,
+  UserCheck, BookOpen, Phone, MapPin, Edit, FileCheck, Gift, TrendingUp,
 } from "lucide-react"
 
 const profileData = {
@@ -38,8 +38,11 @@ const menuGroups = [
   {
     title: "我的服务",
     items: [
-      { icon: Wallet, label: "我的钱包", desc: "余额 ¥12,800", color: "text-green-600", bg: "bg-green-100" },
+      { icon: Wallet, label: "我的钱包", desc: "余额 ¥12,800", color: "text-green-600", bg: "bg-green-100", action: "deposit" },
+      { icon: TrendingUp, label: "收入明细", desc: "本月收入", color: "text-emerald-600", bg: "bg-emerald-100", action: "income" },
       { icon: Calendar, label: "服务记录", desc: "共86单", color: "text-blue-600", bg: "bg-blue-100" },
+      { icon: FileCheck, label: "我的合同", desc: "3份合同", color: "text-indigo-600", bg: "bg-indigo-100", action: "contracts" },
+      { icon: Gift, label: "下户单", desc: "待签署", color: "text-rose-600", bg: "bg-rose-100", action: "discharge" },
       { icon: Award, label: "我的证书", desc: "4本证书", color: "text-amber-600", bg: "bg-amber-100" },
       { icon: BookOpen, label: "学习记录", desc: "3门课程", color: "text-purple-600", bg: "bg-purple-100" },
     ],
@@ -63,7 +66,7 @@ const menuGroups = [
   },
 ]
 
-export function TalentProfilePage() {
+export function TalentProfilePage({ onOpenSubPage }: { onOpenSubPage?: (page: string) => void }) {
   const [showCerts, setShowCerts] = useState(false)
 
   return (
@@ -143,7 +146,13 @@ export function TalentProfilePage() {
                   <button
                     key={item.label}
                     className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-muted/50 transition-colors"
-                    onClick={item.label === "我的证书" ? () => setShowCerts(true) : undefined}
+                    onClick={() => {
+                      if (item.label === "我的证书") {
+                        setShowCerts(true)
+                      } else if ("action" in item && item.action) {
+                        onOpenSubPage?.(item.action)
+                      }
+                    }}
                   >
                     <div className={`w-9 h-9 ${item.bg} rounded-xl flex items-center justify-center`}>
                       <item.icon className={`w-4.5 h-4.5 ${item.color}`} />
@@ -169,9 +178,9 @@ export function TalentProfilePage() {
 
       {/* Certificates Sheet */}
       <Sheet open={showCerts} onOpenChange={setShowCerts}>
-        <SheetContent side="bottom" className="h-[70vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border"><SheetTitle>我的证书</SheetTitle></SheetHeader>
-          <div className="py-4 space-y-3 overflow-y-auto h-[calc(70vh-100px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-3 overflow-y-auto">
             {profileData.certificates.map((cert, i) => (
               <Card key={i} className="border-0 shadow-sm">
                 <CardContent className="p-4 flex items-center gap-3">

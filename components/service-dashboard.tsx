@@ -39,6 +39,7 @@ import { cn } from "@/lib/utils"
 import { SignaturePad } from "@/components/signature-pad"
 import { ScanConfirm } from "@/components/scan-confirm"
 import { ContractManagement } from "@/components/contract-management"
+import { originToProvinceLabel } from "@/lib/employer-caregiver-display"
 
 const contracts = [
   {
@@ -235,7 +236,7 @@ export function ServiceDashboard() {
   }
 
   const handleSignatureComplete = (signature: string) => {
-    console.log("Signature completed for contract:", selectedContract, signature)
+    console.log("[v0] Signature completed for contract:", selectedContract, signature)
     setShowSignature(false)
     setSelectedContract(null)
   }
@@ -352,10 +353,10 @@ export function ServiceDashboard() {
                         <span className="font-semibold text-foreground">{caregiver.name}</span>
                         <Badge className="bg-rose-100 text-rose-700 text-[10px]">{caregiver.level}</Badge>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        {caregiver.age}岁 · {caregiver.hometown} · {caregiver.experience}经验
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        {caregiver.age}岁 · 籍贯 {originToProvinceLabel(caregiver.hometown)}
                       </p>
-                      <p className="text-xs text-rose-600 font-medium mt-0.5">{caregiver.salary}</p>
+                      <p className="mt-0.5 text-[11px] text-muted-foreground">薪资由顾问沟通，不在此展示</p>
                     </div>
                     <div className="flex flex-col gap-1">
                       <Button 
@@ -765,14 +766,14 @@ export function ServiceDashboard() {
 
       {/* Recommendations Sheet */}
       <Sheet open={showRecommendations} onOpenChange={setShowRecommendations}>
-        <SheetContent side="bottom" className="h-[80vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle className="flex items-center gap-2">
               <Heart className="w-5 h-5 text-rose-500" />
               顾问推荐的阿姨
             </SheetTitle>
           </SheetHeader>
-          <div className="py-4 space-y-3 overflow-y-auto h-[calc(80vh-100px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-3 overflow-y-auto">
             {recommendedCaregivers.map((caregiver) => (
               <Card 
                 key={caregiver.id}
@@ -802,13 +803,13 @@ export function ServiceDashboard() {
                           </Badge>
                         )}
                       </div>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        {caregiver.age}岁 · {caregiver.hometown} · {caregiver.experience}经验
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        {caregiver.age}岁 · 籍贯 {originToProvinceLabel(caregiver.hometown)}
                       </p>
-                      <div className="flex items-center justify-between mt-1">
-                        <p className="text-sm text-rose-600 font-medium">{caregiver.salary}</p>
-                        <span className="flex items-center gap-1 text-amber-500 text-xs">
-                          <Star className="w-3 h-3 fill-amber-400" />
+                      <div className="mt-1 flex items-center justify-between">
+                        <p className="text-[11px] text-muted-foreground">薪资由顾问沟通</p>
+                        <span className="flex items-center gap-1 text-xs text-amber-500">
+                          <Star className="h-3 w-3 fill-amber-400" />
                           {caregiver.rating}
                         </span>
                       </div>
@@ -858,12 +859,12 @@ export function ServiceDashboard() {
 
       {/* Caregiver Detail Sheet */}
       <Sheet open={showCaregiverDetail} onOpenChange={setShowCaregiverDetail}>
-        <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>阿姨详情</SheetTitle>
           </SheetHeader>
           {selectedCaregiver && (
-            <div className="py-4 space-y-4 overflow-y-auto h-[calc(85vh-140px)]">
+            <div className="flex-1 min-h-0 py-4 space-y-4 overflow-y-auto">
               {/* Avatar and Basic Info */}
               <div className="flex items-center gap-4">
                 <Avatar className="w-20 h-20">
@@ -875,15 +876,13 @@ export function ServiceDashboard() {
                     <h3 className="text-xl font-bold">{selectedCaregiver.name}</h3>
                     <Badge className="bg-rose-100 text-rose-700">{selectedCaregiver.level}</Badge>
                   </div>
-                  <div className="flex items-center gap-2 mt-1">
+                  <div className="mt-1 flex items-center gap-2">
                     <span className="flex items-center gap-1 text-amber-500">
-                      <Star className="w-4 h-4 fill-amber-400" />
+                      <Star className="h-4 w-4 fill-amber-400" />
                       {selectedCaregiver.rating}
                     </span>
-                    <span className="text-muted-foreground">·</span>
-                    <span className="text-muted-foreground">{selectedCaregiver.experience}经验</span>
                   </div>
-                  <p className="text-lg font-bold text-rose-600 mt-1">{selectedCaregiver.salary}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">薪资由顾问沟通，不向雇主端展示</p>
                 </div>
               </div>
 
@@ -893,9 +892,9 @@ export function ServiceDashboard() {
                   <p className="text-xs text-muted-foreground">年龄</p>
                   <p className="font-medium">{selectedCaregiver.age}岁</p>
                 </div>
-                <div className="bg-muted/50 rounded-xl p-3">
-                  <p className="text-xs text-muted-foreground">籍贯</p>
-                  <p className="font-medium">{selectedCaregiver.hometown}</p>
+                <div className="rounded-xl bg-muted/50 p-3">
+                  <p className="text-xs text-muted-foreground">籍贯（省）</p>
+                  <p className="font-medium">{originToProvinceLabel(selectedCaregiver.hometown)}</p>
                 </div>
               </div>
 
@@ -1001,7 +1000,7 @@ export function ServiceDashboard() {
               待办事项
             </SheetTitle>
           </SheetHeader>
-          <div className="py-4 space-y-3 overflow-y-auto h-[calc(100vh-100px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-3 overflow-y-auto">
             {todoItems.map((item) => (
               <Card 
                 key={item.id}

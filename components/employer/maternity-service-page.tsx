@@ -29,6 +29,8 @@ import { Slider } from "@/components/ui/slider"
 import { cn } from "@/lib/utils"
 import { BookingModal } from "@/components/booking-modal"
 import { SharePosterModal } from "@/components/share-poster-modal"
+import { originToProvinceLabel } from "@/lib/employer-caregiver-display"
+import { StarRatingRow } from "@/components/employer/star-rating-row"
 
 const filterTabs = ["全部", "金牌月嫂", "银牌月嫂", "高级月嫂", "育婴师"]
 
@@ -48,6 +50,10 @@ const nannies = [
     available: true,
     serviceCount: 89,
     certificates: ["高级母婴护理师", "催乳师", "营养师"],
+    goodReviewRate: "98%",
+    education: "高中",
+    personality: "温和细致",
+    specialty: "月子餐、新生儿护理",
   },
   {
     id: 2,
@@ -64,6 +70,10 @@ const nannies = [
     available: true,
     serviceCount: 67,
     certificates: ["育婴师证", "早教指导师"],
+    goodReviewRate: "97%",
+    education: "大专",
+    personality: "耐心亲和",
+    specialty: "早教互动、辅食添加",
   },
   {
     id: 3,
@@ -80,6 +90,10 @@ const nannies = [
     available: false,
     serviceCount: 156,
     certificates: ["高级母婴护理师", "产后康复师", "营养师"],
+    goodReviewRate: "99%",
+    education: "中专",
+    personality: "沉稳可靠",
+    specialty: "双胞胎护理、产后康复",
   },
   {
     id: 4,
@@ -96,6 +110,10 @@ const nannies = [
     available: true,
     serviceCount: 32,
     certificates: ["母婴护理师", "健康证"],
+    goodReviewRate: "96%",
+    education: "初中",
+    personality: "开朗随和",
+    specialty: "辅食制作、日常照料",
   },
 ]
 
@@ -106,10 +124,33 @@ const filterOptions = {
     { id: "gaoji", label: "高级月嫂", checked: false },
     { id: "yuyingshi", label: "育婴师", checked: false },
   ],
+  minRating: [
+    { id: "45", label: "4.5星及以上", checked: false },
+    { id: "48", label: "4.8星及以上", checked: false },
+    { id: "50", label: "5.0星", checked: false },
+  ],
   age: [
     { id: "30-40", label: "30-40岁", checked: false },
     { id: "40-50", label: "40-50岁", checked: false },
     { id: "50+", label: "50岁以上", checked: false },
+  ],
+  education: [
+    { id: "chuzhong", label: "初中", checked: false },
+    { id: "gaozhong", label: "高中", checked: false },
+    { id: "dazhuan", label: "大专", checked: false },
+    { id: "benke", label: "本科及以上", checked: false },
+  ],
+  personality: [
+    { id: "wen", label: "温和细致", checked: false },
+    { id: "qin", label: "耐心亲和", checked: false },
+    { id: "chen", label: "沉稳可靠", checked: false },
+    { id: "kailang", label: "开朗随和", checked: false },
+  ],
+  specialtyPick: [
+    { id: "yuezi", label: "月子餐", checked: false },
+    { id: "xin", label: "新生儿护理", checked: false },
+    { id: "zaojiao", label: "早教互动", checked: false },
+    { id: "shuang", label: "双胞胎", checked: false },
   ],
   availability: [
     { id: "available", label: "立即可派", checked: false },
@@ -121,20 +162,6 @@ const filterOptions = {
     { id: "hunan", label: "湖南", checked: false },
     { id: "jiangsu", label: "江苏", checked: false },
     { id: "anhui", label: "安徽", checked: false },
-  ],
-  zodiac: [
-    { id: "aries", label: "白羊座", checked: false },
-    { id: "taurus", label: "金牛座", checked: false },
-    { id: "gemini", label: "双子座", checked: false },
-    { id: "cancer", label: "巨蟹座", checked: false },
-    { id: "leo", label: "狮子座", checked: false },
-    { id: "virgo", label: "处女座", checked: false },
-    { id: "libra", label: "天秤座", checked: false },
-    { id: "scorpio", label: "天蝎座", checked: false },
-    { id: "sagittarius", label: "射手座", checked: false },
-    { id: "capricorn", label: "摩羯座", checked: false },
-    { id: "aquarius", label: "水瓶座", checked: false },
-    { id: "pisces", label: "双鱼座", checked: false },
   ],
 }
 
@@ -219,27 +246,34 @@ export function MaternityServicePage({ onBack, isGuest, onRegister }: MaternityS
                       已认证
                     </Badge>
                   </div>
-                  <div className="flex items-center gap-1 mt-1">
-                    <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    <span className="font-semibold text-foreground">{selectedNanny.rating}</span>
-                    <span className="text-xs text-muted-foreground">({selectedNanny.reviews}条评价)</span>
+                  <StarRatingRow rating={selectedNanny.rating} className="mt-1" sizeClassName="h-4 w-4" />
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    服务好评 <span className="font-semibold text-primary">{selectedNanny.goodReviewRate}</span>
+                    <span className="mx-1">·</span>({selectedNanny.reviews}条评价)
+                  </p>
+                  <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
+                    <span className="text-foreground">{selectedNanny.age}岁</span>
+                    <span>·</span>
+                    <span>{selectedNanny.education}</span>
+                    <span>·</span>
+                    <span className="flex items-center gap-0.5">
+                      <MapPin className="h-3 w-3 shrink-0" />
+                      {originToProvinceLabel(selectedNanny.origin)}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                    <span>{selectedNanny.age}岁</span>
-                    <span>{"·"}</span>
-                    <span>{selectedNanny.workYears}年经验</span>
-                    <span>{"·"}</span>
-                    <MapPin className="w-3 h-3" />
-                    <span>{selectedNanny.origin}</span>
-                  </div>
+                  <p className="mt-1 text-xs leading-snug text-foreground">
+                    <span className="text-muted-foreground">性格</span> {selectedNanny.personality}
+                    <span className="mx-1 text-muted-foreground">·</span>
+                    <span className="text-muted-foreground">特长</span> {selectedNanny.specialty}
+                  </p>
                 </div>
               </div>
-              <div className="flex flex-wrap gap-1.5 mt-3">
+              <div className="mt-3 flex flex-wrap gap-1.5">
                 {selectedNanny.tags.map((tag) => (
                   <Badge key={tag} variant="secondary" className="bg-primary/10 text-primary text-xs">{tag}</Badge>
                 ))}
               </div>
-              <p className="text-lg font-bold text-primary mt-3">{selectedNanny.salaryRange}</p>
+              <p className="mt-3 text-sm text-muted-foreground">薪资不向雇主端展示，签约前由顾问沟通。</p>
             </CardContent>
           </Card>
         </div>
@@ -344,8 +378,8 @@ export function MaternityServicePage({ onBack, isGuest, onRegister }: MaternityS
             data={{
               name: selectedNanny.name,
               subtitle: selectedNanny.tags[0],
-              desc: `${selectedNanny.workYears}年经验 | ${selectedNanny.origin} | ${selectedNanny.reviews}条好评`,
-              price: selectedNanny.salaryRange,
+              desc: `${originToProvinceLabel(selectedNanny.origin)} | ${selectedNanny.goodReviewRate}服务好评 | ${selectedNanny.reviews}条评价`,
+              price: "面议",
               tags: selectedNanny.tags,
               avatar: selectedNanny.avatar,
               rating: selectedNanny.rating,
@@ -437,14 +471,14 @@ export function MaternityServicePage({ onBack, isGuest, onRegister }: MaternityS
                 {/* Info */}
                 <div className="flex-1 p-3 flex flex-col justify-between min-w-0">
                   <div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="min-w-0 flex-1">
                         <h3 className="font-bold text-foreground">{nanny.name}</h3>
-                        <div className="flex items-center gap-0.5 bg-amber-50 px-1.5 py-0.5 rounded">
-                          <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                          <span className="text-xs font-semibold text-amber-600">{nanny.rating}</span>
-                          <span className="text-[10px] text-muted-foreground">({nanny.reviews})</span>
-                        </div>
+                        <StarRatingRow rating={nanny.rating} className="mt-0.5" />
+                        <p className="mt-0.5 text-[10px] text-muted-foreground">
+                          服务好评 <span className="font-semibold text-primary">{nanny.goodReviewRate}</span>
+                          <span className="mx-1">·</span>({nanny.reviews}条评价)
+                        </p>
                       </div>
                       <button
                         onClick={(e) => { e.stopPropagation(); toggleLike(nanny.id) }}
@@ -453,16 +487,21 @@ export function MaternityServicePage({ onBack, isGuest, onRegister }: MaternityS
                         <Heart className={cn("w-5 h-5", likedList.includes(nanny.id) ? "fill-destructive text-destructive" : "text-muted-foreground")} />
                       </button>
                     </div>
-                    <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                      <span>{nanny.age}岁</span>
-                      <span>{"·"}</span>
-                      <span>{nanny.workYears}年经验</span>
-                      <span>{"·"}</span>
+                    <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-muted-foreground">
+                      <span className="text-foreground">{nanny.age}岁</span>
+                      <span>·</span>
+                      <span>{nanny.education}</span>
+                      <span>·</span>
                       <span className="flex items-center gap-0.5">
-                        <MapPin className="w-3 h-3" />
-                        {nanny.origin}
+                        <MapPin className="h-3 w-3 shrink-0" />
+                        {originToProvinceLabel(nanny.origin)}
                       </span>
                     </div>
+                    <p className="mt-1 text-[10px] leading-snug text-foreground">
+                      <span className="text-muted-foreground">性格</span> {nanny.personality}
+                      <span className="mx-1 text-muted-foreground">|</span>
+                      <span className="text-muted-foreground">特长</span> {nanny.specialty}
+                    </p>
                     <div className="flex flex-wrap gap-1 mt-2">
                       {nanny.tags.slice(0, 3).map((tag, idx) => (
                         <span
@@ -477,8 +516,8 @@ export function MaternityServicePage({ onBack, isGuest, onRegister }: MaternityS
                       ))}
                     </div>
                   </div>
-                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/50">
-                    <p className="font-bold text-primary">{nanny.salaryRange}</p>
+                  <div className="mt-2 flex items-center justify-between border-t border-border/50 pt-2">
+                    <span className="text-[10px] text-muted-foreground">薪资由顾问沟通</span>
                     <Button
                       size="sm"
                       className="h-7 rounded-full px-3 text-xs bg-primary hover:bg-primary/90 text-primary-foreground"
@@ -504,19 +543,19 @@ export function MaternityServicePage({ onBack, isGuest, onRegister }: MaternityS
 
       {/* Filter Sheet */}
       <Sheet open={filterOpen} onOpenChange={setFilterOpen}>
-        <SheetContent side="right" className="w-[85vw] max-w-sm h-full px-0">
-          <SheetHeader className="px-4 pb-3 border-b">
-            <div className="flex items-center justify-between">
-              <SheetTitle className="flex items-center gap-2">
-                <Filter className="w-5 h-5 text-primary" />
-                筛选条件
+        <SheetContent side="right" className="h-full w-[85vw] max-w-sm">
+          <SheetHeader className="border-b pb-3">
+            <div className="drawer-kv-row-head">
+              <SheetTitle className="flex min-w-0 items-center gap-2">
+                <Filter className="h-5 w-5 shrink-0 text-primary" />
+                <span className="break-words">筛选条件</span>
               </SheetTitle>
-              <Button variant="ghost" size="sm" onClick={() => setFilters(filterOptions)} className="text-muted-foreground h-auto p-0">
+              <Button variant="ghost" size="sm" onClick={() => setFilters(filterOptions)} className="h-auto shrink-0 p-0 text-muted-foreground">
                 重置
               </Button>
             </div>
           </SheetHeader>
-          <div className="overflow-y-auto h-[calc(100vh-140px)] px-4 py-3 space-y-4">
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto py-3">
             <div>
               <h4 className="font-semibold text-xs text-foreground mb-2">服务等级</h4>
               <div className="grid grid-cols-2 gap-1.5">
@@ -539,7 +578,31 @@ export function MaternityServicePage({ onBack, isGuest, onRegister }: MaternityS
               </div>
             </div>
             <div>
-              <h4 className="font-semibold text-xs text-foreground mb-2">年龄区间</h4>
+              <h4 className="font-semibold text-xs text-foreground mb-2">评价星级</h4>
+              <div className="grid grid-cols-1 gap-1.5">
+                {filters.minRating.map((item) => (
+                  <label
+                    key={item.id}
+                    className={cn(
+                      "flex items-center gap-1.5 p-2 rounded-lg border cursor-pointer transition-all text-xs",
+                      item.checked ? "border-primary bg-primary/5" : "border-border bg-card"
+                    )}
+                  >
+                    <Checkbox
+                      checked={item.checked}
+                      onCheckedChange={() => handleFilterChange("minRating", item.id)}
+                      className="w-3.5 h-3.5 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                    />
+                    <span className="flex items-center gap-1">
+                      {item.label}
+                      <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h4 className="font-semibold text-xs text-foreground mb-2">年纪</h4>
               <div className="grid grid-cols-3 gap-1.5">
                 {filters.age.map((item) => (
                   <label
@@ -552,6 +615,69 @@ export function MaternityServicePage({ onBack, isGuest, onRegister }: MaternityS
                     <Checkbox
                       checked={item.checked}
                       onCheckedChange={() => handleFilterChange("age", item.id)}
+                      className="w-3.5 h-3.5 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                    />
+                    <span>{item.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h4 className="font-semibold text-xs text-foreground mb-2">学历</h4>
+              <div className="grid grid-cols-2 gap-1.5">
+                {filters.education.map((item) => (
+                  <label
+                    key={item.id}
+                    className={cn(
+                      "flex items-center gap-1.5 p-2 rounded-lg border cursor-pointer transition-all text-xs",
+                      item.checked ? "border-primary bg-primary/5" : "border-border bg-card"
+                    )}
+                  >
+                    <Checkbox
+                      checked={item.checked}
+                      onCheckedChange={() => handleFilterChange("education", item.id)}
+                      className="w-3.5 h-3.5 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                    />
+                    <span>{item.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h4 className="font-semibold text-xs text-foreground mb-2">性格特征</h4>
+              <div className="grid grid-cols-2 gap-1.5">
+                {filters.personality.map((item) => (
+                  <label
+                    key={item.id}
+                    className={cn(
+                      "flex items-center gap-1.5 p-2 rounded-lg border cursor-pointer transition-all text-xs",
+                      item.checked ? "border-primary bg-primary/5" : "border-border bg-card"
+                    )}
+                  >
+                    <Checkbox
+                      checked={item.checked}
+                      onCheckedChange={() => handleFilterChange("personality", item.id)}
+                      className="w-3.5 h-3.5 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                    />
+                    <span>{item.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h4 className="font-semibold text-xs text-foreground mb-2">特长</h4>
+              <div className="grid grid-cols-2 gap-1.5">
+                {filters.specialtyPick.map((item) => (
+                  <label
+                    key={item.id}
+                    className={cn(
+                      "flex items-center gap-1.5 p-2 rounded-lg border cursor-pointer transition-all text-xs",
+                      item.checked ? "border-primary bg-primary/5" : "border-border bg-card"
+                    )}
+                  >
+                    <Checkbox
+                      checked={item.checked}
+                      onCheckedChange={() => handleFilterChange("specialtyPick", item.id)}
                       className="w-3.5 h-3.5 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                     />
                     <span>{item.label}</span>
@@ -581,7 +707,7 @@ export function MaternityServicePage({ onBack, isGuest, onRegister }: MaternityS
               </div>
             </div>
             <div>
-              <h4 className="font-semibold text-xs text-foreground mb-2">籍贯</h4>
+              <h4 className="font-semibold text-xs text-foreground mb-2">籍贯（省）</h4>
               <div className="grid grid-cols-4 gap-1.5">
                 {filters.origin.map((item) => (
                   <label
@@ -602,29 +728,8 @@ export function MaternityServicePage({ onBack, isGuest, onRegister }: MaternityS
               </div>
             </div>
             <div>
-              <h4 className="font-semibold text-xs text-foreground mb-2">星座</h4>
-              <div className="grid grid-cols-4 gap-1.5">
-                {filters.zodiac.map((item) => (
-                  <label
-                    key={item.id}
-                    className={cn(
-                      "flex items-center gap-1 p-2 rounded-lg border cursor-pointer transition-all text-xs",
-                      item.checked ? "border-primary bg-primary/5" : "border-border bg-card"
-                    )}
-                  >
-                    <Checkbox
-                      checked={item.checked}
-                      onCheckedChange={() => handleFilterChange("zodiac", item.id)}
-                      className="w-3.5 h-3.5 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                    />
-                    <span>{item.label}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-            <div>
               <h4 className="font-semibold text-xs text-foreground mb-2">
-                价格区间
+                预算区间
                 <span className="font-normal text-primary ml-2 text-xs">
                   ¥{priceRange[0].toLocaleString()} - ¥{priceRange[1].toLocaleString()}
                 </span>

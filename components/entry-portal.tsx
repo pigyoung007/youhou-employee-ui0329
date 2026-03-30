@@ -13,7 +13,7 @@ import {
   ChevronRight,
   Star,
 } from "lucide-react"
-export type AppType = "employer" | "talent" | "employee"
+export type AppType = "employer" | "talent" | "employee" | "technician"
 
 interface EntryPortalProps {
   onSelectApp: (type: AppType) => void
@@ -103,7 +103,7 @@ export function EntryPortal({ onSelectApp }: EntryPortalProps) {
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-foreground text-lg">优厚家服·人才端</h3>
-                  <p className="text-sm text-muted-foreground">学员 / 家政员 / 产康技师</p>
+                  <p className="text-sm text-muted-foreground">学员 / 家政员</p>
                 </div>
                 <ChevronRight className="w-5 h-5 text-muted-foreground" />
               </div>
@@ -113,6 +113,36 @@ export function EntryPortal({ onSelectApp }: EntryPortalProps) {
                 </span>
                 <span className="flex items-center gap-1">
                   <UserCheck className="w-3.5 h-3.5" />接单服务
+                </span>
+                <span className="flex items-center gap-1">
+                  <Star className="w-3.5 h-3.5" />工作台
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 优厚家服·产康技师端 (独立小程序) */}
+          <Card 
+            className="border-0 shadow-md hover:shadow-lg transition-all cursor-pointer overflow-hidden"
+            onClick={() => onSelectApp("technician")}
+          >
+            <CardContent className="p-0">
+              <div className="flex items-center p-4 bg-gradient-to-r from-rose-500/10 to-rose-500/5">
+                <div className="w-14 h-14 bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl flex items-center justify-center mr-4">
+                  <HeartPulse className="w-7 h-7 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-foreground text-lg">优厚家服·产康技师端</h3>
+                  <p className="text-sm text-muted-foreground">产后康复专业服务</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-muted-foreground" />
+              </div>
+              <div className="px-4 py-3 bg-muted/30 flex items-center gap-4 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1">
+                  <BookOpen className="w-3.5 h-3.5" />学习中心
+                </span>
+                <span className="flex items-center gap-1">
+                  <UserCheck className="w-3.5 h-3.5" />接单
                 </span>
                 <span className="flex items-center gap-1">
                   <Star className="w-3.5 h-3.5" />工作台

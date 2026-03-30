@@ -485,15 +485,17 @@ export function ContractManagement({ role, userId, showHeader = true, filterByUs
 
       {/* Contract Detail Sheet */}
       <Sheet open={showContractDetail} onOpenChange={setShowContractDetail}>
-        <SheetContent side="bottom" className="h-[90vh] rounded-t-2xl overflow-hidden">
-          <SheetHeader className="pb-4 border-b border-border">
-            <div className="flex items-center justify-between">
-              <SheetTitle>合同详情</SheetTitle>
-              {selectedContract && getStatusBadge(selectedContract.status)}
+        <SheetContent side="right" className="flex flex-col min-h-0 overflow-hidden">
+          <SheetHeader className="border-b border-border pb-4">
+            <div className="drawer-kv-row-head items-start">
+              <SheetTitle className="min-w-0">合同详情</SheetTitle>
+              {selectedContract && (
+                <span className="flex justify-end">{getStatusBadge(selectedContract.status)}</span>
+              )}
             </div>
           </SheetHeader>
           {selectedContract && (
-            <div className="overflow-y-auto h-[calc(90vh-140px)] py-4 space-y-4">
+            <div className="flex-1 min-h-0 overflow-y-auto py-4 space-y-4">
               {/* Insurance Alert */}
               {selectedContract.insuranceStatus === "expired" && (
                 <Card className="border-0 shadow-sm bg-red-50 border-l-4 border-l-red-500">
@@ -523,38 +525,38 @@ export function ContractManagement({ role, userId, showHeader = true, filterByUs
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
-                  <div className="flex justify-between">
+                  <div className="drawer-kv-row">
                     <span className="text-muted-foreground">合同编号</span>
                     <span className="font-medium">{selectedContract.id}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="drawer-kv-row">
                     <span className="text-muted-foreground">合同名称</span>
                     <span className="font-medium">{selectedContract.title}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="drawer-kv-row">
                     <span className="text-muted-foreground">签约公司</span>
                     <span className="font-medium">
                       {companyHeaders.find(c => c.id === selectedContract.companyId)?.shortName}
                     </span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="drawer-kv-row">
                     <span className="text-muted-foreground">合同金额</span>
                     <span className="font-bold text-primary">¥{selectedContract.amount.toLocaleString()}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="drawer-kv-row">
                     <span className="text-muted-foreground">服务内容</span>
                     <span className="font-medium">{selectedContract.serviceContent}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="drawer-kv-row">
                     <span className="text-muted-foreground">服务期限</span>
                     <span className="font-medium">{selectedContract.startDate} 至 {selectedContract.endDate}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="drawer-kv-row">
                     <span className="text-muted-foreground">创建时间</span>
                     <span>{selectedContract.createTime}</span>
                   </div>
                   {selectedContract.signedTime && (
-                    <div className="flex justify-between">
+                    <div className="drawer-kv-row">
                       <span className="text-muted-foreground">签署时间</span>
                       <span>{selectedContract.signedTime}</span>
                     </div>
@@ -579,10 +581,10 @@ export function ContractManagement({ role, userId, showHeader = true, filterByUs
                         party.signed ? "bg-green-50" : "bg-amber-50"
                       )}
                     >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
+                      <div className="drawer-kv-row-head">
+                        <div className="flex min-w-0 items-center gap-2">
                           <Badge variant="outline" className="text-xs">{party.role}</Badge>
-                          <span className="font-medium">{party.name}</span>
+                          <span className="font-medium break-words">{party.name}</span>
                         </div>
                         {party.signed ? (
                           <Badge className="bg-green-100 text-green-700 border-0 text-xs">
@@ -621,14 +623,16 @@ export function ContractManagement({ role, userId, showHeader = true, filterByUs
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">家政服务综合保险</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">
+                  <div className="drawer-kv-row-head items-start">
+                    <div className="min-w-0">
+                      <p className="font-medium break-words">家政服务综合保险</p>
+                      <p className="mt-0.5 text-xs text-muted-foreground break-words">
                         有效期至：{selectedContract.insuranceExpiry || "暂无"}
                       </p>
                     </div>
-                    {getInsuranceStatusBadge(selectedContract.insuranceStatus, selectedContract.insuranceExpiry)}
+                    <span className="flex justify-end shrink-0">
+                      {getInsuranceStatusBadge(selectedContract.insuranceStatus, selectedContract.insuranceExpiry)}
+                    </span>
                   </div>
                   {selectedContract.insuranceStatus !== "valid" && (
                     <Button size="sm" variant="outline" className="mt-3 w-full bg-transparent">
@@ -652,10 +656,10 @@ export function ContractManagement({ role, userId, showHeader = true, filterByUs
                     {selectedContract.relatedContracts.map((relatedId) => {
                       const agreement = supplementaryAgreements.find(a => a.id === relatedId)
                       return agreement ? (
-                        <div key={relatedId} className="p-3 bg-blue-50 rounded-xl">
-                          <div className="flex items-center justify-between">
-                            <span className="font-medium text-sm">{agreement.title}</span>
-                            <Badge className="bg-blue-100 text-blue-700 border-0 text-xs">补充协议</Badge>
+                        <div key={relatedId} className="rounded-xl bg-blue-50 p-3">
+                          <div className="drawer-kv-row-head">
+                            <span className="min-w-0 text-sm font-medium break-words">{agreement.title}</span>
+                            <Badge className="shrink-0 border-0 bg-blue-100 text-xs text-blue-700">补充协议</Badge>
                           </div>
                           <p className="text-xs text-muted-foreground mt-1">{agreement.description}</p>
                           <p className="text-xs text-muted-foreground mt-1">签署时间：{agreement.signedTime}</p>
@@ -676,16 +680,16 @@ export function ContractManagement({ role, userId, showHeader = true, filterByUs
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2 text-sm">
-                    <div className="flex justify-between">
+                    <div className="drawer-kv-row">
                       <span className="text-red-600">废止时间</span>
                       <span className="font-medium">{selectedContract.terminatedTime}</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="drawer-kv-row">
                       <span className="text-red-600">废止原因</span>
                       <span className="font-medium">{selectedContract.terminateReason}</span>
                     </div>
                     {selectedContract.refundAmount && (
-                      <div className="flex justify-between">
+                      <div className="drawer-kv-row">
                         <span className="text-red-600">退款金额</span>
                         <span className="font-bold text-red-700">¥{selectedContract.refundAmount.toLocaleString()}</span>
                       </div>
@@ -773,7 +777,7 @@ export function ContractManagement({ role, userId, showHeader = true, filterByUs
 
       {/* Create Contract Sheet */}
       <Sheet open={showCreateContract} onOpenChange={setShowCreateContract}>
-        <SheetContent side="bottom" className="h-[90vh] rounded-t-2xl overflow-hidden">
+        <SheetContent side="right" className="flex flex-col min-h-0 overflow-hidden">
           <SheetHeader className="pb-4 border-b border-border">
             <div className="flex items-center gap-2">
               {newContractStep > 1 && (
@@ -791,7 +795,7 @@ export function ContractManagement({ role, userId, showHeader = true, filterByUs
               </SheetTitle>
             </div>
           </SheetHeader>
-          <div className="overflow-y-auto h-[calc(90vh-140px)] py-4">
+          <div className="flex-1 min-h-0 overflow-y-auto py-4">
             {/* Step 1: Select Template */}
             {newContractStep === 1 && (
               <div className="space-y-3">
@@ -1001,25 +1005,25 @@ export function ContractManagement({ role, userId, showHeader = true, filterByUs
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2 text-sm">
-                    <div className="flex justify-between">
+                    <div className="drawer-kv-row">
                       <span className="text-muted-foreground">合同模板</span>
                       <span className="font-medium">{selectedTemplate?.name}</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="drawer-kv-row">
                       <span className="text-muted-foreground">签约公司</span>
                       <span className="font-medium">{selectedCompany?.shortName}</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="drawer-kv-row">
                       <span className="text-muted-foreground">雇主</span>
                       <span className="font-medium">{newContract.employerName || "-"}</span>
                     </div>
                     {selectedTemplate?.parties === 3 && (
-                      <div className="flex justify-between">
+                      <div className="drawer-kv-row">
                         <span className="text-muted-foreground">服务人员</span>
                         <span className="font-medium">{newContract.caregiverName || "-"}</span>
                       </div>
                     )}
-                    <div className="flex justify-between">
+                    <div className="drawer-kv-row">
                       <span className="text-muted-foreground">合同金额</span>
                       <span className="font-bold text-primary">
                         {newContract.amount ? `¥${newContract.amount.toLocaleString()}` : "-"}

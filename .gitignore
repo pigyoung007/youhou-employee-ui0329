@@ -1,7 +1,19 @@
 # dependencies
 /node_modules
+.pnpm-store
 
 .DS_Store
+
+# 文档、执行/调度过程记录、日志（仅提交业务代码，不提交过程产物）
+/docs/
+*.log
+logs/
+*.log.*
+**/agent-transcripts/
+**/*transcript*.jsonl
+
+# TypeScript incremental
+tsconfig.tsbuildinfo
 
 # next.js
 /.next/

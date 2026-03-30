@@ -305,7 +305,7 @@ export function MaternityResourcePage() {
 
       {/* Caregiver Detail Sheet */}
       <Sheet open={!!selectedCaregiver} onOpenChange={() => setSelectedCaregiver(null)}>
-        <SheetContent side="bottom" className="h-[90vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <div className="flex items-center gap-3">
               <Avatar className="w-12 h-12">
@@ -349,7 +349,7 @@ export function MaternityResourcePage() {
                   </TabsTrigger>
                 </TabsList>
 
-                <div className="overflow-y-auto h-[calc(90vh-180px)] py-4">
+                <div className="flex-1 min-h-0 overflow-y-auto py-4">
                   {/* Learning Tab */}
                   <TabsContent value="learning" className="space-y-4 mt-0">
                     <div className="grid grid-cols-2 gap-3">

@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { BookingModal } from "@/components/booking-modal"
 import { SharePosterModal } from "@/components/share-poster-modal"
+import { PostpartumTechnicianListPage } from "@/components/employer/postpartum-technician-list-page"
 
 const filterTabs = ["全部", "骨盆修复", "腹直肌", "盆底肌", "乳腺护理", "体态调整"]
 
@@ -142,6 +143,7 @@ interface PostpartumServicePageProps {
 }
 
 export function PostpartumServicePage({ onBack, isGuest, onRegister }: PostpartumServicePageProps) {
+  const [subView, setSubView] = useState<"default" | "technicians">("default")
   const [activeFilter, setActiveFilter] = useState("全部")
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedService, setSelectedService] = useState<(typeof postpartumServices)[0] | null>(null)
@@ -152,6 +154,16 @@ export function PostpartumServicePage({ onBack, isGuest, onRegister }: Postpartu
   const filteredServices = activeFilter === "全部"
     ? postpartumServices
     : postpartumServices.filter((s) => s.name.includes(activeFilter))
+
+  if (subView === "technicians") {
+    return (
+      <PostpartumTechnicianListPage
+        onBack={() => setSubView("default")}
+        isGuest={isGuest}
+        onRegister={onRegister}
+      />
+    )
+  }
 
   // Detail View
   if (showDetail && selectedService) {
@@ -353,6 +365,20 @@ export function PostpartumServicePage({ onBack, isGuest, onRegister }: Postpartu
             <Flower2 className="absolute right-4 top-1/2 -translate-y-1/2 w-16 h-16 text-pink-200" />
           </CardContent>
         </Card>
+      </div>
+
+      <div className="mt-3 px-4">
+        <button
+          type="button"
+          onClick={() => setSubView("technicians")}
+          className="flex w-full items-center justify-between rounded-xl border border-pink-200/80 bg-card px-4 py-3 text-left shadow-sm transition-colors hover:bg-pink-50/50"
+        >
+          <div>
+            <p className="font-semibold text-foreground">产康技师列表</p>
+            <p className="text-xs text-muted-foreground">查看持证技师、评价与服务好评</p>
+          </div>
+          <ChevronRight className="h-5 w-5 shrink-0 text-pink-500" />
+        </button>
       </div>
 
       {/* Service List */}

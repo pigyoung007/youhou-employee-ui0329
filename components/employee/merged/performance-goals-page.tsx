@@ -271,7 +271,7 @@ export function PerformanceGoalsPage({ onBack }: PerformanceGoalsPageProps) {
 
       {/* Goal Detail Drawer */}
       <Sheet open={!!selectedGoal} onOpenChange={() => setSelectedGoal(null)}>
-        <SheetContent side="right" className="w-[85vw] max-w-sm p-0 flex flex-col h-auto max-h-screen">
+        <SheetContent side="right" className="w-[85vw] max-w-sm flex flex-col py-0 h-auto max-h-screen">
           <div className="flex flex-col">
             <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-border">
               <SheetTitle className="text-base">{selectedGoal?.category} - 明细</SheetTitle>

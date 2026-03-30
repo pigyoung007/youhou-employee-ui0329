@@ -10,7 +10,6 @@ import {
   Calendar,
   Phone,
   BadgeCheck,
-  Clock,
   Users,
   ChevronRight,
 } from "lucide-react"
@@ -18,6 +17,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
+import { originToProvinceLabel } from "@/lib/employer-caregiver-display"
+import { StarRatingRow } from "@/components/employer/star-rating-row"
 
 interface CaregiverDetailProps {
   onClose: () => void
@@ -34,6 +35,11 @@ interface CaregiverDetailProps {
     price: number
     serviceCount: number
     available?: boolean
+    age?: number
+    education?: string
+    personality?: string
+    specialty?: string
+    goodReviewRate?: string
   }
 }
 
@@ -101,24 +107,31 @@ export function CaregiverDetail({ onClose, onBook, caregiver }: CaregiverDetailP
                   已认证
                 </Badge>
               </div>
-              <div className="flex items-center gap-3 text-sm text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5" />
-                  {caregiver.origin}
+                  <MapPin className="w-3.5 h-3.5 shrink-0" />
+                  籍贯 {originToProvinceLabel(caregiver.origin)}
                 </span>
+                {caregiver.age != null && <span>{caregiver.age}岁</span>}
+                {caregiver.education && <span>{caregiver.education}</span>}
                 <span className="flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5" />
-                  {caregiver.experience}年经验
-                </span>
-                <span className="flex items-center gap-1">
-                  <Users className="w-3.5 h-3.5" />
+                  <Users className="w-3.5 h-3.5 shrink-0" />
                   服务{caregiver.serviceCount}户
                 </span>
               </div>
+              {(caregiver.personality || caregiver.specialty) && (
+                <p className="mt-2 text-xs text-card/95">
+                  {caregiver.personality && <span>性格：{caregiver.personality}</span>}
+                  {caregiver.personality && caregiver.specialty && " · "}
+                  {caregiver.specialty && <span>特长：{caregiver.specialty}</span>}
+                </p>
+              )}
             </div>
-            <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-lg">
-              <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-              <span className="font-bold text-amber-600">{caregiver.rating}</span>
+            <div className="flex flex-col items-end gap-1 rounded-lg bg-amber-50 px-2 py-1">
+              <StarRatingRow rating={caregiver.rating} sizeClassName="h-4 w-4" />
+              {caregiver.goodReviewRate && (
+                <span className="text-[10px] font-medium text-amber-800">服务好评 {caregiver.goodReviewRate}</span>
+              )}
             </div>
           </div>
         </div>
@@ -126,19 +139,15 @@ export function CaregiverDetail({ onClose, onBook, caregiver }: CaregiverDetailP
 
       {/* Content */}
       <div className="px-4 py-4 space-y-4 pb-28 overflow-y-auto h-[calc(100vh-288px-80px)]">
-        {/* Price */}
         <Card className="border-0 shadow-sm bg-gradient-to-r from-primary/10 to-orange-100/50">
-          <CardContent className="p-4 flex items-center justify-between">
+          <CardContent className="flex items-center justify-between p-4">
             <div>
               <p className="text-sm text-muted-foreground">服务费用</p>
-              <p className="text-2xl font-bold text-primary">
-                ¥{caregiver.price.toLocaleString()}
-                <span className="text-sm font-normal text-muted-foreground">/月</span>
-              </p>
+              <p className="text-base font-semibold text-foreground">由顾问沟通 · 不向雇主展示具体薪资</p>
             </div>
             {caregiver.available !== false ? (
-              <Badge className="bg-teal-100 text-teal-700 border-0">
-                <Calendar className="w-3 h-3 mr-1" />
+              <Badge className="border-0 bg-teal-100 text-teal-700">
+                <Calendar className="mr-1 h-3 w-3" />
                 可预约
               </Badge>
             ) : (
@@ -195,8 +204,8 @@ export function CaregiverDetail({ onClose, onBook, caregiver }: CaregiverDetailP
               <CardContent className="p-4 space-y-3">
                 <h4 className="font-semibold text-foreground">个人简介</h4>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  从事母婴护理行业{caregiver.experience}年，擅长新生儿护理、产妇月子餐制作、产后康复指导。
-                  性格温和有耐心，深受雇主好评。持有多项专业资质证书，定期参加技能培训，专业技能扎实。
+                  从事母婴护理行业多年，擅长新生儿护理、产妇月子餐制作、产后康复指导。
+                  持有多项专业资质证书，定期参加技能培训，专业技能扎实。
                 </p>
               </CardContent>
             </Card>
@@ -206,9 +215,9 @@ export function CaregiverDetail({ onClose, onBook, caregiver }: CaregiverDetailP
                 <h4 className="font-semibold text-foreground">详细信息</h4>
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { label: "年龄", value: "45岁" },
-                    { label: "学历", value: "高中" },
-                    { label: "籍贯", value: caregiver.origin },
+                    { label: "年龄", value: caregiver.age != null ? `${caregiver.age}岁` : "—" },
+                    { label: "学历", value: caregiver.education ?? "—" },
+                    { label: "籍贯", value: originToProvinceLabel(caregiver.origin) },
                     { label: "民族", value: "汉族" },
                     { label: "身高", value: "162cm" },
                     { label: "体重", value: "58kg" },

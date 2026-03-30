@@ -342,11 +342,11 @@ export function DomesticHomePage() {
 
       {/* Profile Detail Sheet */}
       <Sheet open={showProfile} onOpenChange={setShowProfile}>
-        <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>我的档案</SheetTitle>
           </SheetHeader>
-          <div className="py-4 space-y-4 overflow-y-auto h-[calc(85vh-80px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-4 overflow-y-auto">
             {/* Avatar & Basic Info */}
             <div className="text-center">
               <Avatar className="w-20 h-20 mx-auto border-2 border-amber-200">
@@ -445,11 +445,11 @@ export function DomesticHomePage() {
 
       {/* Share Settings Sheet */}
       <Sheet open={showShareSettings} onOpenChange={setShowShareSettings}>
-        <SheetContent side="bottom" className="h-[75vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle>简历分享设置</SheetTitle>
           </SheetHeader>
-          <div className="py-4 space-y-4 overflow-y-auto h-[calc(75vh-100px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-4 overflow-y-auto">
             {/* Current Stats */}
             <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4">
               <div className="flex items-center justify-between mb-3">
@@ -776,7 +776,7 @@ export function DomesticHomePage() {
               待办事项
             </SheetTitle>
           </SheetHeader>
-          <div className="py-4 space-y-3 overflow-y-auto h-[calc(100vh-100px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-3 overflow-y-auto">
             {todoItems.map((item) => (
               <Card 
                 key={item.id}
@@ -837,7 +837,7 @@ export function DomesticHomePage() {
 
       {/* Interview Detail Sheet */}
       <Sheet open={showInterviewDetail} onOpenChange={setShowInterviewDetail}>
-        <SheetContent side="bottom" className="h-[70vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle className="flex items-center gap-2">
               <Video className="w-5 h-5 text-rose-500" />
@@ -845,7 +845,7 @@ export function DomesticHomePage() {
             </SheetTitle>
           </SheetHeader>
           {selectedTodo && selectedTodo.type === "interview" && (
-            <div className="py-4 space-y-4 overflow-y-auto h-[calc(70vh-140px)]">
+            <div className="flex-1 min-h-0 py-4 space-y-4 overflow-y-auto">
               {/* Interview Time */}
               <Card className="border-0 shadow-sm bg-gradient-to-r from-rose-50 to-pink-50">
                 <CardContent className="p-4">

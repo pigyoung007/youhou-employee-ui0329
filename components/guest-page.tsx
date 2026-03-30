@@ -29,6 +29,9 @@ import {
   Quote,
   Copy,
   Calendar,
+  HandHeart,
+  Home,
+  UserRound,
 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -39,6 +42,16 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Slider } from "@/components/ui/slider"
 import { cn } from "@/lib/utils"
 import { BookingModal } from "@/components/booking-modal"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { originToProvinceLabel } from "@/lib/employer-caregiver-display"
+import { StarRatingRow } from "@/components/employer/star-rating-row"
 
 const banners = [
   {
@@ -97,7 +110,33 @@ const categories = [
     iconColor: "text-violet-500",
     desc: "育儿知识学习",
   },
+  {
+    id: 5,
+    name: "养老护理师",
+    icon: HandHeart,
+    color: "bg-gradient-to-br from-sky-100 to-cyan-50",
+    iconColor: "text-sky-600",
+    desc: "长期照护支持",
+  },
+  {
+    id: 6,
+    name: "保姆",
+    icon: Home,
+    color: "bg-gradient-to-br from-lime-100 to-green-50",
+    iconColor: "text-lime-700",
+    desc: "家务与日常照料",
+  },
+  {
+    id: 7,
+    name: "家庭陪伴师",
+    icon: UserRound,
+    color: "bg-gradient-to-br from-indigo-100 to-violet-50",
+    iconColor: "text-indigo-600",
+    desc: "陪护照料服务",
+  },
 ]
+
+const COMING_SOON_SERVICES = new Set(["养老护理师", "保姆", "家庭陪伴师"])
 
 const companyStats = [
   { label: "服务家庭", value: "50,000+", icon: Users },
@@ -152,6 +191,11 @@ const caregivers = [
     tags: ["金牌月嫂", "催乳师", "营养配餐"],
     price: 12800,
     serviceCount: 89,
+    age: 45,
+    education: "高中",
+    personality: "温和耐心",
+    specialty: "月子餐、新生儿护理",
+    goodReviewRate: "98%",
   },
   {
     id: 2,
@@ -163,6 +207,11 @@ const caregivers = [
     tags: ["高级育婴师", "早教指导"],
     price: 9800,
     serviceCount: 67,
+    age: 42,
+    education: "大专",
+    personality: "开朗细致",
+    specialty: "早教互动、辅食添加",
+    goodReviewRate: "97%",
   },
   {
     id: 3,
@@ -174,6 +223,11 @@ const caregivers = [
     tags: ["金牌月嫂", "双胞胎经验", "产康师"],
     price: 15800,
     serviceCount: 156,
+    age: 48,
+    education: "中专",
+    personality: "沉稳可靠",
+    specialty: "双胞胎护理、产后康复",
+    goodReviewRate: "99%",
   },
 ]
 
@@ -184,11 +238,30 @@ const filterOptions = {
     { id: "chanhouxiufu", label: "产后修复师", checked: false },
     { id: "cuirushi", label: "催乳师", checked: false },
   ],
-  experience: [
-    { id: "1-3", label: "1-3年", checked: false },
-    { id: "3-5", label: "3-5年", checked: false },
-    { id: "5-8", label: "5-8年", checked: true },
-    { id: "8+", label: "8年以上", checked: false },
+  minRating: [
+    { id: "4.5", label: "4.5星及以上", checked: false },
+    { id: "4.8", label: "4.8星及以上", checked: false },
+    { id: "5.0", label: "5.0星", checked: false },
+  ],
+  ageRange: [
+    { id: "35-45", label: "35-45岁", checked: false },
+    { id: "45-55", label: "45-55岁", checked: false },
+  ],
+  education: [
+    { id: "junior", label: "初中", checked: false },
+    { id: "high", label: "高中", checked: false },
+    { id: "college", label: "大专", checked: false },
+    { id: "bachelor", label: "本科及以上", checked: false },
+  ],
+  personality: [
+    { id: "wenhe", label: "温和耐心", checked: false },
+    { id: "kaichen", label: "开朗细致", checked: false },
+    { id: "chenwen", label: "沉稳可靠", checked: false },
+  ],
+  specialtyPick: [
+    { id: "yuezi", label: "月子餐", checked: false },
+    { id: "xin", label: "新生儿护理", checked: false },
+    { id: "zao", label: "早教互动", checked: false },
   ],
   certificates: [
     { id: "jinpai", label: "金牌月嫂", checked: false },
@@ -219,6 +292,7 @@ export function GuestPage({ onRegister, onServiceNavigate }: GuestPageProps) {
   const [showBooking, setShowBooking] = useState(false)
   const [selectedCaregiver, setSelectedCaregiver] = useState<(typeof caregivers)[0] | null>(null)
   const [copied, setCopied] = useState(false)
+  const [comingSoonOpen, setComingSoonOpen] = useState(false)
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -333,7 +407,7 @@ export function GuestPage({ onRegister, onServiceNavigate }: GuestPageProps) {
               <div className="flex items-center gap-2 mb-4">
                 <Building2 className="w-5 h-5 text-primary" />
                 <h3 className="font-semibold text-foreground">品牌实力</h3>
-                <Badge className="bg-primary/15 text-primary border-0 text-xs">值得信赖</Badge>
+                <Badge className="border-0 bg-primary/15 text-xs text-primary">值得信赖</Badge>
               </div>
               <div className="grid grid-cols-4 gap-2">
                 {companyStats.map((stat) => {
@@ -365,8 +439,15 @@ export function GuestPage({ onRegister, onServiceNavigate }: GuestPageProps) {
               return (
                 <button
                   key={cat.id}
-                  onClick={() => onServiceNavigate?.(cat.name)}
-                  className="flex flex-col items-center gap-2 p-2 rounded-2xl hover:scale-105 transition-transform relative"
+                  type="button"
+                  onClick={() => {
+                    if (COMING_SOON_SERVICES.has(cat.name)) {
+                      setComingSoonOpen(true)
+                      return
+                    }
+                    onServiceNavigate?.(cat.name)
+                  }}
+                  className="relative flex flex-col items-center gap-2 rounded-2xl p-2 transition-transform hover:scale-105"
                 >
                   <div
                     className={cn("w-14 h-14 rounded-2xl flex items-center justify-center shadow-sm", cat.color)}
@@ -468,8 +549,8 @@ export function GuestPage({ onRegister, onServiceNavigate }: GuestPageProps) {
                   筛选
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[85vw] max-w-sm h-full px-0">
-                <SheetHeader className="px-4 pb-3 border-b">
+              <SheetContent side="right" className="h-full w-[85vw] max-w-sm">
+                <SheetHeader className="border-b pb-3">
                   <div className="flex items-center justify-between">
                     <SheetTitle className="flex items-center gap-2">
                       <Filter className="w-5 h-5 text-primary" />
@@ -480,7 +561,7 @@ export function GuestPage({ onRegister, onServiceNavigate }: GuestPageProps) {
                     </Button>
                   </div>
                 </SheetHeader>
-                <div className="overflow-y-auto h-[calc(100vh-140px)] px-4 py-4 space-y-6">
+                <div className="min-h-0 flex-1 space-y-6 overflow-y-auto py-4">
                   {/* Service Type */}
                   <div>
                     <h4 className="font-semibold text-sm text-foreground mb-3">服务类型</h4>
@@ -504,22 +585,112 @@ export function GuestPage({ onRegister, onServiceNavigate }: GuestPageProps) {
                     </div>
                   </div>
 
-                  {/* Experience */}
                   <div>
-                    <h4 className="font-semibold text-sm text-foreground mb-3">工作年限</h4>
-                    <div className="grid grid-cols-2 gap-2">
-                      {filters.experience.map((item) => (
+                    <h4 className="mb-3 text-sm font-semibold text-foreground">评价星级</h4>
+                    <div className="grid grid-cols-1 gap-2">
+                      {filters.minRating.map((item) => (
                         <label
                           key={item.id}
                           className={cn(
-                            "flex items-center gap-2 p-3 rounded-xl border-2 cursor-pointer transition-all",
+                            "flex cursor-pointer items-center gap-2 rounded-xl border-2 p-3 transition-all",
                             item.checked ? "border-primary bg-primary/5" : "border-border bg-card"
                           )}
                         >
                           <Checkbox
                             checked={item.checked}
-                            onCheckedChange={() => handleFilterChange("experience", item.id)}
-                            className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                            onCheckedChange={() => handleFilterChange("minRating", item.id)}
+                            className="data-[state=checked]:border-primary data-[state=checked]:bg-primary"
+                          />
+                          <span className="flex items-center gap-1 text-sm">
+                            {item.label}
+                            <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="mb-3 text-sm font-semibold text-foreground">年纪</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      {filters.ageRange.map((item) => (
+                        <label
+                          key={item.id}
+                          className={cn(
+                            "flex cursor-pointer items-center gap-2 rounded-xl border-2 p-3 transition-all",
+                            item.checked ? "border-primary bg-primary/5" : "border-border bg-card"
+                          )}
+                        >
+                          <Checkbox
+                            checked={item.checked}
+                            onCheckedChange={() => handleFilterChange("ageRange", item.id)}
+                            className="data-[state=checked]:border-primary data-[state=checked]:bg-primary"
+                          />
+                          <span className="text-sm">{item.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="mb-3 text-sm font-semibold text-foreground">学历</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      {filters.education.map((item) => (
+                        <label
+                          key={item.id}
+                          className={cn(
+                            "flex cursor-pointer items-center gap-2 rounded-xl border-2 p-3 transition-all",
+                            item.checked ? "border-primary bg-primary/5" : "border-border bg-card"
+                          )}
+                        >
+                          <Checkbox
+                            checked={item.checked}
+                            onCheckedChange={() => handleFilterChange("education", item.id)}
+                            className="data-[state=checked]:border-primary data-[state=checked]:bg-primary"
+                          />
+                          <span className="text-sm">{item.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="mb-3 text-sm font-semibold text-foreground">性格特征</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      {filters.personality.map((item) => (
+                        <label
+                          key={item.id}
+                          className={cn(
+                            "flex cursor-pointer items-center gap-2 rounded-xl border-2 p-3 transition-all",
+                            item.checked ? "border-primary bg-primary/5" : "border-border bg-card"
+                          )}
+                        >
+                          <Checkbox
+                            checked={item.checked}
+                            onCheckedChange={() => handleFilterChange("personality", item.id)}
+                            className="data-[state=checked]:border-primary data-[state=checked]:bg-primary"
+                          />
+                          <span className="text-sm">{item.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="mb-3 text-sm font-semibold text-foreground">特长</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      {filters.specialtyPick.map((item) => (
+                        <label
+                          key={item.id}
+                          className={cn(
+                            "flex cursor-pointer items-center gap-2 rounded-xl border-2 p-3 transition-all",
+                            item.checked ? "border-primary bg-primary/5" : "border-border bg-card"
+                          )}
+                        >
+                          <Checkbox
+                            checked={item.checked}
+                            onCheckedChange={() => handleFilterChange("specialtyPick", item.id)}
+                            className="data-[state=checked]:border-primary data-[state=checked]:bg-primary"
                           />
                           <span className="text-sm">{item.label}</span>
                         </label>
@@ -574,22 +745,21 @@ export function GuestPage({ onRegister, onServiceNavigate }: GuestPageProps) {
                     </div>
                   </div>
 
-                  {/* Special Skills */}
                   <div>
-                    <h4 className="font-semibold text-sm text-foreground mb-3">特殊技能</h4>
+                    <h4 className="mb-3 text-sm font-semibold text-foreground">服务场景（扩展）</h4>
                     <div className="grid grid-cols-2 gap-2">
                       {filters.specialSkills.map((item) => (
                         <label
                           key={item.id}
                           className={cn(
-                            "flex items-center gap-2 p-3 rounded-xl border-2 cursor-pointer transition-all",
+                            "flex cursor-pointer items-center gap-2 rounded-xl border-2 p-3 transition-all",
                             item.checked ? "border-primary bg-primary/5" : "border-border bg-card"
                           )}
                         >
                           <Checkbox
                             checked={item.checked}
                             onCheckedChange={() => handleFilterChange("specialSkills", item.id)}
-                            className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                            className="data-[state=checked]:border-primary data-[state=checked]:bg-primary"
                           />
                           <span className="text-sm">{item.label}</span>
                         </label>
@@ -643,21 +813,32 @@ export function GuestPage({ onRegister, onServiceNavigate }: GuestPageProps) {
                     <div className="flex-1 p-3 flex flex-col justify-between min-w-0">
                       <div>
                         <div className="flex items-start justify-between">
-                          <div className="flex items-center gap-2">
-                            <h4 className="font-bold text-foreground text-base">{caregiver.name}</h4>
-                            <div className="flex items-center gap-0.5 bg-amber-50 px-1.5 py-0.5 rounded">
-                              <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                              <span className="text-xs font-semibold text-amber-600">{caregiver.rating}</span>
-                            </div>
+                          <div className="min-w-0 flex-1 flex-col gap-1">
+                            <h4 className="text-base font-bold text-foreground">{caregiver.name}</h4>
+                            <StarRatingRow rating={caregiver.rating} />
+                            <p className="text-[11px] text-muted-foreground">
+                              服务好评{" "}
+                              <span className="font-semibold text-primary">{caregiver.goodReviewRate}</span>
+                            </p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                          <span className="font-medium text-foreground">{caregiver.experience}年经验</span>
-                          <span className="w-1 h-1 bg-muted-foreground/50 rounded-full" />
-                          <span>{caregiver.origin}</span>
-                          <span className="w-1 h-1 bg-muted-foreground/50 rounded-full" />
+                        <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-muted-foreground">
+                          <span className="font-medium text-foreground">{caregiver.age}岁</span>
+                          <span className="text-border">|</span>
+                          <span>{caregiver.education}</span>
+                          <span className="text-border">|</span>
+                          <span className="flex items-center gap-0.5">
+                            <MapPin className="h-3 w-3 shrink-0" />
+                            {originToProvinceLabel(caregiver.origin)}
+                          </span>
+                          <span className="text-border">|</span>
                           <span>服务{caregiver.serviceCount}户</span>
                         </div>
+                        <p className="mt-1 text-[11px] leading-snug text-foreground">
+                          <span className="text-muted-foreground">性格</span> {caregiver.personality}
+                          <span className="mx-1 text-muted-foreground">·</span>
+                          <span className="text-muted-foreground">特长</span> {caregiver.specialty}
+                        </p>
                         <div className="flex flex-wrap gap-1.5 mt-2">
                           {caregiver.tags.slice(0, 3).map((tag, idx) => (
                             <Badge
@@ -673,12 +854,9 @@ export function GuestPage({ onRegister, onServiceNavigate }: GuestPageProps) {
                           ))}
                         </div>
                       </div>
-                      <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/50">
-                        <div className="text-primary font-bold text-lg">
-                          ¥{caregiver.price.toLocaleString()}
-                          <span className="text-xs font-normal text-muted-foreground">/月</span>
-                        </div>
-                        <div className="flex gap-2">
+                      <div className="mt-2 flex items-center justify-between border-t border-border/50 pt-2">
+                        <span className="text-[11px] text-muted-foreground">薪资由顾问沟通，注册后可详询</span>
+                        <div className="flex shrink-0 gap-2">
                           <Button
                             size="sm"
                             variant="outline"
@@ -747,9 +925,9 @@ export function GuestPage({ onRegister, onServiceNavigate }: GuestPageProps) {
 
       {/* Contact Consultant Modal */}
       {contactModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center">
+        <div className="fixed inset-0 z-50 flex justify-end">
           <div className="absolute inset-0 bg-foreground/60" onClick={() => setContactModalOpen(false)} />
-          <div className="relative bg-card w-full max-w-md rounded-t-3xl p-6 safe-area-bottom animate-in slide-in-from-bottom duration-300">
+          <div className="relative flex h-dvh max-h-dvh w-full max-w-md flex-col overflow-y-auto border-l bg-card p-6 shadow-xl safe-area-bottom animate-in slide-in-from-right duration-300">
             <button
               onClick={() => setContactModalOpen(false)}
               className="absolute top-4 right-4 p-2 rounded-full hover:bg-muted"
@@ -851,6 +1029,19 @@ export function GuestPage({ onRegister, onServiceNavigate }: GuestPageProps) {
         />
       )}
 
+      <Dialog open={comingSoonOpen} onOpenChange={setComingSoonOpen}>
+        <DialogContent className="max-w-sm rounded-2xl">
+          <DialogHeader>
+            <DialogTitle>敬请期待</DialogTitle>
+            <DialogDescription>该服务正在筹备中，后续开放后将通知您。</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button className="w-full" onClick={() => setComingSoonOpen(false)}>
+              知道了
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

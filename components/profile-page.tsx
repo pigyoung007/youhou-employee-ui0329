@@ -269,17 +269,17 @@ export function ProfilePage({ onLogout }: ProfilePageProps) {
   
       {/* Benefits Modal */}
       {showBenefits && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center">
+        <div className="fixed inset-0 z-50 flex justify-end">
           <div className="absolute inset-0 bg-foreground/60" onClick={() => setShowBenefits(false)} />
-          <div className="relative bg-card w-full max-w-md rounded-t-3xl max-h-[80vh] overflow-hidden animate-in slide-in-from-bottom duration-300">
-            <div className="sticky top-0 bg-card border-b border-border px-5 py-4 flex items-center justify-between">
+          <div className="relative flex h-dvh max-h-dvh w-full max-w-md flex-col overflow-hidden border-l bg-card shadow-xl animate-in slide-in-from-right duration-300">
+            <div className="shrink-0 border-b border-border bg-card px-5 py-4 flex items-center justify-between">
               <h3 className="text-lg font-bold text-foreground">VIP会员权益</h3>
               <button onClick={() => setShowBenefits(false)} className="p-2 rounded-full hover:bg-muted">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-5 space-y-4 overflow-y-auto">
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5">
               {/* Current Level */}
               <Card className="border-0 bg-gradient-to-r from-amber-100 via-orange-100 to-amber-50 overflow-hidden">
                 <CardContent className="p-4 relative">

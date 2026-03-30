@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { CustomerDetailDrawer } from '@/components/customer-detail-drawer'
+import type { OrderPrefillData } from '@/components/employee/merged/orders-create-page'
 
 interface Lead {
   id: string
@@ -17,17 +18,36 @@ interface Lead {
   status: 'new' | 'contacted' | 'qualified' | 'ordered' | 'lost'
   lastContactDate?: string
   followUpDate?: string
+  /** 预产期（家政/月嫂线索） */
+  dueDate?: string
   source: string
   remark?: string
   priority: 'high' | 'medium' | 'low'
 }
 
+function managementLeadToOrderPrefill(lead: Lead, serviceTypeMap: Record<Lead['serviceType'], string>): OrderPrefillData {
+  if (lead.serviceType === 'training') {
+    return {
+      customerName: lead.name,
+      serviceType: serviceTypeMap.training,
+    }
+  }
+  return {
+    customerName: lead.name,
+    serviceType: serviceTypeMap[lead.serviceType],
+    startDate: lead.dueDate,
+    dueDate: lead.dueDate,
+  }
+}
+
 interface LeadsManagementPageProps {
   employeeRole?: 'career' | 'maternity_consultant' | 'bei_yi_sheng'
   onBack?: () => void
+  onNewOrder?: (prefill: OrderPrefillData) => void
+  onNewReceipt?: (prefill: OrderPrefillData) => void
 }
 
-export function LeadsManagementPage({ employeeRole = 'maternity_consultant', onBack }: LeadsManagementPageProps) {
+export function LeadsManagementPage({ employeeRole = 'maternity_consultant', onBack, onNewOrder, onNewReceipt }: LeadsManagementPageProps) {
   const [leads, setLeads] = useState<Lead[]>([
     {
       id: 'LEAD-001',
@@ -40,6 +60,7 @@ export function LeadsManagementPage({ employeeRole = 'maternity_consultant', onB
       followUpDate: '2026-03-30',
       source: '亲友介绍',
       remark: '预产期3月底，需要月嫂服务',
+      dueDate: '2026-03-28',
       priority: 'high',
     },
     {
@@ -50,6 +71,7 @@ export function LeadsManagementPage({ employeeRole = 'maternity_consultant', onB
       serviceType: 'maternity',
       status: 'new',
       source: '小程序浏览',
+      dueDate: '2026-04-20',
       priority: 'medium',
     },
     {
@@ -303,6 +325,111 @@ export function LeadsManagementPage({ employeeRole = 'maternity_consultant', onB
       <CustomerDetailDrawer
         open={!!selectedLead}
         onClose={() => setSelectedLead(null)}
+        onNewOrder={
+          onNewOrder && selectedLead
+            ? () => {
+                onNewOrder(managementLeadToOrderPrefill(selectedLead, serviceTypeMap))
+                setSelectedLead(null)
+              }
+            : undefined
+        }
+        onNewReceipt={
+          onNewReceipt && selectedLead
+            ? () => {
+                onNewReceipt(managementLeadToOrderPrefill(selectedLead, serviceTypeMap))
+                setSelectedLead(null)
+              }
+            : undefined
+        }
+        detailMode={selectedLead?.serviceType === 'training' ? 'training' : 'service'}
+        defaultArchive={selectedLead?.serviceType === 'training' ? 'student' : 'customer'}
+        studentArchive={
+          selectedLead?.serviceType === 'training'
+            ? {
+                courseCategory: '职业培训',
+                courseName: `${serviceTypeMap.training} · ${selectedLead.remark?.slice(0, 24) || '育婴师考证'}`,
+                progressPercent: selectedLead.priority === 'high' ? 65 : selectedLead.priority === 'medium' ? 40 : 20,
+                examStatus: selectedLead.status === 'qualified' ? '已通过初审' : '待考',
+                enrollDate: selectedLead.lastContactDate || '2026-01-05',
+                studyHours: selectedLead.priority === 'high' ? '28/48 课时' : '8/48 课时',
+                certificate: '暂无',
+                tags: ['学习中', selectedLead.priority === 'high' ? '重点学员' : ''].filter(Boolean),
+              }
+            : undefined
+        }
+        courses={
+          selectedLead?.serviceType === 'training'
+            ? [
+                {
+                  id: 'c1',
+                  courseName: `${serviceTypeMap.training} · ${selectedLead.remark?.slice(0, 20) || '育婴师考证'}`,
+                  courseType: '职业培训',
+                  teacher: '张老师',
+                  startDate: '2025-03-01',
+                  endDate: '2025-03-15',
+                  progress: selectedLead.priority === 'high' ? 72 : 45,
+                  status: 'in_progress',
+                  totalHours: 48,
+                  attendedHours: selectedLead.priority === 'high' ? 36 : 16,
+                },
+                {
+                  id: 'c2',
+                  courseName: '岗前实操强化',
+                  courseType: '辅助训练',
+                  teacher: '李老师',
+                  startDate: '2025-03-20',
+                  endDate: '2025-04-05',
+                  progress: 20,
+                  status: 'not_started',
+                  totalHours: 16,
+                  attendedHours: 0,
+                },
+              ]
+            : undefined
+        }
+        enrollments={
+          selectedLead?.serviceType === 'training'
+            ? [
+                {
+                  id: 'e1',
+                  courseName: `${serviceTypeMap.training} · 系统班`,
+                  enrollDate: selectedLead.lastContactDate || '2026-01-08',
+                  amount: 3980,
+                  paymentStatus: 'paid',
+                  orderNo: `EDU${selectedLead.id.replace(/\D/g, '')}0001`,
+                },
+                {
+                  id: 'e2',
+                  courseName: '岗前实操强化',
+                  enrollDate: '2026-03-18',
+                  amount: 800,
+                  paymentStatus: 'unpaid',
+                  orderNo: `EDU${selectedLead.id.replace(/\D/g, '')}0002`,
+                },
+              ]
+            : undefined
+        }
+        domesticArchive={
+          selectedLead && selectedLead.serviceType !== 'training'
+            ? {
+                displayName: '待匹配服务人员',
+                serviceType: serviceTypeMap[selectedLead.serviceType],
+                level: selectedLead.priority === 'high' ? '金牌优先' : '待评级',
+                workStatus:
+                  selectedLead.status === 'ordered' ? '已签约待上户' : '雇主需求对接中',
+                ordersCompleted: selectedLead.status === 'ordered' ? 1 : 0,
+                rating: selectedLead.priority === 'high' ? 4.9 : 0,
+                lastServiceDate: selectedLead.lastContactDate,
+                consultant: '张顾问',
+                tags: ['匹配池', selectedLead.city].filter(Boolean),
+              }
+            : undefined
+        }
+        availableArchives={
+          selectedLead?.serviceType === 'training'
+            ? ['customer', 'student']
+            : ['customer', 'domestic']
+        }
         customer={selectedLead ? {
           id: selectedLead.id,
           name: selectedLead.name,
@@ -310,16 +437,28 @@ export function LeadsManagementPage({ employeeRole = 'maternity_consultant', onB
           wechat: 'wx_' + selectedLead.name,
           consultant: '张顾问',
           status: '入库',
-          statusProgress: 36,
-          tags: selectedLead.priority === 'high' ? ['高净值', '复购客户'] : ['潜在客户'],
+          statusProgress: selectedLead.serviceType === 'training'
+            ? (selectedLead.status === 'qualified' ? 72 : selectedLead.status === 'contacted' ? 55 : 40)
+            : 36,
+          tags: selectedLead.priority === 'high' ? ['高意向', '重点跟进'] : ['潜在客户'],
           fullName: selectedLead.name,
-          starLevel: 4,
+          starLevel: selectedLead.priority === 'high' ? 5 : 4,
           source: selectedLead.source,
           ethnicity: '汉族',
           gender: '女',
           maternityConsultant: '张顾问',
           referralInfo: selectedLead.remark || '-',
-          dueDate: selectedLead.followUpDate || '-',
+          phoneLocation: selectedLead.city ? `${selectedLead.city} · 线索跟进` : undefined,
+          profileCompleteness: selectedLead.serviceType === 'training'
+            ? (selectedLead.priority === 'high' ? 58 : 42)
+            : (selectedLead.priority === 'high' ? 48 : 36),
+          dueDate: selectedLead.serviceType === 'training' ? undefined : (selectedLead.dueDate || selectedLead.followUpDate || '-'),
+          trainingIntent: selectedLead.serviceType === 'training'
+            ? (selectedLead.remark || `${serviceTypeMap.training}意向`)
+            : undefined,
+          leadStageLabel: selectedLead.serviceType === 'training' ? statusMap[selectedLead.status].label : undefined,
+          nextFollowUp: selectedLead.followUpDate || '-',
+          trainingNotes: selectedLead.serviceType === 'training' ? (selectedLead.remark || '-') : undefined,
         } : null}
       />
       {/* 新建线索抽屉 */}

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Search, Plus, ChevronRight, Baby, GraduationCap, X, ChevronLeft } from 'lucide-react'
+import { OrderConsultantLines } from '@/components/order-consultant-lines'
 
 interface Order {
   id: string
@@ -18,17 +19,19 @@ interface Order {
   paidAmount: number
   status: 'draft' | 'pending_payment' | 'in_service' | 'completed' | 'pending_review'
   createdAt: string
+  maternityConsultant?: string
+  careerConsultant?: string
 }
 
 const maternityOrders: Order[] = [
-  { id: 'ORD001', customerName: '王女士', customerPhone: '138****8888', serviceType: '月嫂服务', servicePeriod: '2026-04-01 至 2026-04-26', totalAmount: 15800, paidAmount: 5000, status: 'in_service', createdAt: '2026-03-01' },
-  { id: 'ORD002', customerName: '张先生', customerPhone: '139****6666', serviceType: '产后修复', servicePeriod: '2026-03-15 起', totalAmount: 8800, paidAmount: 8800, status: 'completed', createdAt: '2026-02-28' },
-  { id: 'ORD003', customerName: '刘女士', customerPhone: '137****5555', serviceType: '月嫂服务', servicePeriod: '2026-05-01 至 2026-05-26', totalAmount: 18800, paidAmount: 0, status: 'pending_payment', createdAt: '2026-02-25' },
+  { id: 'ORD001', customerName: '王女士', customerPhone: '138****8888', serviceType: '月嫂服务', servicePeriod: '2026-04-01 至 2026-04-26', totalAmount: 15800, paidAmount: 5000, status: 'in_service', createdAt: '2026-03-01', maternityConsultant: '张丽', careerConsultant: '陈明' },
+  { id: 'ORD002', customerName: '张先生', customerPhone: '139****6666', serviceType: '产后修复', servicePeriod: '2026-03-15 起', totalAmount: 8800, paidAmount: 8800, status: 'completed', createdAt: '2026-02-28', maternityConsultant: '刘婷', careerConsultant: '' },
+  { id: 'ORD003', customerName: '刘女士', customerPhone: '137****5555', serviceType: '月嫂服务', servicePeriod: '2026-05-01 至 2026-05-26', totalAmount: 18800, paidAmount: 0, status: 'pending_payment', createdAt: '2026-02-25', maternityConsultant: '张丽', careerConsultant: '王强' },
 ]
 
 const careerOrders: Order[] = [
-  { id: 'TRN001', customerName: '李小姐', customerPhone: '138****1234', serviceType: '月嫂培训', servicePeriod: '2026-04-01 至 2026-04-30', totalAmount: 5800, paidAmount: 5800, status: 'in_service', createdAt: '2026-03-01' },
-  { id: 'TRN002', customerName: '张女士', customerPhone: '139****5678', serviceType: '育婴师培训', servicePeriod: '2026-03-15 至 2026-04-15', totalAmount: 4800, paidAmount: 2400, status: 'pending_payment', createdAt: '2026-02-28' },
+  { id: 'TRN001', customerName: '李小姐', customerPhone: '138****1234', serviceType: '月嫂培训', servicePeriod: '2026-04-01 至 2026-04-30', totalAmount: 5800, paidAmount: 5800, status: 'in_service', createdAt: '2026-03-01', maternityConsultant: '赵敏', careerConsultant: '周洋' },
+  { id: 'TRN002', customerName: '张女士', customerPhone: '139****5678', serviceType: '育婴师培训', servicePeriod: '2026-03-15 至 2026-04-15', totalAmount: 4800, paidAmount: 2400, status: 'pending_payment', createdAt: '2026-02-28', careerConsultant: '周洋' },
 ]
 
 const statusMap: Record<string, { label: string; color: string }> = {
@@ -133,6 +136,12 @@ export function EmployeeOrdersPage({ employeeRole = 'maternity_consultant', onOp
                   <Badge className={`text-[10px] ${status.color}`}>{status.label}</Badge>
                 </div>
 
+                <OrderConsultantLines
+                  maternityConsultant={order.maternityConsultant}
+                  careerConsultant={order.careerConsultant}
+                  className="mb-1.5"
+                />
+
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <span>{order.servicePeriod}</span>
                   <span className="font-semibold text-foreground">¥{order.totalAmount.toLocaleString()}</span>
@@ -189,6 +198,14 @@ export function EmployeeOrdersPage({ employeeRole = 'maternity_consultant', onOp
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">服务周期</span>
                   <span className="text-sm font-medium">{selectedOrder.servicePeriod}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">母婴顾问</span>
+                  <span className="text-sm font-medium">{selectedOrder.maternityConsultant?.trim() ? selectedOrder.maternityConsultant : '—'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">职业顾问</span>
+                  <span className="text-sm font-medium">{selectedOrder.careerConsultant?.trim() ? selectedOrder.careerConsultant : '—'}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">订单金额</span>

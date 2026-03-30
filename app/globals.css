@@ -169,3 +169,25 @@
 .safe-area-top {
   padding-top: env(safe-area-inset-top, 44px);
 }
+
+/* 抽屉 / 详情键值行：左固定宽标签 + 右自适应内容左对齐，避免左右两极拉扯 */
+@layer components {
+  .drawer-kv-row {
+    @apply grid grid-cols-[8.5rem_minmax(0,1fr)] items-start gap-x-2.5 gap-y-0.5 sm:grid-cols-[9rem_minmax(0,1fr)];
+  }
+  .drawer-kv-row > :first-child {
+    @apply min-w-0 shrink-0 pt-0.5 break-words;
+  }
+  .drawer-kv-row > :last-child {
+    @apply min-w-0 text-left break-words;
+  }
+  .drawer-kv-row-head {
+    @apply mb-2 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3;
+  }
+  .drawer-kv-row-head > :first-child {
+    @apply min-w-0;
+  }
+  .drawer-kv-row-head > :last-child {
+    @apply shrink-0;
+  }
+}

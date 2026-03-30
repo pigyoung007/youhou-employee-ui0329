@@ -106,10 +106,15 @@ export function SignaturePad({ onClose, onComplete }: SignaturePadProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-foreground/60 backdrop-blur-sm flex items-end">
-      <div className="w-full bg-card rounded-t-3xl max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom duration-300">
+    <div className="fixed inset-0 z-50 flex justify-end">
+      <div
+        className="absolute inset-0 bg-foreground/60 backdrop-blur-sm"
+        onClick={onClose}
+        aria-hidden
+      />
+      <div className="relative flex h-dvh max-h-dvh w-full max-w-md flex-col overflow-hidden border-l bg-card shadow-xl animate-in slide-in-from-right duration-300">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+        <div className="flex shrink-0 items-center justify-between border-b border-border px-5 py-4">
           <div>
             <h3 className="text-lg font-bold text-foreground">电子签名</h3>
             <p className="text-xs text-muted-foreground mt-0.5">请在下方区域手写签名</p>
@@ -120,7 +125,7 @@ export function SignaturePad({ onClose, onComplete }: SignaturePadProps) {
         </div>
 
         {/* Content */}
-        <div className="p-5">
+        <div className="min-h-0 flex-1 overflow-y-auto p-5">
           {/* Notice */}
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4 flex items-start gap-2">
             <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />

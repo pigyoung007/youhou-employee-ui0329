@@ -287,7 +287,7 @@ export function ContractManagementPage({ onBack, onCreateOrder, contractPrefill,
 
       {/* Contract Detail Drawer */}
       <Sheet open={!!selectedContract} onOpenChange={() => setSelectedContract(null)}>
-        <SheetContent side="right" className="w-[90vw] max-w-md p-0 flex flex-col h-full">
+        <SheetContent side="right" className="w-[90vw] max-w-md flex flex-col py-0 h-full">
           {selectedContract && (
             <div className="flex flex-col h-full">
               <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-border shrink-0">
@@ -436,7 +436,7 @@ export function ContractManagementPage({ onBack, onCreateOrder, contractPrefill,
 
       {/* Reminder Drawer */}
       <Sheet open={showReminder} onOpenChange={setShowReminder}>
-        <SheetContent side="right" className="w-[85vw] max-w-sm p-0">
+        <SheetContent side="right" className="w-[85vw] max-w-sm py-0">
           <div className="px-4 py-4 space-y-4">
             <SheetTitle>发送催签提醒</SheetTitle>
 
@@ -466,7 +466,7 @@ export function ContractManagementPage({ onBack, onCreateOrder, contractPrefill,
 
       {/* Create Contract Sheet */}
       <Sheet open={showCreateContract} onOpenChange={setShowCreateContract}>
-        <SheetContent side="right" className="w-full max-w-md p-0 overflow-y-auto">
+        <SheetContent side="right" className="max-w-md w-full overflow-y-auto py-0">
           <div className="px-4 py-4 space-y-4">
             <div className="flex items-center justify-between">
               <SheetTitle>新建合同</SheetTitle>

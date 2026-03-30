@@ -15,6 +15,9 @@ import {
   ScanLine,
   Filter,
   ChevronDown,
+  HandHeart,
+  Home,
+  Users,
 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -27,6 +30,16 @@ import { cn } from "@/lib/utils"
 import { BookingModal } from "@/components/booking-modal"
 import { CaregiverDetail } from "@/components/caregiver-detail"
 import { PointsCenter } from "@/components/points-center"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { originToProvinceLabel } from "@/lib/employer-caregiver-display"
+import { StarRatingRow } from "@/components/employer/star-rating-row"
 
 
 const banners = [
@@ -82,7 +95,30 @@ const categories = [
     color: "bg-gradient-to-br from-violet-100 to-purple-50",
     iconColor: "text-violet-500",
   },
+  {
+    id: 5,
+    name: "养老护理师",
+    icon: HandHeart,
+    color: "bg-gradient-to-br from-sky-100 to-cyan-50",
+    iconColor: "text-sky-600",
+  },
+  {
+    id: 6,
+    name: "保姆",
+    icon: Home,
+    color: "bg-gradient-to-br from-lime-100 to-green-50",
+    iconColor: "text-lime-700",
+  },
+  {
+    id: 7,
+    name: "家庭陪伴师",
+    icon: Users,
+    color: "bg-gradient-to-br from-indigo-100 to-violet-50",
+    iconColor: "text-indigo-600",
+  },
 ]
+
+const COMING_SOON_SERVICES = new Set(["养老护理师", "保姆", "家庭陪伴师"])
 
 const caregivers = [
   {
@@ -98,6 +134,11 @@ const caregivers = [
     available: true,
     liked: false,
     serviceCount: 89,
+    age: 45,
+    education: "高中",
+    personality: "温和耐心",
+    specialty: "月子餐、新生儿护理",
+    goodReviewRate: "98%",
   },
   {
     id: 2,
@@ -112,6 +153,11 @@ const caregivers = [
     available: true,
     liked: true,
     serviceCount: 67,
+    age: 42,
+    education: "大专",
+    personality: "开朗细致",
+    specialty: "早教互动、辅食添加",
+    goodReviewRate: "97%",
   },
   {
     id: 3,
@@ -126,6 +172,11 @@ const caregivers = [
     available: false,
     liked: false,
     serviceCount: 156,
+    age: 48,
+    education: "中专",
+    personality: "沉稳可靠",
+    specialty: "双胞胎护理、产后康复",
+    goodReviewRate: "99%",
   },
 ]
 
@@ -136,17 +187,32 @@ const filterOptions = {
     { id: "chanhouxiufu", label: "产后修复师", checked: false },
     { id: "cuirushi", label: "催乳师", checked: false },
   ],
-  experience: [
-    { id: "1-3", label: "1-3年", checked: false },
-    { id: "3-5", label: "3-5年", checked: false },
-    { id: "5-8", label: "5-8年", checked: true },
-    { id: "8+", label: "8年以上", checked: false },
+  minRating: [
+    { id: "4.5", label: "4.5星及以上", checked: false },
+    { id: "4.8", label: "4.8星及以上", checked: false },
+    { id: "5.0", label: "5.0星", checked: false },
+  ],
+  ageRange: [
+    { id: "35-45", label: "35-45岁", checked: false },
+    { id: "45-55", label: "45-55岁", checked: false },
+    { id: "55+", label: "55岁以上", checked: false },
   ],
   education: [
     { id: "junior", label: "初中", checked: false },
     { id: "high", label: "高中", checked: true },
     { id: "college", label: "大专", checked: false },
     { id: "bachelor", label: "本科及以上", checked: false },
+  ],
+  personality: [
+    { id: "wenhe", label: "温和耐心", checked: false },
+    { id: "kaichen", label: "开朗细致", checked: false },
+    { id: "chenwen", label: "沉稳可靠", checked: false },
+  ],
+  specialtyPick: [
+    { id: "yuezi", label: "月子餐", checked: false },
+    { id: "xinshenger", label: "新生儿护理", checked: false },
+    { id: "zaojiao", label: "早教互动", checked: false },
+    { id: "shuangbao", label: "双胞胎", checked: false },
   ],
   origin: [
     { id: "sichuan", label: "四川", checked: false },
@@ -172,6 +238,7 @@ export function HomePage({ onServiceNavigate, onGoToServiceTab }: HomePageProps)
   const [showDetail, setShowDetail] = useState(false)
   const [unreadMessages, setUnreadMessages] = useState(3)
   const [showPoints, setShowPoints] = useState(false)
+  const [comingSoonOpen, setComingSoonOpen] = useState(false)
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -291,13 +358,20 @@ export function HomePage({ onServiceNavigate, onGoToServiceTab }: HomePageProps)
               return (
                 <button
                   key={cat.id}
-                  onClick={() => onServiceNavigate?.(cat.name)}
+                  type="button"
+                  onClick={() => {
+                    if (COMING_SOON_SERVICES.has(cat.name)) {
+                      setComingSoonOpen(true)
+                      return
+                    }
+                    onServiceNavigate?.(cat.name)
+                  }}
                   className="flex flex-col items-center gap-2 p-2 rounded-2xl hover:scale-105 transition-transform"
                 >
                   <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center shadow-sm", cat.color)}>
                     <Icon className={cn("w-7 h-7", cat.iconColor)} />
                   </div>
-                  <span className="text-xs font-medium text-foreground">{cat.name}</span>
+                  <span className="text-xs font-medium text-foreground text-center leading-tight">{cat.name}</span>
                 </button>
               )
             })}
@@ -370,8 +444,8 @@ export function HomePage({ onServiceNavigate, onGoToServiceTab }: HomePageProps)
                   筛选
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[85vw] max-w-sm h-full px-0">
-                <SheetHeader className="px-4 pb-3 border-b">
+              <SheetContent side="right" className="w-[85vw] max-w-sm h-full">
+                <SheetHeader className="border-b pb-3">
                   <div className="flex items-center justify-between">
                     <SheetTitle className="flex items-center gap-2">
                       <Filter className="w-5 h-5 text-primary" />
@@ -382,7 +456,7 @@ export function HomePage({ onServiceNavigate, onGoToServiceTab }: HomePageProps)
                     </Button>
                   </div>
                 </SheetHeader>
-                <div className="overflow-y-auto h-[calc(100vh-140px)] px-4 py-4 space-y-6">
+                <div className="min-h-0 flex-1 space-y-6 overflow-y-auto py-4">
                   {/* Service Type */}
                   <div>
                     <h4 className="font-semibold text-sm text-foreground mb-3">服务类型</h4>
@@ -406,11 +480,11 @@ export function HomePage({ onServiceNavigate, onGoToServiceTab }: HomePageProps)
                     </div>
                   </div>
 
-                  {/* Experience */}
+                  {/* 评价星级 */}
                   <div>
-                    <h4 className="font-semibold text-sm text-foreground mb-3">工作年限</h4>
-                    <div className="grid grid-cols-2 gap-2">
-                      {filters.experience.map((item) => (
+                    <h4 className="font-semibold text-sm text-foreground mb-3">评价星级</h4>
+                    <div className="grid grid-cols-1 gap-2">
+                      {filters.minRating.map((item) => (
                         <label
                           key={item.id}
                           className={cn(
@@ -420,7 +494,33 @@ export function HomePage({ onServiceNavigate, onGoToServiceTab }: HomePageProps)
                         >
                           <Checkbox
                             checked={item.checked}
-                            onCheckedChange={() => handleFilterChange("experience", item.id)}
+                            onCheckedChange={() => handleFilterChange("minRating", item.id)}
+                            className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                          />
+                          <span className="flex items-center gap-1 text-sm">
+                            {item.label}
+                            <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 年龄 */}
+                  <div>
+                    <h4 className="font-semibold text-sm text-foreground mb-3">年纪</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      {filters.ageRange.map((item) => (
+                        <label
+                          key={item.id}
+                          className={cn(
+                            "flex items-center gap-2 p-3 rounded-xl border-2 cursor-pointer transition-all",
+                            item.checked ? "border-primary bg-primary/5" : "border-border bg-card"
+                          )}
+                        >
+                          <Checkbox
+                            checked={item.checked}
+                            onCheckedChange={() => handleFilterChange("ageRange", item.id)}
                             className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                           />
                           <span className="text-sm">{item.label}</span>
@@ -476,9 +576,55 @@ export function HomePage({ onServiceNavigate, onGoToServiceTab }: HomePageProps)
                     </div>
                   </div>
 
+                  {/* 性格特征 */}
+                  <div>
+                    <h4 className="font-semibold text-sm text-foreground mb-3">性格特征</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      {filters.personality.map((item) => (
+                        <label
+                          key={item.id}
+                          className={cn(
+                            "flex items-center gap-2 p-3 rounded-xl border-2 cursor-pointer transition-all",
+                            item.checked ? "border-primary bg-primary/5" : "border-border bg-card"
+                          )}
+                        >
+                          <Checkbox
+                            checked={item.checked}
+                            onCheckedChange={() => handleFilterChange("personality", item.id)}
+                            className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                          />
+                          <span className="text-sm">{item.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 特长 */}
+                  <div>
+                    <h4 className="font-semibold text-sm text-foreground mb-3">特长</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      {filters.specialtyPick.map((item) => (
+                        <label
+                          key={item.id}
+                          className={cn(
+                            "flex items-center gap-2 p-3 rounded-xl border-2 cursor-pointer transition-all",
+                            item.checked ? "border-primary bg-primary/5" : "border-border bg-card"
+                          )}
+                        >
+                          <Checkbox
+                            checked={item.checked}
+                            onCheckedChange={() => handleFilterChange("specialtyPick", item.id)}
+                            className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                          />
+                          <span className="text-sm">{item.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
                   {/* Origin */}
                   <div>
-                    <h4 className="font-semibold text-sm text-foreground mb-3">户籍</h4>
+                    <h4 className="font-semibold text-sm text-foreground mb-3">籍贯（省）</h4>
                     <div className="grid grid-cols-2 gap-2">
                       {filters.origin.map((item) => (
                         <label
@@ -553,12 +699,13 @@ export function HomePage({ onServiceNavigate, onGoToServiceTab }: HomePageProps)
                     <div className="flex-1 p-3 flex flex-col justify-between min-w-0">
                       <div>
                         <div className="flex items-start justify-between">
-                          <div className="flex items-center gap-2">
+                          <div className="flex min-w-0 flex-col gap-1">
                             <h4 className="font-bold text-foreground text-base">{caregiver.name}</h4>
-                            <div className="flex items-center gap-0.5 bg-amber-50 px-1.5 py-0.5 rounded">
-                              <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                              <span className="text-xs font-semibold text-amber-600">{caregiver.rating}</span>
-                            </div>
+                            <StarRatingRow rating={caregiver.rating} />
+                            <p className="text-[11px] text-muted-foreground">
+                              服务好评{" "}
+                              <span className="font-semibold text-primary">{caregiver.goodReviewRate}</span>
+                            </p>
                           </div>
                           <button
                             onClick={(e) => {
@@ -577,13 +724,23 @@ export function HomePage({ onServiceNavigate, onGoToServiceTab }: HomePageProps)
                             />
                           </button>
                         </div>
-                        <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                          <span className="font-medium text-foreground">{caregiver.experience}年经验</span>
-                          <span className="w-1 h-1 bg-muted-foreground/50 rounded-full" />
-                          <span>{caregiver.origin}</span>
-                          <span className="w-1 h-1 bg-muted-foreground/50 rounded-full" />
+                        <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-muted-foreground">
+                          <span className="font-medium text-foreground">{caregiver.age}岁</span>
+                          <span className="text-border">|</span>
+                          <span>{caregiver.education}</span>
+                          <span className="text-border">|</span>
+                          <span className="flex items-center gap-0.5">
+                            <MapPin className="h-3 w-3 shrink-0" />
+                            {originToProvinceLabel(caregiver.origin)}
+                          </span>
+                          <span className="text-border">|</span>
                           <span>服务{caregiver.serviceCount}户</span>
                         </div>
+                        <p className="mt-1 text-[11px] leading-snug text-foreground">
+                          <span className="text-muted-foreground">性格</span> {caregiver.personality}
+                          <span className="mx-1 text-muted-foreground">·</span>
+                          <span className="text-muted-foreground">特长</span> {caregiver.specialty}
+                        </p>
                         <div className="flex flex-wrap gap-1.5 mt-2">
                           {caregiver.tags.slice(0, 3).map((tag, idx) => (
                             <Badge
@@ -599,17 +756,14 @@ export function HomePage({ onServiceNavigate, onGoToServiceTab }: HomePageProps)
                           ))}
                         </div>
                       </div>
-                      <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/50">
-                        <div className="text-primary font-bold text-lg">
-                          ¥{caregiver.price.toLocaleString()}
-                          <span className="text-xs font-normal text-muted-foreground">/月</span>
-                        </div>
+                      <div className="mt-2 flex items-center justify-between border-t border-border/50 pt-2">
+                        <span className="text-[11px] text-muted-foreground">薪资由顾问沟通，不向雇主公开展示</span>
                         <Button
                           size="sm"
                           className={cn(
-                            "h-8 rounded-full px-4",
+                            "h-8 shrink-0 rounded-full px-4",
                             caregiver.available
-                              ? "bg-primary hover:bg-primary/90 text-primary-foreground"
+                              ? "bg-primary text-primary-foreground hover:bg-primary/90"
                               : "bg-muted text-muted-foreground"
                           )}
                           disabled={!caregiver.available}
@@ -659,7 +813,19 @@ export function HomePage({ onServiceNavigate, onGoToServiceTab }: HomePageProps)
       {/* Points Center */}
       <PointsCenter open={showPoints} onClose={() => setShowPoints(false)} />
 
-
+      <Dialog open={comingSoonOpen} onOpenChange={setComingSoonOpen}>
+        <DialogContent className="max-w-sm rounded-2xl">
+          <DialogHeader>
+            <DialogTitle>敬请期待</DialogTitle>
+            <DialogDescription>该服务正在筹备中，开通后将在首页通知您。</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button className="w-full" onClick={() => setComingSoonOpen(false)}>
+              知道了
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

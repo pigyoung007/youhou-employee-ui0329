@@ -27,6 +27,8 @@ import { Slider } from "@/components/ui/slider"
 import { cn } from "@/lib/utils"
 import { BookingModal } from "@/components/booking-modal"
 import { SharePosterModal } from "@/components/share-poster-modal"
+import { originToProvinceLabel } from "@/lib/employer-caregiver-display"
+import { StarRatingRow } from "@/components/employer/star-rating-row"
 
 const filterTabs = ["全部", "住家育婴师", "白班育婴师", "早教师", "小儿推拿"]
 
@@ -48,6 +50,10 @@ const childcareWorkers = [
     type: "住家育婴师",
     certificates: ["高级育婴师证", "蒙氏教育证", "营养师证"],
     desc: "擅长0-3岁婴幼儿科学喂养与早期教育，蒙氏教育理念融入日常",
+    goodReviewRate: "98%",
+    education: "大专",
+    personality: "亲和有耐心",
+    specialty: "蒙氏早教、科学喂养",
   },
   {
     id: 2,
@@ -66,6 +72,10 @@ const childcareWorkers = [
     type: "白班育婴师",
     certificates: ["育婴师证", "感统训练师"],
     desc: "专注婴幼儿感统发展训练，每日定制适龄互动游戏方案",
+    goodReviewRate: "97%",
+    education: "本科",
+    personality: "活泼细致",
+    specialty: "感统训练、绘本阅读",
   },
   {
     id: 3,
@@ -84,6 +94,10 @@ const childcareWorkers = [
     type: "早教师",
     certificates: ["高级育婴师证", "早期教育指导师", "心理咨询师"],
     desc: "10年早期教育经验，擅长音乐启蒙与语言发展引导",
+    goodReviewRate: "99%",
+    education: "本科",
+    personality: "稳重专业",
+    specialty: "音乐启蒙、语言发展",
   },
   {
     id: 4,
@@ -102,6 +116,10 @@ const childcareWorkers = [
     type: "小儿推拿",
     certificates: ["小儿推拿师证", "中医保健师"],
     desc: "专业小儿推拿保健，调理积食、咳嗽、夜啼等常见问题",
+    goodReviewRate: "96%",
+    education: "中专",
+    personality: "手法娴熟",
+    specialty: "小儿推拿、体质调理",
   },
 ]
 
@@ -112,10 +130,31 @@ const filterOptions = {
     { id: "zaojiao", label: "早教师", checked: false },
     { id: "tuina", label: "小儿推拿", checked: false },
   ],
+  minRating: [
+    { id: "45", label: "4.5星及以上", checked: false },
+    { id: "48", label: "4.8星及以上", checked: false },
+    { id: "50", label: "5.0星", checked: false },
+  ],
   age: [
     { id: "25-35", label: "25-35岁", checked: false },
     { id: "35-45", label: "35-45岁", checked: false },
     { id: "45+", label: "45岁以上", checked: false },
+  ],
+  education: [
+    { id: "zhongzhuan", label: "中专", checked: false },
+    { id: "dazhuan", label: "大专", checked: false },
+    { id: "benke", label: "本科及以上", checked: false },
+  ],
+  personality: [
+    { id: "qin", label: "亲和有耐心", checked: false },
+    { id: "huo", label: "活泼细致", checked: false },
+    { id: "wen", label: "稳重专业", checked: false },
+  ],
+  specialtyPick: [
+    { id: "meng", label: "蒙氏早教", checked: false },
+    { id: "gan", label: "感统训练", checked: false },
+    { id: "yin", label: "音乐启蒙", checked: false },
+    { id: "tui", label: "小儿推拿", checked: false },
   ],
   availability: [
     { id: "available", label: "立即可派", checked: false },
@@ -211,28 +250,35 @@ export function ChildcareServicePage({ onBack, isGuest, onRegister }: ChildcareS
                       已认证
                     </Badge>
                   </div>
-                  <div className="flex items-center gap-1 mt-1">
-                    <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    <span className="font-semibold text-foreground">{selectedWorker.rating}</span>
-                    <span className="text-xs text-muted-foreground">({selectedWorker.reviews}条评价)</span>
+                  <StarRatingRow rating={selectedWorker.rating} className="mt-1" sizeClassName="h-4 w-4" />
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    服务好评 <span className="font-semibold text-teal-600">{selectedWorker.goodReviewRate}</span>
+                    <span className="mx-1">·</span>({selectedWorker.reviews}条评价)
+                  </p>
+                  <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
+                    <span className="text-foreground">{selectedWorker.age}岁</span>
+                    <span>·</span>
+                    <span>{selectedWorker.education}</span>
+                    <span>·</span>
+                    <span className="flex items-center gap-0.5">
+                      <MapPin className="h-3 w-3 shrink-0" />
+                      {originToProvinceLabel(selectedWorker.origin)}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                    <span>{selectedWorker.age}岁</span>
-                    <span>{"·"}</span>
-                    <span>{selectedWorker.workYears}年经验</span>
-                    <span>{"·"}</span>
-                    <MapPin className="w-3 h-3" />
-                    <span>{selectedWorker.origin}</span>
-                  </div>
+                  <p className="mt-1 text-xs leading-snug text-foreground">
+                    <span className="text-muted-foreground">性格</span> {selectedWorker.personality}
+                    <span className="mx-1 text-muted-foreground">·</span>
+                    <span className="text-muted-foreground">特长</span> {selectedWorker.specialty}
+                  </p>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground mt-3">{selectedWorker.desc}</p>
-              <div className="flex flex-wrap gap-1.5 mt-3">
+              <p className="mt-3 text-sm text-muted-foreground">{selectedWorker.desc}</p>
+              <div className="mt-3 flex flex-wrap gap-1.5">
                 {selectedWorker.tags.map((tag) => (
                   <Badge key={tag} variant="secondary" className="bg-teal-500/10 text-teal-700 text-xs">{tag}</Badge>
                 ))}
               </div>
-              <p className="text-lg font-bold text-teal-600 mt-3">{selectedWorker.salary}</p>
+              <p className="mt-3 text-sm text-muted-foreground">薪资不向雇主端展示，签约前由顾问沟通。</p>
             </CardContent>
           </Card>
         </div>
@@ -325,8 +371,8 @@ export function ChildcareServicePage({ onBack, isGuest, onRegister }: ChildcareS
             data={{
               name: selectedWorker.name,
               subtitle: selectedWorker.type,
-              desc: `${selectedWorker.workYears}年经验 | ${selectedWorker.origin} | ${selectedWorker.reviews}条好评`,
-              price: selectedWorker.salary,
+              desc: `${originToProvinceLabel(selectedWorker.origin)} | ${selectedWorker.goodReviewRate}服务好评 | ${selectedWorker.reviews}条评价`,
+              price: "面议",
               tags: selectedWorker.tags,
               avatar: selectedWorker.avatar,
               rating: selectedWorker.rating,
@@ -401,23 +447,37 @@ export function ChildcareServicePage({ onBack, isGuest, onRegister }: ChildcareS
                 </div>
                 <div className="flex-1 p-3 flex flex-col justify-between min-w-0">
                   <div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-bold text-foreground">{worker.name}</h3>
-                        <Badge className="bg-teal-100 text-teal-700 border-0 text-[10px]">{worker.type}</Badge>
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="font-bold text-foreground">{worker.name}</h3>
+                          <Badge className="border-0 bg-teal-100 text-[10px] text-teal-700">{worker.type}</Badge>
+                        </div>
+                        <StarRatingRow rating={worker.rating} className="mt-0.5" />
+                        <p className="mt-0.5 text-[10px] text-muted-foreground">
+                          服务好评 <span className="font-semibold text-teal-600">{worker.goodReviewRate}</span>
+                          <span className="mx-1">·</span>({worker.reviews}条评价)
+                        </p>
                       </div>
-                      <button onClick={(e) => { e.stopPropagation(); toggleLike(worker.id) }} className="p-1">
-                        <Heart className={cn("w-5 h-5", likedList.includes(worker.id) ? "fill-destructive text-destructive" : "text-muted-foreground")} />
+                      <button type="button" onClick={(e) => { e.stopPropagation(); toggleLike(worker.id) }} className="p-1">
+                        <Heart className={cn("h-5 w-5", likedList.includes(worker.id) ? "fill-destructive text-destructive" : "text-muted-foreground")} />
                       </button>
                     </div>
-                    <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                      <span>{worker.age}岁</span>
-                      <span>{"·"}</span>
-                      <span>{worker.workYears}年经验</span>
-                      <span>{"·"}</span>
-                      <MapPin className="w-3 h-3" />
-                      <span>{worker.origin}</span>
+                    <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-muted-foreground">
+                      <span className="text-foreground">{worker.age}岁</span>
+                      <span>·</span>
+                      <span>{worker.education}</span>
+                      <span>·</span>
+                      <span className="flex items-center gap-0.5">
+                        <MapPin className="h-3 w-3 shrink-0" />
+                        {originToProvinceLabel(worker.origin)}
+                      </span>
                     </div>
+                    <p className="mt-1 text-[10px] leading-snug text-foreground">
+                      <span className="text-muted-foreground">性格</span> {worker.personality}
+                      <span className="mx-1 text-muted-foreground">|</span>
+                      <span className="text-muted-foreground">特长</span> {worker.specialty}
+                    </p>
                     <div className="flex flex-wrap gap-1 mt-2">
                       {worker.tags.slice(0, 3).map((tag, idx) => (
                         <span key={tag} className={cn("px-1.5 py-0.5 text-[10px] rounded", idx === 0 ? "bg-teal-500/10 text-teal-700" : "bg-muted text-muted-foreground")}>
@@ -426,14 +486,8 @@ export function ChildcareServicePage({ onBack, isGuest, onRegister }: ChildcareS
                       ))}
                     </div>
                   </div>
-                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/50">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-teal-600">{worker.salary}</span>
-                      <div className="flex items-center gap-0.5">
-                        <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                        <span className="text-xs text-foreground font-medium">{worker.rating}</span>
-                      </div>
-                    </div>
+                  <div className="mt-2 flex items-center justify-between border-t border-border/50 pt-2">
+                    <span className="text-[10px] text-muted-foreground">薪资由顾问沟通</span>
                     <Button
                       size="sm"
                       className="h-7 rounded-full px-3 text-xs bg-teal-500 hover:bg-teal-600 text-white"
@@ -457,17 +511,19 @@ export function ChildcareServicePage({ onBack, isGuest, onRegister }: ChildcareS
       </div>
 
       <Sheet open={filterOpen} onOpenChange={setFilterOpen}>
-        <SheetContent side="right" className="w-[85vw] max-w-sm h-full px-0">
-          <SheetHeader className="px-4 pb-3 border-b">
-            <div className="flex items-center justify-between">
-              <SheetTitle className="flex items-center gap-2">
-                <Filter className="w-5 h-5 text-teal-600" />
-                筛选条件
+        <SheetContent side="right" className="h-full w-[85vw] max-w-sm">
+          <SheetHeader className="border-b pb-3">
+            <div className="drawer-kv-row-head">
+              <SheetTitle className="flex min-w-0 items-center gap-2">
+                <Filter className="h-5 w-5 shrink-0 text-teal-600" />
+                <span className="break-words">筛选条件</span>
               </SheetTitle>
-              <Button variant="ghost" size="sm" onClick={() => setFilters(filterOptions)} className="text-muted-foreground h-auto p-0">重置</Button>
+              <Button variant="ghost" size="sm" onClick={() => setFilters(filterOptions)} className="h-auto shrink-0 p-0 text-muted-foreground">
+                重置
+              </Button>
             </div>
           </SheetHeader>
-          <div className="overflow-y-auto h-[calc(100vh-140px)] px-4 py-3 space-y-4">
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto py-3">
             <div>
               <h4 className="font-semibold text-xs text-foreground mb-2">服务类型</h4>
               <div className="grid grid-cols-2 gap-1.5">
@@ -480,11 +536,58 @@ export function ChildcareServicePage({ onBack, isGuest, onRegister }: ChildcareS
               </div>
             </div>
             <div>
-              <h4 className="font-semibold text-xs text-foreground mb-2">年龄区间</h4>
+              <h4 className="font-semibold text-xs text-foreground mb-2">评价星级</h4>
+              <div className="grid grid-cols-1 gap-1.5">
+                {filters.minRating.map((item) => (
+                  <label key={item.id} className={cn("flex items-center gap-1.5 p-2 rounded-lg border cursor-pointer transition-all text-xs", item.checked ? "border-teal-500 bg-teal-500/5" : "border-border bg-card")}>
+                    <Checkbox checked={item.checked} onCheckedChange={() => handleFilterChange("minRating", item.id)} className="w-3.5 h-3.5 data-[state=checked]:bg-teal-500 data-[state=checked]:border-teal-500" />
+                    <span className="flex items-center gap-1">
+                      {item.label}
+                      <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h4 className="font-semibold text-xs text-foreground mb-2">年纪</h4>
               <div className="grid grid-cols-3 gap-1.5">
                 {filters.age.map((item) => (
                   <label key={item.id} className={cn("flex items-center gap-1.5 p-2 rounded-lg border cursor-pointer transition-all text-xs", item.checked ? "border-teal-500 bg-teal-500/5" : "border-border bg-card")}>
                     <Checkbox checked={item.checked} onCheckedChange={() => handleFilterChange("age", item.id)} className="w-3.5 h-3.5 data-[state=checked]:bg-teal-500 data-[state=checked]:border-teal-500" />
+                    <span>{item.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h4 className="font-semibold text-xs text-foreground mb-2">学历</h4>
+              <div className="grid grid-cols-2 gap-1.5">
+                {filters.education.map((item) => (
+                  <label key={item.id} className={cn("flex items-center gap-1.5 p-2 rounded-lg border cursor-pointer transition-all text-xs", item.checked ? "border-teal-500 bg-teal-500/5" : "border-border bg-card")}>
+                    <Checkbox checked={item.checked} onCheckedChange={() => handleFilterChange("education", item.id)} className="w-3.5 h-3.5 data-[state=checked]:bg-teal-500 data-[state=checked]:border-teal-500" />
+                    <span>{item.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h4 className="font-semibold text-xs text-foreground mb-2">性格特征</h4>
+              <div className="grid grid-cols-2 gap-1.5">
+                {filters.personality.map((item) => (
+                  <label key={item.id} className={cn("flex items-center gap-1.5 p-2 rounded-lg border cursor-pointer transition-all text-xs", item.checked ? "border-teal-500 bg-teal-500/5" : "border-border bg-card")}>
+                    <Checkbox checked={item.checked} onCheckedChange={() => handleFilterChange("personality", item.id)} className="w-3.5 h-3.5 data-[state=checked]:bg-teal-500 data-[state=checked]:border-teal-500" />
+                    <span>{item.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h4 className="font-semibold text-xs text-foreground mb-2">特长</h4>
+              <div className="grid grid-cols-2 gap-1.5">
+                {filters.specialtyPick.map((item) => (
+                  <label key={item.id} className={cn("flex items-center gap-1.5 p-2 rounded-lg border cursor-pointer transition-all text-xs", item.checked ? "border-teal-500 bg-teal-500/5" : "border-border bg-card")}>
+                    <Checkbox checked={item.checked} onCheckedChange={() => handleFilterChange("specialtyPick", item.id)} className="w-3.5 h-3.5 data-[state=checked]:bg-teal-500 data-[state=checked]:border-teal-500" />
                     <span>{item.label}</span>
                   </label>
                 ))}
@@ -502,7 +605,7 @@ export function ChildcareServicePage({ onBack, isGuest, onRegister }: ChildcareS
               </div>
             </div>
             <div>
-              <h4 className="font-semibold text-xs text-foreground mb-2">籍贯</h4>
+              <h4 className="font-semibold text-xs text-foreground mb-2">籍贯（省）</h4>
               <div className="grid grid-cols-4 gap-1.5">
                 {filters.origin.map((item) => (
                   <label key={item.id} className={cn("flex items-center gap-1 p-2 rounded-lg border cursor-pointer transition-all text-xs", item.checked ? "border-teal-500 bg-teal-500/5" : "border-border bg-card")}>
@@ -514,7 +617,7 @@ export function ChildcareServicePage({ onBack, isGuest, onRegister }: ChildcareS
             </div>
             <div>
               <h4 className="font-semibold text-xs text-foreground mb-2">
-                薪资区间
+                预算区间
                 <span className="font-normal text-teal-600 ml-2 text-xs">¥{priceRange[0].toLocaleString()} - ¥{priceRange[1].toLocaleString()}</span>
               </h4>
               <div className="px-1">

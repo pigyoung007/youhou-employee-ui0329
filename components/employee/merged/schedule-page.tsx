@@ -293,7 +293,7 @@ export function SchedulePage({ onBack }: SchedulePageProps) {
 
       {/* Event Detail Drawer */}
       <Sheet open={!!selectedEvent} onOpenChange={() => setSelectedEvent(null)}>
-        <SheetContent side="right" className="w-[85vw] max-w-sm p-0 flex flex-col h-auto max-h-screen">
+        <SheetContent side="right" className="w-[85vw] max-w-sm flex flex-col py-0 h-auto max-h-screen">
           <div className="flex flex-col">
             <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-border">
               <SheetTitle className="text-base">日程详情</SheetTitle>
@@ -357,7 +357,7 @@ export function SchedulePage({ onBack }: SchedulePageProps) {
 
       {/* Add Event Drawer */}
       <Sheet open={showAddEvent} onOpenChange={setShowAddEvent}>
-        <SheetContent side="right" className="w-[90vw] max-w-md p-0 flex flex-col h-full">
+        <SheetContent side="right" className="w-[90vw] max-w-md flex flex-col py-0 h-full">
           <div className="flex flex-col h-full">
             <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-border shrink-0">
               <SheetTitle className="text-base">新建日程</SheetTitle>

@@ -4,17 +4,13 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import {
   Clock, MapPin, Camera, Upload, LogIn, LogOut, Baby, Heart,
-  Calendar, ChevronRight, CheckCircle2, FileText, ClipboardList,
-  Phone, Star,
+  CheckCircle2, FileText, ClipboardList,
 } from "lucide-react"
 
 // Domestic Worker Workbench Data (monthly live-in care)
@@ -42,39 +38,10 @@ const punchRecords = [
   { date: "2025-02-18", checkIn: "07:50", checkOut: "20:00", location: "金凤区瑞银中心A座" },
 ]
 
-// Technician Workbench Data (visit-based services)
-const todayServices = [
-  {
-    id: 1, serviceName: "催乳通乳", customerName: "赵女士", phone: "131****4567",
-    serviceDate: "2025-02-20", serviceTime: "10:00-11:30",
-    address: "金凤区阅海万家C区8-1-301", status: "upcoming" as const,
-    items: [{ name: "精油", quantity: 1 }, { name: "热敷包", quantity: 2 }],
-  },
-  {
-    id: 2, serviceName: "产后修复", customerName: "孙女士", phone: "132****8901",
-    serviceDate: "2025-02-20", serviceTime: "14:00-15:30",
-    address: "兴庆区丽景街168号", status: "upcoming" as const,
-    items: [{ name: "修复仪", quantity: 1 }, { name: "腹带", quantity: 1 }],
-  },
-]
-
-const historyServices = [
-  {
-    id: 10, serviceName: "小儿推拿", customerName: "周女士", phone: "130****2345",
-    serviceDate: "2025-02-19", serviceTime: "09:00-10:00",
-    address: "西夏区怀远路56号", status: "completed" as const,
-    items: [{ name: "推拿油", quantity: 1 }],
-  },
-]
-
 export function TalentWorkbenchPage() {
-  const [workMode, setWorkMode] = useState<"domestic" | "technician">("domestic")
   const [showDailyLog, setShowDailyLog] = useState(false)
   const [showMealUpload, setShowMealUpload] = useState(false)
   const [showPunchRecords, setShowPunchRecords] = useState(false)
-  const [showServiceDetail, setShowServiceDetail] = useState(false)
-  const [showServiceLog, setShowServiceLog] = useState(false)
-  const [selectedService, setSelectedService] = useState<(typeof todayServices)[0] | null>(null)
   const [babyLog, setBabyLog] = useState({ feedCount: "", diaperWet: "", diaperDirty: "", sleepTotal: "", temperature: "", weight: "", note: "" })
   const [motherLog, setMotherLog] = useState({ recovery: "", mood: "", note: "" })
 
@@ -83,30 +50,13 @@ export function TalentWorkbenchPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-gradient-to-r from-amber-500 to-orange-500 pt-4 pb-4 px-4 safe-area-top">
-        <div className="flex items-center justify-between">
-          <h1 className="text-lg font-bold text-white">工作台</h1>
-          {/* Work Mode Toggle */}
-          <div className="flex bg-white/20 rounded-lg p-0.5">
-            <button
-              onClick={() => setWorkMode("domestic")}
-              className={`px-3 py-1 text-xs rounded-md transition-colors ${workMode === "domestic" ? "bg-white text-amber-600 font-medium" : "text-white"}`}
-            >
-              住家
-            </button>
-            <button
-              onClick={() => setWorkMode("technician")}
-              className={`px-3 py-1 text-xs rounded-md transition-colors ${workMode === "technician" ? "bg-white text-amber-600 font-medium" : "text-white"}`}
-            >
-              技师
-            </button>
-          </div>
-        </div>
+      <div className="safe-area-top bg-gradient-to-r from-amber-500 to-orange-500 px-4 pb-4 pt-4">
+        <h1 className="text-lg font-bold text-white">工作台</h1>
+        <p className="mt-0.5 text-xs text-white/85">住家服务履约与记录</p>
       </div>
 
-      <main className="px-4 py-4 space-y-4 pb-24">
-        {workMode === "domestic" ? (
-          <>
+      <main className="space-y-4 px-4 py-4 pb-24">
+        <>
             {/* Current Service Info */}
             <Card className="border-0 shadow-sm bg-gradient-to-r from-amber-50 to-orange-50">
               <CardContent className="p-4">
@@ -185,78 +135,14 @@ export function TalentWorkbenchPage() {
                 </CardContent>
               </Card>
             </div>
-          </>
-        ) : (
-          /* Technician Workbench */
-          <>
-            {/* Today Stats */}
-            <div className="grid grid-cols-3 gap-3">
-              <Card className="border-0 shadow-sm"><CardContent className="p-3 text-center"><p className="text-xl font-bold text-teal-600">{todayServices.length}</p><p className="text-xs text-muted-foreground">今日预约</p></CardContent></Card>
-              <Card className="border-0 shadow-sm"><CardContent className="p-3 text-center"><p className="text-xl font-bold text-amber-600">0</p><p className="text-xs text-muted-foreground">已完成</p></CardContent></Card>
-              <Card className="border-0 shadow-sm"><CardContent className="p-3 text-center"><p className="text-xl font-bold text-green-600">¥830</p><p className="text-xs text-muted-foreground">今日收入</p></CardContent></Card>
-            </div>
-
-            {/* Service List */}
-            <Tabs defaultValue="today">
-              <TabsList className="grid w-full grid-cols-2 bg-muted/50 h-9">
-                <TabsTrigger value="today" className="text-xs">今日服务</TabsTrigger>
-                <TabsTrigger value="history" className="text-xs">历史记录</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="today" className="mt-4 space-y-3">
-                {todayServices.map((svc) => (
-                  <Card key={svc.id} className="border-0 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
-                    onClick={() => { setSelectedService(svc); setShowServiceDetail(true) }}>
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <h4 className="font-semibold text-foreground">{svc.serviceName}</h4>
-                          <p className="text-xs text-muted-foreground">{svc.customerName}</p>
-                        </div>
-                        <Badge className="bg-amber-100 text-amber-700 text-[10px]">待服务</Badge>
-                      </div>
-                      <div className="space-y-1 text-xs text-muted-foreground">
-                        <div className="flex items-center gap-2"><Clock className="w-3 h-3" />{svc.serviceTime}</div>
-                        <div className="flex items-center gap-2"><MapPin className="w-3 h-3" />{svc.address}</div>
-                      </div>
-                      <div className="flex gap-2 mt-3">
-                        <Button variant="outline" className="flex-1 bg-transparent" size="sm">导航</Button>
-                        <Button className="flex-1 bg-teal-500 hover:bg-teal-600" size="sm">开始服务</Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </TabsContent>
-
-              <TabsContent value="history" className="mt-4 space-y-3">
-                {historyServices.map((svc) => (
-                  <Card key={svc.id} className="border-0 shadow-sm">
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <h4 className="font-semibold text-foreground">{svc.serviceName}</h4>
-                          <p className="text-xs text-muted-foreground">{svc.customerName} | {svc.serviceDate}</p>
-                        </div>
-                        <Badge className="bg-green-100 text-green-700 text-[10px]">已完成</Badge>
-                      </div>
-                      <Button variant="ghost" className="w-full mt-2 text-xs text-muted-foreground" size="sm"
-                        onClick={() => { setSelectedService(svc as any); setShowServiceLog(true) }}>
-                        填写服务日志 <ChevronRight className="w-3 h-3 ml-1" />
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </TabsContent>
-            </Tabs>
-          </>
-        )}
+        </>
       </main>
 
       {/* Daily Log Sheet (Domestic) */}
       <Sheet open={showDailyLog} onOpenChange={setShowDailyLog}>
-        <SheetContent side="bottom" className="h-[75vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-3 border-b border-border"><SheetTitle className="text-base">今日护理日报</SheetTitle></SheetHeader>
-          <div className="py-3 space-y-4 overflow-y-auto h-[calc(75vh-100px)]">
+          <div className="flex-1 min-h-0 py-3 space-y-4 overflow-y-auto">
             <div>
               <div className="flex items-center gap-2 mb-3"><Baby className="w-5 h-5 text-blue-500" /><h3 className="font-semibold text-foreground">宝宝护理记录</h3></div>
               <div className="space-y-4">
@@ -290,7 +176,7 @@ export function TalentWorkbenchPage() {
 
       {/* Meal Upload Sheet */}
       <Sheet open={showMealUpload} onOpenChange={setShowMealUpload}>
-        <SheetContent side="bottom" className="h-[60vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border"><SheetTitle>上传餐食照片</SheetTitle></SheetHeader>
           <div className="py-4 space-y-4">
             <div className="grid grid-cols-2 gap-3">
@@ -312,9 +198,9 @@ export function TalentWorkbenchPage() {
 
       {/* Punch Records Sheet */}
       <Sheet open={showPunchRecords} onOpenChange={setShowPunchRecords}>
-        <SheetContent side="bottom" className="h-[70vh] rounded-t-2xl">
+        <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-4 border-b border-border"><SheetTitle>打卡记录</SheetTitle></SheetHeader>
-          <div className="py-4 space-y-3 overflow-y-auto h-[calc(70vh-100px)]">
+          <div className="flex-1 min-h-0 py-4 space-y-3 overflow-y-auto">
             {punchRecords.map((record, i) => (
               <Card key={i} className="border-0 shadow-sm">
                 <CardContent className="p-3">
@@ -331,78 +217,6 @@ export function TalentWorkbenchPage() {
         </SheetContent>
       </Sheet>
 
-      {/* Service Detail Dialog (Technician) */}
-      <Dialog open={showServiceDetail} onOpenChange={setShowServiceDetail}>
-        <DialogContent className="max-w-sm w-[92vw] max-h-[80vh] rounded-xl">
-          <DialogHeader><DialogTitle>服务详情</DialogTitle></DialogHeader>
-          {selectedService && (
-            <ScrollArea className="max-h-[60vh]">
-              <div className="space-y-4">
-                <Card className="border">
-                  <CardHeader className="pb-2"><CardTitle className="text-base">客户信息</CardTitle></CardHeader>
-                  <CardContent className="space-y-2 text-sm">
-                    <div className="flex justify-between"><span className="text-muted-foreground">客户姓名</span><span>{selectedService.customerName}</span></div>
-                    <div className="flex justify-between"><span className="text-muted-foreground">联系电话</span><span>{selectedService.phone}</span></div>
-                    <div className="flex justify-between"><span className="text-muted-foreground">服务地址</span><span className="text-right max-w-[60%]">{selectedService.address}</span></div>
-                  </CardContent>
-                </Card>
-                <Card className="border">
-                  <CardHeader className="pb-2"><CardTitle className="text-base">服务信息</CardTitle></CardHeader>
-                  <CardContent className="space-y-2 text-sm">
-                    <div className="flex justify-between"><span className="text-muted-foreground">服务项目</span><span>{selectedService.serviceName}</span></div>
-                    <div className="flex justify-between"><span className="text-muted-foreground">服务日期</span><span>{selectedService.serviceDate}</span></div>
-                    <div className="flex justify-between"><span className="text-muted-foreground">服务时间</span><span>{selectedService.serviceTime}</span></div>
-                  </CardContent>
-                </Card>
-                <Card className="border">
-                  <CardHeader className="pb-2"><CardTitle className="text-base">耗材使用</CardTitle></CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      {selectedService.items.map((item, i) => (
-                        <div key={i} className="flex justify-between text-sm"><span className="text-muted-foreground">{item.name}</span><span>x{item.quantity}</span></div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </ScrollArea>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Service Log Dialog (Technician) */}
-      <Dialog open={showServiceLog} onOpenChange={setShowServiceLog}>
-        <DialogContent className="max-w-sm w-[92vw] max-h-[80vh] rounded-xl">
-          <DialogHeader><DialogTitle>填写服务日志</DialogTitle></DialogHeader>
-          {selectedService && (
-            <ScrollArea className="max-h-[60vh]">
-              <div className="space-y-4">
-                <div className="bg-muted/50 rounded-lg p-3">
-                  <p className="text-sm font-medium">{selectedService.customerName} - {selectedService.serviceName}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{selectedService.serviceDate} {selectedService.serviceTime}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">服务记录</label>
-                  <textarea className="w-full h-24 p-3 border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-teal-500/20" placeholder="请填写本次服务的详细记录..." />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">客户反馈</label>
-                  <textarea className="w-full h-20 p-3 border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-teal-500/20" placeholder="请记录客户的反馈意见..." />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">服务照片</label>
-                  <div className="flex gap-2">
-                    <button className="w-20 h-20 border-2 border-dashed rounded-lg flex flex-col items-center justify-center text-muted-foreground hover:border-teal-500 hover:text-teal-600 transition-colors">
-                      <Camera className="w-6 h-6" /><span className="text-xs mt-1">添加</span>
-                    </button>
-                  </div>
-                </div>
-                <Button className="w-full bg-teal-500 hover:bg-teal-600"><CheckCircle2 className="w-4 h-4 mr-2" />提交日志</Button>
-              </div>
-            </ScrollArea>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
