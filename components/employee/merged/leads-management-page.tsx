@@ -425,11 +425,6 @@ export function LeadsManagementPage({ employeeRole = 'maternity_consultant', onB
               }
             : undefined
         }
-        availableArchives={
-          selectedLead?.serviceType === 'training'
-            ? ['customer', 'student']
-            : ['customer', 'domestic']
-        }
         customer={selectedLead ? {
           id: selectedLead.id,
           name: selectedLead.name,

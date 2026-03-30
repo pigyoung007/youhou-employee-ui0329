@@ -224,13 +224,6 @@ export function MergedLeadsPage({ onNewOrder, onNewReceipt }: MergedLeadsPagePro
               }
             : undefined
         }
-        availableArchives={
-          selectedLead?.type === 'training'
-            ? ['customer', 'student']
-            : selectedLead?.type === 'employer'
-              ? ['customer', 'domestic']
-              : ['customer', 'student', 'domestic']
-        }
         customer={selectedLead ? {
           id: String(selectedLead.id),
           name: selectedLead.name,
