@@ -1,6 +1,6 @@
 "use client"
 
-import { Home, BookOpen, Briefcase, User, LayoutGrid } from "lucide-react"
+import { Home, BookOpen, Briefcase, User, LayoutGrid, ShoppingBag } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface TalentBottomNavProps {
@@ -15,6 +15,7 @@ export function TalentBottomNav({ activeTab, onTabChange, onBackToEntry }: Talen
     { id: "home", label: "首页", icon: Home },
     { id: "learning", label: "学习", icon: BookOpen },
     { id: "workbench", label: "工作台", icon: Briefcase },
+    { id: "orders-pool", label: "接单", icon: ShoppingBag },
     { id: "profile", label: "我的", icon: User },
   ]
 

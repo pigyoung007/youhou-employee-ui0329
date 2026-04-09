@@ -18,6 +18,8 @@ import {
   MessageCircle,
   X,
   Coins,
+  ShoppingBag,
+  AlertTriangle,
 } from "lucide-react"
 import { PointsCenter } from "@/components/points-center"
 import { Card, CardContent } from "@/components/ui/card"
@@ -27,12 +29,23 @@ import { Badge } from "@/components/ui/badge"
 const menuItems = [
   {
     id: "orders",
-    icon: FileText,
+    icon: ShoppingBag,
     label: "订单管理",
     desc: "查看全部订单",
     badge: "3",
     color: "text-primary",
     bgColor: "bg-gradient-to-br from-orange-100 to-amber-50",
+    navigable: true,
+  },
+  {
+    id: "contracts",
+    icon: FileText,
+    label: "合同管理",
+    desc: "查看和签署合同",
+    badge: "1",
+    color: "text-blue-600",
+    bgColor: "bg-gradient-to-br from-blue-100 to-sky-50",
+    navigable: true,
   },
   {
     id: "caregivers",
@@ -41,6 +54,25 @@ const menuItems = [
     desc: "当前服务的阿姨档案",
     color: "text-teal-600",
     bgColor: "bg-gradient-to-br from-teal-100 to-emerald-50",
+    navigable: false,
+  },
+  {
+    id: "reviews",
+    icon: Star,
+    label: "我的评价",
+    desc: "已提交和待提交的评价",
+    color: "text-violet-600",
+    bgColor: "bg-gradient-to-br from-violet-100 to-purple-50",
+    navigable: true,
+  },
+  {
+    id: "complaints",
+    icon: AlertTriangle,
+    label: "投诉建议",
+    desc: "提交投诉或查看处理进度",
+    color: "text-rose-600",
+    bgColor: "bg-gradient-to-br from-rose-100 to-pink-50",
+    navigable: true,
   },
   {
     id: "settings",
@@ -49,6 +81,7 @@ const menuItems = [
     desc: "账号与隐私设置、修改密码",
     color: "text-slate-600",
     bgColor: "bg-gradient-to-br from-slate-100 to-gray-50",
+    navigable: false,
   },
   {
     id: "help",
@@ -57,6 +90,7 @@ const menuItems = [
     desc: "常见问题解答与联系客服",
     color: "text-slate-600",
     bgColor: "bg-gradient-to-br from-slate-100 to-gray-50",
+    navigable: false,
   },
 ]
 
@@ -67,20 +101,20 @@ const orderStats = [
   { label: "已完成", value: 8, color: "text-foreground" },
 ]
 
-const memberBenefits = [
-  { icon: Star, label: "专享9折", active: true },
-  { icon: Crown, label: "优先预约", active: true },
-  { icon: Gift, label: "积分翻倍", active: true },
-  { icon: Shield, label: "专属客服", active: true },
-]
-
 interface ProfilePageProps {
   onLogout?: () => void
+  onNavigate?: (target: string) => void
 }
 
-export function ProfilePage({ onLogout }: ProfilePageProps) {
+export function ProfilePage({ onLogout, onNavigate }: ProfilePageProps) {
   const [showBenefits, setShowBenefits] = useState(false)
   const [showPoints, setShowPoints] = useState(false)
+
+  const handleMenuClick = (id: string, navigable: boolean) => {
+    if (navigable && onNavigate) {
+      onNavigate(id)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -140,6 +174,7 @@ export function ProfilePage({ onLogout }: ProfilePageProps) {
                 <button
                   key={stat.label}
                   className="flex flex-col items-center gap-1 py-5 hover:bg-muted/50 transition-colors relative"
+                  onClick={() => onNavigate?.("orders")}
                 >
                   <span className={`text-2xl font-bold ${stat.color}`}>{stat.value}</span>
                   <span className="text-xs text-muted-foreground">{stat.label}</span>
@@ -200,7 +235,10 @@ export function ProfilePage({ onLogout }: ProfilePageProps) {
               <p className="text-xs font-medium text-foreground">邀请有礼</p>
             </CardContent>
           </Card>
-          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+          <Card
+            className="border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+            onClick={() => onNavigate?.("reviews")}
+          >
             <CardContent className="p-3 text-center">
               <div className="w-10 h-10 mx-auto bg-gradient-to-br from-violet-100 to-purple-50 rounded-xl flex items-center justify-center mb-2">
                 <Star className="w-5 h-5 text-violet-500" />
@@ -227,6 +265,7 @@ export function ProfilePage({ onLogout }: ProfilePageProps) {
                 <button
                   key={item.id}
                   className="w-full flex items-center gap-3 px-4 py-4 hover:bg-muted/50 transition-colors relative"
+                  onClick={() => handleMenuClick(item.id, item.navigable)}
                 >
                   <div className={`w-10 h-10 rounded-xl ${item.bgColor} flex items-center justify-center`}>
                     <Icon className={`w-5 h-5 ${item.color}`} />
@@ -260,9 +299,8 @@ export function ProfilePage({ onLogout }: ProfilePageProps) {
           退出登录
         </Button>
 
-        {/* Footer */}
-        <p className="text-center text-xs text-muted-foreground pt-2 pb-4">优厚家庭服务 v1.0.0</p>
-</main>
+        <p className="text-center text-xs text-muted-foreground pt-2 pb-4">优厚家庭服务 v2.0.0</p>
+      </main>
 
       {/* Points Center */}
       <PointsCenter open={showPoints} onClose={() => setShowPoints(false)} />
@@ -280,7 +318,6 @@ export function ProfilePage({ onLogout }: ProfilePageProps) {
             </div>
 
             <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5">
-              {/* Current Level */}
               <Card className="border-0 bg-gradient-to-r from-amber-100 via-orange-100 to-amber-50 overflow-hidden">
                 <CardContent className="p-4 relative">
                   <div className="flex items-center gap-4">
@@ -296,16 +333,15 @@ export function ProfilePage({ onLogout }: ProfilePageProps) {
                 </CardContent>
               </Card>
 
-              {/* Benefits List */}
               <div className="space-y-3">
                 <h4 className="font-semibold text-foreground">专享权益</h4>
                 {[
-                  { icon: Star, title: "服务折扣", desc: "所有服务享受9折优惠", active: true },
-                  { icon: Crown, title: "优先预约", desc: "热门阿姨优先选择权", active: true },
-                  { icon: Gift, title: "积分翻倍", desc: "消费积分双倍累积", active: true },
-                  { icon: Shield, title: "专属客服", desc: "一对一VIP顾问服务", active: true },
-                  { icon: MessageCircle, title: "免费咨询", desc: "无限次在线育儿咨询", active: true },
-                  { icon: Receipt, title: "生日礼券", desc: "生日当月专属优惠券", active: true },
+                  { icon: Star, title: "服务折扣", desc: "所有服务享受9折优惠" },
+                  { icon: Crown, title: "优先预约", desc: "热门阿姨优先选择权" },
+                  { icon: Gift, title: "积分翻倍", desc: "消费积分双倍累积" },
+                  { icon: Shield, title: "专属客服", desc: "一对一VIP顾问服务" },
+                  { icon: MessageCircle, title: "免费咨询", desc: "无限次在线育儿咨询" },
+                  { icon: Receipt, title: "生日礼券", desc: "生日当月专属优惠券" },
                 ].map((benefit) => {
                   const Icon = benefit.icon
                   return (
@@ -323,7 +359,6 @@ export function ProfilePage({ onLogout }: ProfilePageProps) {
                 })}
               </div>
 
-              {/* Upgrade Hint */}
               <Card className="border-0 bg-gradient-to-r from-violet-100 to-purple-50">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">

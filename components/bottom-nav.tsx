@@ -1,11 +1,11 @@
 "use client"
 
-import { Home, Briefcase, User, LayoutGrid, ShoppingBag, FileText } from "lucide-react"
+import { Home, Briefcase, User, LayoutGrid } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface BottomNavProps {
-  activeTab: "home" | "service" | "orders" | "contracts" | "profile"
-  onTabChange: (tab: "home" | "service" | "orders" | "contracts" | "profile") => void
+  activeTab: "home" | "service" | "profile"
+  onTabChange: (tab: "home" | "service" | "profile") => void
   onBackToEntry?: () => void
 }
 
@@ -13,8 +13,6 @@ export function BottomNav({ activeTab, onTabChange, onBackToEntry }: BottomNavPr
   const tabs = [
     { id: "home" as const, label: "首页", icon: Home },
     { id: "service" as const, label: "服务", icon: Briefcase },
-    { id: "orders" as const, label: "订单", icon: ShoppingBag },
-    { id: "contracts" as const, label: "合同", icon: FileText },
     { id: "profile" as const, label: "我的", icon: User },
   ]
 

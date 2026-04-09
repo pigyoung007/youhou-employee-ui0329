@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Search, ChevronRight, Zap } from 'lucide-react'
+import { Search, ChevronRight, ChevronLeft, Zap } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
@@ -37,7 +37,12 @@ const serviceTypeEmoji = {
   '在线课程': '📚',
 }
 
-export function OrdersPage({ onOrderClick }: { onOrderClick?: (orderId: string) => void }) {
+interface OrdersPageProps {
+  onBack?: () => void
+  onOrderClick?: (orderId: string) => void
+}
+
+export function OrdersPage({ onBack, onOrderClick }: OrdersPageProps) {
   const [searchTerm, setSearchTerm] = useState('')
   const [filterStatus, setFilterStatus] = useState<'all' | Order['status']>('all')
 
@@ -124,7 +129,14 @@ export function OrdersPage({ onOrderClick }: { onOrderClick?: (orderId: string) 
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background border-b border-border pt-3 pb-3">
         <div className="px-3">
-          <h1 className="font-bold text-base mb-3">我的订单</h1>
+          <div className="flex items-center gap-2 mb-3">
+            {onBack && (
+              <button onClick={onBack} className="p-1 hover:bg-muted rounded-lg">
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+            )}
+            <h1 className="font-bold text-base">我的订单</h1>
+          </div>
 
           {/* 搜索框 */}
           <div className="relative mb-3">

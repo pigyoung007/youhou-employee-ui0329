@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { FileText, ChevronRight } from 'lucide-react'
+import { FileText, ChevronRight, ChevronLeft } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
@@ -23,7 +23,12 @@ const statusConfig = {
   expired: { label: '已过期', color: 'bg-gray-100 text-gray-700', icon: '✗' },
 }
 
-export function ContractsPage({ onContractClick }: { onContractClick?: (contractId: string) => void }) {
+interface ContractsPageProps {
+  onBack?: () => void
+  onContractClick?: (contractId: string) => void
+}
+
+export function ContractsPage({ onBack, onContractClick }: ContractsPageProps) {
   const [filterStatus, setFilterStatus] = useState<'all' | Contract['status']>('all')
 
   // Mock 合同数据
@@ -89,7 +94,14 @@ export function ContractsPage({ onContractClick }: { onContractClick?: (contract
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background border-b border-border pt-3 pb-3">
         <div className="px-3">
-          <h1 className="font-bold text-base mb-3">我的合同</h1>
+          <div className="flex items-center gap-2 mb-3">
+            {onBack && (
+              <button onClick={onBack} className="p-1 hover:bg-muted rounded-lg">
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+            )}
+            <h1 className="font-bold text-base">我的合同</h1>
+          </div>
 
           {/* 状态筛选 Tab */}
           <div className="flex gap-2 overflow-x-auto pb-2 -mx-3 px-3">

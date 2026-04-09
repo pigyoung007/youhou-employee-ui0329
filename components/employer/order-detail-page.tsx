@@ -10,6 +10,9 @@ import { cn } from '@/lib/utils'
 interface OrderDetailPageProps {
   orderId: string
   onBack: () => void
+  onPayment?: (orderId: string, amount: number) => void
+  onReview?: (orderId: string, caregiverName: string) => void
+  onComplaint?: (orderId: string, caregiverName: string) => void
 }
 
 const statusConfig = {
@@ -20,7 +23,7 @@ const statusConfig = {
   cancelled: { label: '已取消', color: 'bg-red-100 text-red-700' },
 }
 
-export function OrderDetailPage({ orderId, onBack }: OrderDetailPageProps) {
+export function OrderDetailPage({ orderId, onBack, onPayment, onReview, onComplaint }: OrderDetailPageProps) {
   // Mock 订单详情数据
   const order = {
     id: orderId,
@@ -166,7 +169,10 @@ export function OrderDetailPage({ orderId, onBack }: OrderDetailPageProps) {
         {/* 操作按钮 */}
         {order.status === 'pending_pay' && (
           <div className="space-y-2">
-            <Button className="w-full h-10 bg-primary hover:bg-primary/90">
+            <Button
+              className="w-full h-10 bg-primary hover:bg-primary/90"
+              onClick={() => onPayment?.(order.id, order.totalAmount)}
+            >
               立即支付
             </Button>
           </div>
@@ -174,11 +180,18 @@ export function OrderDetailPage({ orderId, onBack }: OrderDetailPageProps) {
 
         {order.status === 'completed' && (
           <div className="space-y-2">
-            <Button className="w-full h-10 bg-primary hover:bg-primary/90 gap-2">
+            <Button
+              className="w-full h-10 bg-primary hover:bg-primary/90 gap-2"
+              onClick={() => onReview?.(order.id, order.caregiverName)}
+            >
               <Star className="w-4 h-4" />
               评价服务
             </Button>
-            <Button variant="outline" className="w-full h-10 gap-2">
+            <Button
+              variant="outline"
+              className="w-full h-10 gap-2"
+              onClick={() => onComplaint?.(order.id, order.caregiverName)}
+            >
               <AlertCircle className="w-4 h-4" />
               提交投诉
             </Button>

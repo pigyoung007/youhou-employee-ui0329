@@ -27,6 +27,7 @@ import {
   Link2,
   Play,
   Bell,
+  Flower2,
 } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
@@ -196,28 +197,70 @@ const recommendedCaregivers = [
   },
 ]
 
-// 待办事项
+// 待办事项 — 聚合来自员工端、人才端、产康技师端的推送
 const todoItems = [
   {
     id: 1,
-    type: "interview",
-    title: "视频面试 - 张阿姨",
-    description: "您与张阿姨的面试已安排",
-    date: "2026-01-25 14:00",
-    link: "https://interview.youhou.com/abc123",
+    type: "contract",
+    title: "新合同待签署",
+    description: "顾问张丽为您生成了月嫂服务合同，请尽快签署",
+    date: "2026-04-08 09:30",
+    source: "员工端",
     status: "pending",
   },
   {
     id: 2,
+    type: "interview",
+    title: "视频面试 - 王阿姨",
+    description: "您与王阿姨的面试已安排",
+    date: "2026-04-12 10:00",
+    link: "https://interview.youhou.com/abc123",
+    source: "员工端",
+    status: "pending",
+  },
+  {
+    id: 3,
     type: "recommendation",
     title: "新阿姨推荐",
     description: "顾问为您推荐了李阿姨，请查看并确认",
-    date: "2026-01-21 14:30",
+    date: "2026-04-07 14:30",
+    source: "员工端",
+    status: "pending",
+  },
+  {
+    id: 4,
+    type: "punch",
+    title: "家政员已上户",
+    description: "李春华已于今日08:30到达并签到",
+    date: "2026-04-09 08:30",
+    source: "人才端",
+    status: "pending",
+  },
+  {
+    id: 5,
+    type: "sign_confirm",
+    title: "耗卡待签字",
+    description: "张技师已完成盆底肌修复服务，请签字确认消费",
+    date: "2026-04-08 16:00",
+    source: "产康技师端",
+    status: "pending",
+  },
+  {
+    id: 6,
+    type: "order_change",
+    title: "订单变更通知",
+    description: "您的月嫂服务订单服务日期有变更，请查看",
+    date: "2026-04-06 11:00",
+    source: "员工端",
     status: "pending",
   },
 ]
 
-export function ServiceDashboard() {
+interface ServiceDashboardProps {
+  onNavigate?: (target: string) => void
+}
+
+export function ServiceDashboard({ onNavigate }: ServiceDashboardProps = {}) {
   const [showSignature, setShowSignature] = useState(false)
   const [selectedContract, setSelectedContract] = useState<number | null>(null)
   const [showScan, setShowScan] = useState(false)
@@ -260,8 +303,8 @@ export function ServiceDashboard() {
       <header className="bg-gradient-to-br from-primary via-primary to-primary/80 px-4 pt-4 pb-16 safe-area-top relative overflow-hidden">
         <div className="relative z-10 flex items-start justify-between">
           <div>
-            <h1 className="text-xl font-bold text-primary-foreground">服务工作台</h1>
-            <p className="text-sm text-primary-foreground/80 mt-1">管理您的服务进度和合同</p>
+            <h1 className="text-xl font-bold text-primary-foreground">服务中心</h1>
+            <p className="text-sm text-primary-foreground/80 mt-1">管理您的服务进度和预约</p>
           </div>
           <Button 
             variant="ghost" 
@@ -312,6 +355,111 @@ export function ServiceDashboard() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Cross-Platform Notification Banner */}
+        {todoItems.filter(t => t.status === "pending").length > 0 && (
+          <Card 
+            className="border-0 shadow-sm bg-gradient-to-r from-blue-50 via-violet-50 to-teal-50 cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => setShowTodoList(true)}
+          >
+            <CardContent className="p-3">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
+                  <Bell className="w-4 h-4 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground">
+                    您有 {todoItems.filter(t => t.status === "pending").length} 条待办通知
+                  </p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {todoItems.filter(t => t.status === "pending")[0]?.title}
+                  </p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Active Services */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-semibold text-foreground">进行中的服务</h2>
+          </div>
+          <div className="space-y-3">
+            <Card className="border-0 shadow-sm overflow-hidden border-l-4 border-l-orange-400">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-orange-100 to-amber-50 rounded-xl flex items-center justify-center shrink-0">
+                    <Baby className="w-5 h-5 text-orange-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <h3 className="font-semibold text-sm">月嫂服务</h3>
+                      <Badge className="bg-green-100 text-green-700 text-[10px]">服务中</Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-2">李春华 · 金牌月嫂</p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+                          <span>服务进度</span>
+                          <span>15/26天</span>
+                        </div>
+                        <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                          <div className="h-full bg-orange-400 rounded-full" style={{ width: '58%' }} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border-0 shadow-sm overflow-hidden border-l-4 border-l-rose-400">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-rose-100 to-pink-50 rounded-xl flex items-center justify-center shrink-0">
+                    <Flower2 className="w-5 h-5 text-rose-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <h3 className="font-semibold text-sm">产后修复</h3>
+                      <Badge className="bg-green-100 text-green-700 text-[10px]">服务中</Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-2">盆底肌修复套卡 · 张技师</p>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-muted-foreground">剩余 5/10 次</span>
+                      <span className="text-muted-foreground">下次预约: 04-10 14:00</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Appointment Quick Entry */}
+        <Card 
+          className="border-0 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+          onClick={() => onNavigate?.("appointments")}
+        >
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-sky-50 rounded-xl flex items-center justify-center">
+                  <Calendar className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-sm text-foreground">预约管理</p>
+                  <p className="text-xs text-muted-foreground">查看和管理您的服务预约</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge className="bg-blue-100 text-blue-700 text-[10px]">2个即将到来</Badge>
+                <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Recommended Caregivers Card */}
         {recommendedCaregivers.filter(c => c.status === "pending").length > 0 && (
@@ -548,6 +696,7 @@ export function ServiceDashboard() {
                         <Baby className="w-5 h-5 text-primary" />
                       </div>
                       1月{selectedDate}日 宝宝日志
+                      <Badge className="bg-teal-100 text-teal-700 text-[10px]">家政员填写</Badge>
                     </CardTitle>
                     <div className="text-xs text-muted-foreground">
                       {log.caregiverName} · {log.updateTime}更新
@@ -619,6 +768,40 @@ export function ServiceDashboard() {
                 </CardContent>
               </Card>
             ))}
+
+            {/* Technician Care Log */}
+            <Card className="border-0 shadow-sm overflow-hidden">
+              <CardHeader className="pb-3 bg-gradient-to-r from-violet-50/80 to-purple-50/50">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <div className="w-8 h-8 bg-violet-100 rounded-lg flex items-center justify-center">
+                    <Flower2 className="w-5 h-5 text-violet-600" />
+                  </div>
+                  产康护理日志
+                  <Badge className="bg-violet-100 text-violet-700 text-[10px]">技师填写</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-4 space-y-3">
+                <div className="bg-violet-50/50 rounded-xl p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-sm font-medium text-foreground">盆底肌修复 · 第5次</p>
+                    <p className="text-xs text-muted-foreground">张技师 · 01-14 15:00</p>
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                    本次进行盆底肌电刺激+生物反馈训练，肌力从3级提升到3+级，恢复进展良好。建议继续坚持凯格尔训练。
+                  </p>
+                  <div className="flex gap-2">
+                    <div className="relative">
+                      <img src="/placeholder.svg" alt="服务前" className="w-16 h-16 rounded-lg object-cover" />
+                      <span className="absolute bottom-0 left-0 right-0 bg-foreground/60 text-primary-foreground text-[8px] text-center py-0.5 rounded-b-lg">服务前</span>
+                    </div>
+                    <div className="relative">
+                      <img src="/placeholder.svg" alt="服务后" className="w-16 h-16 rounded-lg object-cover" />
+                      <span className="absolute bottom-0 left-0 right-0 bg-foreground/60 text-primary-foreground text-[8px] text-center py-0.5 rounded-b-lg">服务后</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Knowledge Articles */}
             <Card className="border-0 shadow-sm">
@@ -700,16 +883,47 @@ export function ServiceDashboard() {
               </CardContent>
             </Card>
 
-            {/* Scan Button */}
-            <Button
-              className="w-full h-14 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/95 hover:to-primary/85 text-primary-foreground rounded-2xl text-lg gap-3 shadow-lg shadow-primary/25"
-              onClick={() => setShowScan(true)}
-            >
-              <div className="w-10 h-10 bg-primary-foreground/20 rounded-xl flex items-center justify-center">
-                <Scan className="w-6 h-6" />
-              </div>
-              扫一扫核销
-            </Button>
+            {/* Action Buttons */}
+            <div className="grid grid-cols-2 gap-3">
+              <Button
+                className="h-14 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/95 hover:to-primary/85 text-primary-foreground rounded-2xl text-base gap-2 shadow-lg shadow-primary/25"
+                onClick={() => setShowScan(true)}
+              >
+                <Scan className="w-5 h-5" />
+                扫码核销
+              </Button>
+              <Button
+                variant="outline"
+                className="h-14 rounded-2xl text-base gap-2 border-violet-200 text-violet-700 hover:bg-violet-50"
+                onClick={() => setShowSignature(true)}
+              >
+                <PenLine className="w-5 h-5" />
+                签字确认
+              </Button>
+            </div>
+
+            {/* Pending Sign Confirmation */}
+            <Card className="border-0 shadow-sm overflow-hidden border-l-4 border-l-violet-400">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center shrink-0">
+                    <PenLine className="w-5 h-5 text-violet-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-sm text-foreground">待签字确认</p>
+                    <p className="text-xs text-muted-foreground">张技师 · 盆底肌修复 · 01-14 15:30</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">消费 1 次，剩余 5 次</p>
+                  </div>
+                  <Button 
+                    size="sm" 
+                    className="h-8 text-xs bg-violet-600 hover:bg-violet-700"
+                    onClick={() => setShowSignature(true)}
+                  >
+                    签字
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Recent Records */}
             <Card className="border-0 shadow-sm">
@@ -997,73 +1211,129 @@ export function ServiceDashboard() {
           <SheetHeader className="pb-4 border-b border-border">
             <SheetTitle className="flex items-center gap-2">
               <Bell className="w-5 h-5 text-primary" />
-              待办事项
+              待办中心
+              <Badge className="bg-destructive text-destructive-foreground text-[10px]">
+                {todoItems.filter(t => t.status === "pending").length}
+              </Badge>
             </SheetTitle>
           </SheetHeader>
           <div className="flex-1 min-h-0 py-4 space-y-3 overflow-y-auto">
-            {todoItems.map((item) => (
-              <Card 
-                key={item.id}
-                className={cn(
-                  "border-0 shadow-sm",
-                  item.type === "interview" && "border-l-4 border-l-rose-500"
-                )}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <div className={cn(
-                      "w-10 h-10 rounded-xl flex items-center justify-center shrink-0",
-                      item.type === "interview" ? "bg-rose-100" : "bg-amber-100"
-                    )}>
-                      {item.type === "interview" ? (
-                        <Video className="w-5 h-5 text-rose-500" />
-                      ) : (
-                        <Heart className="w-5 h-5 text-amber-500" />
-                      )}
+            {todoItems.map((item) => {
+              const todoIconConfig: Record<string, { icon: typeof Video; bgColor: string; iconColor: string; borderColor: string }> = {
+                contract: { icon: FileText, bgColor: "bg-blue-100", iconColor: "text-blue-500", borderColor: "border-l-blue-500" },
+                interview: { icon: Video, bgColor: "bg-rose-100", iconColor: "text-rose-500", borderColor: "border-l-rose-500" },
+                recommendation: { icon: Heart, bgColor: "bg-amber-100", iconColor: "text-amber-500", borderColor: "border-l-amber-500" },
+                punch: { icon: MapPin, bgColor: "bg-teal-100", iconColor: "text-teal-500", borderColor: "border-l-teal-500" },
+                sign_confirm: { icon: PenLine, bgColor: "bg-violet-100", iconColor: "text-violet-500", borderColor: "border-l-violet-500" },
+                order_change: { icon: Bell, bgColor: "bg-orange-100", iconColor: "text-orange-500", borderColor: "border-l-orange-500" },
+              }
+              const cfg = todoIconConfig[item.type] || todoIconConfig.contract
+              const TodoIcon = cfg.icon
+
+              const sourceColors: Record<string, string> = {
+                "员工端": "bg-blue-50 text-blue-600",
+                "人才端": "bg-teal-50 text-teal-600",
+                "产康技师端": "bg-violet-50 text-violet-600",
+              }
+
+              return (
+                <Card 
+                  key={item.id}
+                  className={cn("border-0 shadow-sm border-l-4", cfg.borderColor)}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-3">
+                      <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shrink-0", cfg.bgColor)}>
+                        <TodoIcon className={cn("w-5 h-5", cfg.iconColor)} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <h4 className="font-semibold text-foreground text-sm">{item.title}</h4>
+                          {item.source && (
+                            <Badge className={cn("text-[9px] px-1.5 py-0", sourceColors[item.source] || "bg-gray-50 text-gray-600")}>
+                              {item.source}
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground">{item.description}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{item.date}</p>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-foreground">{item.title}</h4>
-                      <p className="text-sm text-muted-foreground mt-0.5">{item.description}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{item.date}</p>
-                    </div>
-                  </div>
-                  {item.type === "interview" && item.link && (
-                    <div className="mt-3 flex gap-2">
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        className="flex-1 bg-transparent"
-                        onClick={() => {
-                          navigator.clipboard.writeText(item.link!)
-                        }}
-                      >
-                        <Link2 className="w-3 h-3 mr-1" />
-                        复制链接
-                      </Button>
+                    {item.type === "interview" && item.link && (
+                      <div className="mt-3 flex gap-2">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          className="flex-1 bg-transparent"
+                          onClick={() => {
+                            navigator.clipboard.writeText(item.link!)
+                          }}
+                        >
+                          <Link2 className="w-3 h-3 mr-1" />
+                          复制链接
+                        </Button>
+                        <Button 
+                          size="sm"
+                          className="flex-1 bg-rose-500 hover:bg-rose-600"
+                        >
+                          <Play className="w-3 h-3 mr-1" />
+                          进入面试
+                        </Button>
+                      </div>
+                    )}
+                    {item.type === "recommendation" && (
                       <Button 
                         size="sm"
-                        className="flex-1 bg-rose-500 hover:bg-rose-600"
+                        className="w-full mt-3 bg-primary hover:bg-primary/90"
+                        onClick={() => {
+                          setShowTodoList(false)
+                          setShowRecommendations(true)
+                        }}
                       >
-                        <Play className="w-3 h-3 mr-1" />
-                        进入面试
+                        查看推荐
                       </Button>
-                    </div>
-                  )}
-                  {item.type === "recommendation" && (
-                    <Button 
-                      size="sm"
-                      className="w-full mt-3 bg-primary hover:bg-primary/90"
-                      onClick={() => {
-                        setShowTodoList(false)
-                        setShowRecommendations(true)
-                      }}
-                    >
-                      查看推荐
-                    </Button>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
+                    )}
+                    {item.type === "contract" && (
+                      <Button 
+                        size="sm"
+                        className="w-full mt-3 bg-blue-600 hover:bg-blue-700"
+                        onClick={() => {
+                          setShowTodoList(false)
+                          onNavigate?.("contracts")
+                        }}
+                      >
+                        去签署
+                      </Button>
+                    )}
+                    {item.type === "sign_confirm" && (
+                      <Button 
+                        size="sm"
+                        className="w-full mt-3 bg-violet-600 hover:bg-violet-700"
+                        onClick={() => {
+                          setShowTodoList(false)
+                          setShowSignature(true)
+                        }}
+                      >
+                        去签字
+                      </Button>
+                    )}
+                    {item.type === "order_change" && (
+                      <Button 
+                        size="sm"
+                        variant="outline"
+                        className="w-full mt-3"
+                        onClick={() => {
+                          setShowTodoList(false)
+                          onNavigate?.("orders")
+                        }}
+                      >
+                        查看订单
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              )
+            })}
           </div>
         </SheetContent>
       </Sheet>

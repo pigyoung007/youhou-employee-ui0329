@@ -11,6 +11,10 @@ export interface NannyResumeShareData {
   avatar?: string
   subtitle?: string
   selfIntro: string
+  gender?: string
+  ethnicity?: string
+  zodiac?: string
+  hometown?: string
   skills: string[]
   certificates: { name: string }[]
   workPhotos: string[]
@@ -27,6 +31,10 @@ export function buildNannyResumeData(
     avatar?: string
     subtitle?: string
     selfIntro?: string
+    gender?: string
+    ethnicity?: string
+    zodiac?: string
+    hometown?: string
     skills?: string[]
     certificates?: { name: string }[]
     workPhotos?: string[]
@@ -47,6 +55,10 @@ export function buildNannyResumeData(
     selfIntro:
       base.selfIntro ??
       `您好，我是${base.name}，从事母婴护理工作多年，持有相关资质证书，擅长新生儿护理、产妇护理与月子餐，服务细致耐心。`,
+    gender: base.gender ?? "女",
+    ethnicity: base.ethnicity ?? "汉族",
+    zodiac: base.zodiac ?? "天蝎座",
+    hometown: base.hometown ?? "—",
     skills: base.skills ?? ["母乳喂养指导", "新生儿护理", "月子餐", "产妇护理"],
     certificates: base.certificates ?? [
       { name: "高级母婴护理师" },
@@ -76,6 +88,9 @@ export function domesticWorkerToResumeData(worker: {
   age: number
   hometown: string
   experience: string
+  gender?: string
+  ethnicity?: string
+  zodiac?: string
 }): NannyResumeShareData {
   const ph = "/placeholder.svg"
   const av = worker.avatar || ph
@@ -84,6 +99,10 @@ export function domesticWorkerToResumeData(worker: {
     avatar: av,
     subtitle: `${worker.level} · ${worker.workerType}`,
     selfIntro: `您好，我是${worker.name}，${worker.age}岁，籍贯${worker.hometown}，具备${worker.experience}母婴护理经验，持有高级母婴护理师等资质，擅长新生儿护理、产妇护理与月子餐。`,
+    gender: worker.gender,
+    ethnicity: worker.ethnicity,
+    zodiac: worker.zodiac,
+    hometown: worker.hometown,
     workPhotos: [av, `${ph}#w1`, `${ph}#w2`],
     foodPhotos: [`${ph}#f1`, `${ph}#f2`, `${ph}#f3`],
   })
@@ -111,7 +130,20 @@ export function NannyResumeShareView({
             <Sparkles className="text-primary h-4 w-4 shrink-0" />
             <span className="text-foreground font-medium">自我介绍</span>
           </div>
-          <p className="text-muted-foreground">{data.selfIntro}</p>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+            {([
+              ["姓名", data.name],
+              ["性别", data.gender],
+              ["民族", data.ethnicity],
+              ["星座", data.zodiac],
+              ["籍贯", data.hometown],
+            ] as const).map(([label, value]) => (
+              <div key={label} className="flex items-center justify-between">
+                <span className="text-muted-foreground">{label}</span>
+                <span className="text-foreground font-medium">{value || "—"}</span>
+              </div>
+            ))}
+          </div>
           <div>
             <p className="text-foreground mb-2 font-medium">技能标签</p>
             <div className="flex flex-wrap gap-1.5">

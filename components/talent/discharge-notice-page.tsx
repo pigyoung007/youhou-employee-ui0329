@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { FileText, Download, Signature, CheckCircle2, AlertCircle, ChevronRight } from 'lucide-react'
+import { FileText, Download, Signature, CheckCircle2, AlertCircle, ChevronLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface DischargeNotice {
@@ -25,7 +25,7 @@ const statusConfig: Record<DischargeNotice['status'], { label: string; color: st
   completed: { label: '已完成', color: 'bg-green-50 text-green-600', icon: CheckCircle2 },
 }
 
-export function TalentDischargeNoticePage() {
+export function TalentDischargeNoticePage({ onBack }: { onBack?: () => void }) {
   const [selectedNotice, setSelectedNotice] = useState<DischargeNotice | null>(null)
 
   const notices: DischargeNotice[] = [
@@ -58,12 +58,12 @@ export function TalentDischargeNoticePage() {
 
     return (
       <div className="min-h-screen bg-background">
-        <div className="sticky top-0 z-10 bg-white border-b border-border px-4 py-3">
+        <div className="sticky top-0 z-10 bg-white border-b border-border px-4 py-3 flex items-center gap-3">
           <button
             onClick={() => setSelectedNotice(null)}
-            className="flex items-center gap-2 text-primary hover:opacity-80"
+            className="flex items-center gap-1 text-primary hover:opacity-80"
           >
-            <ChevronRight className="w-5 h-5 rotate-180" />
+            <ChevronLeft className="w-5 h-5" />
             <span className="text-sm font-medium">返回</span>
           </button>
         </div>
@@ -153,7 +153,12 @@ export function TalentDischargeNoticePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="sticky top-0 z-10 bg-white border-b border-border px-4 py-3">
+      <div className="sticky top-0 z-10 bg-white border-b border-border px-4 py-3 flex items-center gap-3">
+        {onBack && (
+          <button onClick={onBack} className="text-foreground hover:opacity-80">
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+        )}
         <h1 className="text-base font-semibold">下户通知单</h1>
       </div>
 

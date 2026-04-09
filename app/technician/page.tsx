@@ -8,6 +8,9 @@ import { TechnicianProfilePage } from "@/components/technician/profile-page"
 import { TechnicianLearningPage } from "@/components/technician/learning-page"
 import { TechnicianCardDeductionPage } from "@/components/technician/card-deduction-page"
 import { TechnicianBottomNav } from "@/components/technician/bottom-nav"
+import { PrivateOrderCreatePage } from "@/components/technician/private-order-create-page"
+import { ResumeEditPage } from "@/components/technician/resume-edit-page"
+import { BackgroundCheckPage } from "@/components/technician/background-check-page"
 
 export default function TechnicianPortal() {
   const [activeTab, setActiveTab] = useState("home")
@@ -21,6 +24,30 @@ export default function TechnicianPortal() {
     return (
       <div className="relative mx-auto min-h-screen max-w-md bg-background">
         <TechnicianCardDeductionPage onBack={() => setSubPage(null)} />
+      </div>
+    )
+  }
+
+  if (subPage === "private-order-create") {
+    return (
+      <div className="relative mx-auto min-h-screen max-w-md bg-background">
+        <PrivateOrderCreatePage onBack={() => setSubPage(null)} />
+      </div>
+    )
+  }
+
+  if (subPage === "resume") {
+    return (
+      <div className="relative mx-auto min-h-screen max-w-md bg-background">
+        <ResumeEditPage onBack={() => setSubPage(null)} />
+      </div>
+    )
+  }
+
+  if (subPage === "background-check") {
+    return (
+      <div className="relative mx-auto min-h-screen max-w-md bg-background">
+        <BackgroundCheckPage onBack={() => setSubPage(null)} />
       </div>
     )
   }
@@ -43,7 +70,10 @@ export default function TechnicianPortal() {
           <TechnicianOrdersPage onOpenCardDeduction={() => setSubPage("card-deduction")} />
         )}
         {activeTab === "workbench" && (
-          <TechnicianWorkbenchPage onOpenCardDeduction={() => setSubPage("card-deduction")} />
+          <TechnicianWorkbenchPage
+            onOpenCardDeduction={() => setSubPage("card-deduction")}
+            onCreatePrivateOrder={() => setSubPage("private-order-create")}
+          />
         )}
         {activeTab === "learning" && <TechnicianLearningPage />}
         {activeTab === "profile" && <TechnicianProfilePage onOpenSubPage={handleOpenSubPage} />}

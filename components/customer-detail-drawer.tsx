@@ -368,6 +368,16 @@ export function CustomerDetailDrawer({
   const [operatorFilter, setOperatorFilter] = useState("all")
   const [birthdayOn, setBirthdayOn] = useState(() => customer?.birthdayReminder ?? false)
 
+  // 添加跟进
+  const [showAddFollowUpSheet, setShowAddFollowUpSheet] = useState(false)
+  const [newFuType, setNewFuType] = useState("phone")
+  const [newFuBiz, setNewFuBiz] = useState("maternal")
+  const [newFuContent, setNewFuContent] = useState("")
+  const [newFuNextDate, setNewFuNextDate] = useState("")
+  const [localFollowUps, setLocalFollowUps] = useState<FollowUpRecord[]>([])
+
+  const allFollowUps = [...localFollowUps, ...followUpRecords]
+
   const archivesKey = availableArchives.join(",")
 
   useEffect(() => {
@@ -467,7 +477,16 @@ export function CustomerDetailDrawer({
   const selectClass =
     "border-input bg-background text-foreground flex h-9 w-full min-w-0 rounded-md border px-3 py-1 text-xs shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
 
-  const filteredFollowUps = followUpRecords
+  const filteredFollowUps = allFollowUps.filter(record => {
+    if (followUpTypeFilter !== "all") {
+      const typeMap: Record<string, string> = { phone: "电话跟进", wechat: "微信跟进" }
+      if (record.type !== (typeMap[followUpTypeFilter] || followUpTypeFilter)) return false
+    }
+    if (operatorFilter !== "all") {
+      if (operatorFilter === "zhang" && !record.consultant.includes("张")) return false
+    }
+    return true
+  })
 
   const showArchive = (id: ArchiveId) => availableArchives.includes(id)
 
@@ -749,6 +768,8 @@ export function CustomerDetailDrawer({
                             <option value="all">全部类型</option>
                             <option value="phone">电话跟进</option>
                             <option value="wechat">微信跟进</option>
+                            <option value="visit">拜访跟进</option>
+                            <option value="video">视频跟进</option>
                           </select>
                           <select
                             className={selectClass}
@@ -762,6 +783,13 @@ export function CustomerDetailDrawer({
                         <Button
                           type="button"
                           className="bg-primary text-primary-foreground hover:bg-primary/90 h-9 w-full text-sm"
+                          onClick={() => {
+                            setNewFuType("phone")
+                            setNewFuBiz("maternal")
+                            setNewFuContent("")
+                            setNewFuNextDate("")
+                            setShowAddFollowUpSheet(true)
+                          }}
                         >
                           添加跟进
                         </Button>
@@ -1126,30 +1154,6 @@ export function CustomerDetailDrawer({
               {/* —— 家政员档案（对齐 nanny 六 Tab） —— */}
               {showArchive("domestic") && (
                 <TabsContent value="domestic" className="mt-0 space-y-0 p-0 pb-3 data-[state=inactive]:hidden">
-                  {domesticArchive && (
-                    <Card className="border-border bg-muted/30 mb-2 border shadow-none">
-                      <CardContent className="space-y-1 p-3 text-xs">
-                        <p className="text-muted-foreground">关联家政员 / 服务需求</p>
-                        <p className="text-foreground font-medium">{domesticArchive.displayName}</p>
-                        <div className="text-muted-foreground flex flex-wrap gap-x-2 gap-y-1">
-                          <span>{domesticArchive.serviceType}</span>
-                          <span>·</span>
-                          <span>{domesticArchive.level}</span>
-                          <span>·</span>
-                          <span>{domesticArchive.workStatus}</span>
-                        </div>
-                        {domesticArchive.tags && domesticArchive.tags.length > 0 && (
-                          <div className="mt-1 flex flex-wrap gap-1">
-                            {domesticArchive.tags.map((t) => (
-                              <Badge key={t} variant="secondary" className="text-[10px] font-normal">
-                                {t}
-                              </Badge>
-                            ))}
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  )}
                   <div className="w-full">
                     <div className="overflow-x-auto border-b border-border">
                       <div className="flex min-w-max justify-start">
@@ -1299,6 +1303,107 @@ export function CustomerDetailDrawer({
           </div>
         </div>
       </SheetContent>
+
+      {/* 添加跟进记录 Sheet */}
+      {showAddFollowUpSheet && (
+        <div className="fixed inset-0 z-[70] bg-black/50" onClick={() => setShowAddFollowUpSheet(false)}>
+          <div
+            className="absolute inset-y-0 right-0 w-[80%] max-w-sm bg-white shadow-xl flex flex-col animate-in slide-in-from-right duration-300"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="sticky top-0 bg-white border-b border-border px-4 py-3 flex items-center justify-between shrink-0">
+              <div>
+                <h2 className="font-semibold text-sm">添加跟进记录</h2>
+                {customer && <p className="text-[10px] text-muted-foreground mt-0.5">{customer.name} · {customer.phone}</p>}
+              </div>
+              <button onClick={() => setShowAddFollowUpSheet(false)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted">
+                <span className="sr-only">关闭</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-xs font-medium block">跟进类型</label>
+                  <select
+                    className={selectClass}
+                    value={newFuType}
+                    onChange={(e) => setNewFuType(e.target.value)}
+                  >
+                    <option value="phone">电话</option>
+                    <option value="wechat">微信</option>
+                    <option value="visit">拜访</option>
+                    <option value="video">视频</option>
+                    <option value="demand_info">自定义信息</option>
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-medium block">业务线</label>
+                  <select
+                    className={selectClass}
+                    value={newFuBiz}
+                    onChange={(e) => setNewFuBiz(e.target.value)}
+                  >
+                    <option value="maternal">母婴业务</option>
+                    <option value="wellness">产康业务</option>
+                    <option value="student">学员业务</option>
+                    <option value="sales">销售活动</option>
+                    <option value="transfer">流转记录</option>
+                    <option value="maintenance">资料维护</option>
+                    <option value="demand_info">自定义信息</option>
+                  </select>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-medium block">跟进内容 <span className="text-red-500">*</span></label>
+                <textarea
+                  className="w-full border rounded-lg p-2 text-sm resize-none min-h-[80px] border-input bg-background"
+                  placeholder="记录跟进内容..."
+                  value={newFuContent}
+                  onChange={(e) => setNewFuContent(e.target.value)}
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-medium block">下次跟进日期</label>
+                <input
+                  type="date"
+                  className={selectClass}
+                  value={newFuNextDate}
+                  onChange={(e) => setNewFuNextDate(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="px-4 py-3 border-t border-border shrink-0">
+              <Button
+                className="w-full h-9 text-sm bg-primary hover:bg-primary/90"
+                disabled={!newFuContent.trim()}
+                onClick={() => {
+                  const typeLabels: Record<string, string> = { phone: "电话跟进", wechat: "微信跟进", visit: "拜访跟进", video: "视频跟进", demand_info: "自定义信息" }
+                  const now = new Date()
+                  const dateStr = now.toISOString().split("T")[0]
+                  const timeStr = now.toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit", hour12: false })
+                  const newRecord: FollowUpRecord = {
+                    id: `local-${Date.now()}`,
+                    date: dateStr,
+                    consultant: customer?.consultant || "当前顾问",
+                    type: typeLabels[newFuType] || "电话跟进",
+                    time: timeStr,
+                    status: "已完成",
+                    content: newFuContent,
+                    contactPhone: customer?.phone || "",
+                  }
+                  setLocalFollowUps(prev => [newRecord, ...prev])
+                  setNewFuContent("")
+                  setNewFuNextDate("")
+                  setShowAddFollowUpSheet(false)
+                }}
+              >
+                保存记录
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </Sheet>
   )
 }

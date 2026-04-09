@@ -7,7 +7,8 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import {
   Star, Award, ChevronRight, Calendar, Bell, MapPin,
   TrendingUp, Clock, Heart, Phone, Shield,
-  Briefcase, GraduationCap, CheckCircle,
+  Briefcase, GraduationCap, CheckCircle, Edit,
+  FileText, ShoppingBag, Shield as ShieldIcon, AlertTriangle,
 } from "lucide-react"
 
 const profileData = {
@@ -42,25 +43,27 @@ const todaySchedule = [
 ]
 
 const notifications = [
-  { id: 1, text: "您有2份服务报告待提交", color: "bg-amber-50", dot: "bg-amber-500" },
-  { id: 2, text: "明日有1个产后修复预约需确认", color: "bg-teal-50", dot: "bg-teal-500" },
-  { id: 3, text: "新证书已颁发，请前往查看", color: "bg-violet-50", dot: "bg-violet-500" },
+  { id: 1, text: "您有1份合同待签署", color: "bg-rose-50", dot: "bg-rose-500" },
+  { id: 2, text: "保险将于30天内到期，请及时续保", color: "bg-amber-50", dot: "bg-amber-500" },
+  { id: 3, text: "您有2份服务报告待提交", color: "bg-teal-50", dot: "bg-teal-500" },
+  { id: 4, text: "新证书已颁发，请前往查看", color: "bg-violet-50", dot: "bg-violet-500" },
 ]
 
 interface TalentHomePageProps {
   onOpenService?: (serviceName: string) => void
+  onOpenSubPage?: (page: string) => void
 }
 
-export function TalentHomePage({ onOpenService }: TalentHomePageProps) {
+export function TalentHomePage({ onOpenService, onOpenSubPage }: TalentHomePageProps) {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-gradient-to-br from-amber-500 via-orange-500 to-amber-600 pt-4 pb-6 px-4 safe-area-top">
+      <div className="bg-gradient-to-br from-rose-500 via-pink-500 to-rose-600 pt-4 pb-6 px-4 safe-area-top">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-lg font-bold text-white">优厚家服 - 人才端</h1>
           <Button size="sm" variant="ghost" className="text-white hover:bg-white/20 relative">
             <Bell className="w-5 h-5" />
-            <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center">3</span>
+            <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center">4</span>
           </Button>
         </div>
 
@@ -69,43 +72,73 @@ export function TalentHomePage({ onOpenService }: TalentHomePageProps) {
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <Avatar className="w-16 h-16 border-2 border-amber-200">
+                <Avatar className="w-16 h-16 border-2 border-rose-200">
                   <AvatarImage src={profileData.avatar || "/placeholder.svg"} />
-                  <AvatarFallback className="bg-amber-100 text-amber-600">{profileData.name[0]}</AvatarFallback>
+                  <AvatarFallback className="bg-rose-100 text-rose-600">{profileData.name[0]}</AvatarFallback>
                 </Avatar>
-                <div className="absolute -bottom-1 -right-1 bg-amber-500 text-white text-[9px] px-1.5 py-0.5 rounded-full font-medium">
+                <div className="absolute -bottom-1 -right-1 bg-rose-500 text-white text-[9px] px-1.5 py-0.5 rounded-full font-medium">
                   {profileData.level.slice(0, 2)}
                 </div>
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <h2 className="font-bold text-lg text-foreground">{profileData.name}</h2>
-                  <Badge className="bg-amber-100 text-amber-700 text-[10px]">{profileData.level}</Badge>
+                  <Badge className="bg-rose-100 text-rose-700 text-[10px]">{profileData.level}</Badge>
                 </div>
                 <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1"><Star className="w-3 h-3 fill-amber-400 text-amber-400" />{profileData.rating}</span>
+                  <span className="flex items-center gap-1"><Star className="w-3 h-3 fill-rose-400 text-rose-400" />{profileData.rating}</span>
                   <span>{profileData.totalOrders}单</span>
                   <span>{profileData.experience}经验</span>
                 </div>
-                {/* Completeness */}
                 <div className="mt-2">
                   <div className="flex items-center justify-between text-xs mb-1">
                     <span className="text-muted-foreground">档案完善度</span>
-                    <span className="font-medium text-amber-600">{profileData.completeness}%</span>
+                    <span className="font-medium text-rose-600">{profileData.completeness}%</span>
                   </div>
                   <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full" style={{ width: `${profileData.completeness}%` }} />
+                    <div className="h-full bg-gradient-to-r from-rose-400 to-pink-500 rounded-full" style={{ width: `${profileData.completeness}%` }} />
                   </div>
                 </div>
               </div>
             </div>
-
+            {/* Edit Resume Button */}
+            <Button
+              size="sm"
+              variant="outline"
+              className="w-full mt-3 text-rose-600 border-rose-200 hover:bg-rose-50"
+              onClick={() => onOpenSubPage?.("resume-edit")}
+            >
+              <Edit className="w-3.5 h-3.5 mr-1.5" />
+              编辑简历
+            </Button>
           </CardContent>
         </Card>
       </div>
 
       {/* Main Content */}
       <main className="px-4 py-4 space-y-4 pb-24">
+        {/* Quick Stats */}
+        <div className="grid grid-cols-3 gap-2">
+          <Card className="border-0 shadow-sm cursor-pointer hover:shadow-md transition-shadow">
+            <CardContent className="p-3 text-center">
+              <p className="text-lg font-bold text-amber-600">1</p>
+              <p className="text-[10px] text-muted-foreground">待签合同</p>
+            </CardContent>
+          </Card>
+          <Card className="border-0 shadow-sm cursor-pointer hover:shadow-md transition-shadow">
+            <CardContent className="p-3 text-center">
+              <p className="text-lg font-bold text-green-600">2</p>
+              <p className="text-[10px] text-muted-foreground">服务中</p>
+            </CardContent>
+          </Card>
+          <Card className="border-0 shadow-sm cursor-pointer hover:shadow-md transition-shadow">
+            <CardContent className="p-3 text-center">
+              <p className="text-lg font-bold text-blue-600">3</p>
+              <p className="text-[10px] text-muted-foreground">可接工单</p>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Service Categories */}
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-2">
@@ -138,7 +171,7 @@ export function TalentHomePage({ onOpenService }: TalentHomePageProps) {
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-amber-500" />
+              <Calendar className="w-4 h-4 text-rose-500" />
               今日日程
             </CardTitle>
           </CardHeader>
@@ -146,9 +179,9 @@ export function TalentHomePage({ onOpenService }: TalentHomePageProps) {
             {todaySchedule.map((item) => (
               <div key={item.id} className="flex items-center gap-3 p-3 bg-muted/50 rounded-xl">
                 <div className="text-center min-w-[48px]">
-                  <p className="text-sm font-bold text-amber-600">{item.time}</p>
+                  <p className="text-sm font-bold text-rose-600">{item.time}</p>
                 </div>
-                <div className="w-px h-10 bg-amber-300" />
+                <div className="w-px h-10 bg-rose-300" />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-medium text-foreground">{item.type}</p>
@@ -168,7 +201,7 @@ export function TalentHomePage({ onOpenService }: TalentHomePageProps) {
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2">
-              <Bell className="w-4 h-4 text-amber-500" />
+              <Bell className="w-4 h-4 text-rose-500" />
               通知提醒
             </CardTitle>
           </CardHeader>

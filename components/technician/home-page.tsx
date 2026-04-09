@@ -11,9 +11,6 @@ import {
   Clock,
   MapPin,
   ChevronRight,
-  TrendingUp,
-  Star,
-  CheckCircle2,
   AlertCircle,
   Phone,
 } from "lucide-react"
@@ -173,34 +170,6 @@ export function TechnicianHomePage() {
             ))}
           </CardContent>
         </Card>
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-4 gap-3">
-          <button className="flex flex-col items-center gap-2 p-3 bg-card rounded-xl shadow-sm hover:shadow-md transition-shadow">
-            <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center">
-              <Calendar className="w-5 h-5 text-teal-600" />
-            </div>
-            <span className="text-xs font-medium">我的排班</span>
-          </button>
-          <button className="flex flex-col items-center gap-2 p-3 bg-card rounded-xl shadow-sm hover:shadow-md transition-shadow">
-            <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
-              <CheckCircle2 className="w-5 h-5 text-orange-600" />
-            </div>
-            <span className="text-xs font-medium">签到打卡</span>
-          </button>
-          <button className="flex flex-col items-center gap-2 p-3 bg-card rounded-xl shadow-sm hover:shadow-md transition-shadow">
-            <div className="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-violet-600" />
-            </div>
-            <span className="text-xs font-medium">业绩统计</span>
-          </button>
-          <button className="flex flex-col items-center gap-2 p-3 bg-card rounded-xl shadow-sm hover:shadow-md transition-shadow">
-            <div className="w-10 h-10 bg-rose-100 rounded-xl flex items-center justify-center">
-              <Star className="w-5 h-5 text-rose-600" />
-            </div>
-            <span className="text-xs font-medium">我的评价</span>
-          </button>
-        </div>
 
         {/* Notifications */}
         <Card className="border-0 shadow-sm">

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { BarChart3, TrendingUp, Calendar } from 'lucide-react'
+import { BarChart3, TrendingUp, Calendar, ChevronLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface IncomeRecord {
@@ -22,7 +22,7 @@ const statusConfig: Record<IncomeRecord['status'], { label: string; color: strin
   cancelled: { label: '已取消', color: 'bg-gray-50 text-gray-600' },
 }
 
-export function TalentIncomeDetailsPage() {
+export function TalentIncomeDetailsPage({ onBack }: { onBack?: () => void }) {
   const [selectedMonth, setSelectedMonth] = useState<string>('2026-03')
   const [filterStatus, setFilterStatus] = useState<IncomeRecord['status'] | 'all'>('all')
 
@@ -72,7 +72,14 @@ export function TalentIncomeDetailsPage() {
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-4 py-6 space-y-4">
-        <h1 className="text-lg font-bold">收入明细</h1>
+        <div className="flex items-center gap-3">
+          {onBack && (
+            <button onClick={onBack} className="text-white hover:opacity-80">
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+          )}
+          <h1 className="text-lg font-bold">收入明细</h1>
+        </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="text-xs opacity-80">本月已收</p>

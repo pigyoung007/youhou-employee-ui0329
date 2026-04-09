@@ -14,6 +14,11 @@ import { TalentContractsPage } from "@/components/talent/contracts-page"
 import { TalentDepositPage } from "@/components/talent/deposit-page"
 import { TalentDischargeNoticePage } from "@/components/talent/discharge-notice-page"
 import { TalentIncomeDetailsPage } from "@/components/talent/income-details-page"
+import { OrdersPoolPage } from "@/components/talent/orders-pool-page"
+import { PrivateOrderCreate } from "@/components/talent/private-order-create"
+import { ResumeEditPage } from "@/components/talent/resume-edit-page"
+import { BackgroundCheckPage } from "@/components/talent/background-check-page"
+import { ComplaintsPage } from "@/components/talent/complaints-page"
 
 export default function TalentPortal() {
   const [activeTab, setActiveTab] = useState("home")
@@ -33,14 +38,24 @@ export default function TalentPortal() {
     )
   }
 
-  // If a sub page is open (contracts, deposit, etc.), render it
+  // If a sub page is open, render it
   if (subPage) {
+    const subPageProps = { onBack: () => setSubPage(null) }
     return (
       <div className="max-w-md mx-auto min-h-screen bg-background relative">
-        {subPage === "contracts" && <TalentContractsPage />}
-        {subPage === "deposit" && <TalentDepositPage />}
-        {subPage === "discharge" && <TalentDischargeNoticePage />}
-        {subPage === "income" && <TalentIncomeDetailsPage />}
+        {subPage === "contracts" && <TalentContractsPage onBack={() => setSubPage(null)} />}
+        {subPage === "deposit" && <TalentDepositPage onBack={() => setSubPage(null)} />}
+        {subPage === "discharge" && <TalentDischargeNoticePage onBack={() => setSubPage(null)} />}
+        {subPage === "income" && <TalentIncomeDetailsPage onBack={() => setSubPage(null)} />}
+        {subPage === "private-order-create" && (
+          <PrivateOrderCreate
+            onBack={() => setSubPage(null)}
+            onCreated={() => { setSubPage(null); setActiveTab("workbench") }}
+          />
+        )}
+        {subPage === "resume-edit" && <ResumeEditPage onBack={() => setSubPage(null)} />}
+        {subPage === "background-check" && <BackgroundCheckPage onBack={() => setSubPage(null)} />}
+        {subPage === "complaints" && <ComplaintsPage onBack={() => setSubPage(null)} />}
       </div>
     )
   }
@@ -48,10 +63,18 @@ export default function TalentPortal() {
   return (
     <div className="max-w-md mx-auto min-h-screen bg-background relative">
       <div className={activeTab === "home" ? "block" : "hidden"}>
-        <TalentHomePage onOpenService={setServicePage} />
+        <TalentHomePage
+          onOpenService={setServicePage}
+          onOpenSubPage={setSubPage}
+        />
       </div>
       <div className={activeTab === "learning" ? "block" : "hidden"}><TalentLearningPage /></div>
-      <div className={activeTab === "workbench" ? "block" : "hidden"}><TalentWorkbenchPage /></div>
+      <div className={activeTab === "workbench" ? "block" : "hidden"}>
+        <TalentWorkbenchPage
+          onCreatePrivateOrder={() => setSubPage("private-order-create")}
+        />
+      </div>
+      <div className={activeTab === "orders-pool" ? "block" : "hidden"}><OrdersPoolPage /></div>
       <div className={activeTab === "profile" ? "block" : "hidden"}>
         <TalentProfilePage onOpenSubPage={setSubPage} />
       </div>

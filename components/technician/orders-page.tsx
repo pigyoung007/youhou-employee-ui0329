@@ -164,6 +164,13 @@ export function TechnicianOrdersPage({ onOpenCardDeduction }: TechnicianOrdersPa
             >
               已完成
             </TabsTrigger>
+            <TabsTrigger
+              value="private"
+              className="flex-1 text-white data-[state=active]:bg-white data-[state=active]:text-teal-600"
+            >
+              私单
+              <Badge className="ml-1 bg-white/30 text-white text-xs px-1.5">2</Badge>
+            </TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
@@ -363,6 +370,73 @@ export function TechnicianOrdersPage({ onOpenCardDeduction }: TechnicianOrdersPa
               </Card>
             ))}
           </>
+        )}
+
+        {activeTab === "private" && (
+          <div className="space-y-3">
+            <Card className="border-0 shadow-sm">
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h3 className="font-semibold">产后全身调理</h3>
+                    <p className="text-sm text-muted-foreground">第1/8次 · 私有订单</p>
+                  </div>
+                  <Badge className="bg-amber-100 text-amber-700">待确认</Badge>
+                </div>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    <span>2026-04-11</span>
+                    <Clock className="w-4 h-4 ml-2" />
+                    <span>10:00-12:00</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span>陈女士 · 136****8888</span>
+                  </div>
+                </div>
+                <div className="mt-2 flex items-center justify-between">
+                  <span className="text-lg font-bold text-teal-600">¥1,200</span>
+                  <Badge className="bg-violet-100 text-violet-600 text-[10px]">私单</Badge>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-sm">
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h3 className="font-semibold">乳腺疏通护理</h3>
+                    <p className="text-sm text-muted-foreground">第2/6次 · 私有订单</p>
+                  </div>
+                  <Badge className="bg-teal-100 text-teal-700">已确认</Badge>
+                </div>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    <span>2026-04-09</span>
+                    <Clock className="w-4 h-4 ml-2" />
+                    <span>15:00-16:00</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span>吴女士 · 137****6666</span>
+                  </div>
+                </div>
+                <div className="mt-2 flex items-center justify-between">
+                  <span className="text-lg font-bold text-teal-600">¥480</span>
+                  <Badge className="bg-violet-100 text-violet-600 text-[10px]">私单</Badge>
+                </div>
+                <div className="flex gap-2 mt-3">
+                  <Button variant="outline" className="flex-1 border-teal-200 bg-transparent text-xs" size="sm">
+                    <Phone className="mr-1 h-3.5 w-3.5" />
+                    联系客户
+                  </Button>
+                  <Button className="flex-1 bg-teal-600 text-xs hover:bg-teal-700" size="sm">
+                    开始服务
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         )}
       </main>
 

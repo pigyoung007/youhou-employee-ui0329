@@ -10,10 +10,24 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import {
   Clock, MapPin, Camera, Upload, LogIn, LogOut, Baby, Heart,
-  CheckCircle2, FileText, ClipboardList,
+  CheckCircle2, FileText, ClipboardList, QrCode,
 } from "lucide-react"
+import { WorkbenchTabs } from "./workbench-tabs"
+import { WorkbenchOrdersTab } from "./workbench-orders-tab"
+import { WorkbenchContractsTab } from "./workbench-contracts-tab"
+import { WorkbenchInsuranceTab } from "./workbench-insurance-tab"
+import { WorkbenchLogsTab } from "./workbench-logs-tab"
+import { WorkbenchScheduleTab } from "./workbench-schedule-tab"
 
-// Domestic Worker Workbench Data (monthly live-in care)
+const workbenchTabsList = [
+  { id: "service", label: "服务" },
+  { id: "orders", label: "订单" },
+  { id: "contracts", label: "合同" },
+  { id: "insurance", label: "保险" },
+  { id: "logs", label: "日志" },
+  { id: "schedule", label: "档期" },
+]
+
 const currentService = {
   employer: "陈女士", babyName: "小宝", babyAge: "18天",
   address: "金凤区瑞银中心A座1208",
@@ -38,7 +52,12 @@ const punchRecords = [
   { date: "2025-02-18", checkIn: "07:50", checkOut: "20:00", location: "金凤区瑞银中心A座" },
 ]
 
-export function TalentWorkbenchPage() {
+interface TalentWorkbenchPageProps {
+  onCreatePrivateOrder?: () => void
+}
+
+export function TalentWorkbenchPage({ onCreatePrivateOrder }: TalentWorkbenchPageProps) {
+  const [activeTab, setActiveTab] = useState("service")
   const [showDailyLog, setShowDailyLog] = useState(false)
   const [showMealUpload, setShowMealUpload] = useState(false)
   const [showPunchRecords, setShowPunchRecords] = useState(false)
@@ -50,15 +69,27 @@ export function TalentWorkbenchPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="safe-area-top bg-gradient-to-r from-amber-500 to-orange-500 px-4 pb-4 pt-4">
+      <div className="safe-area-top bg-gradient-to-r from-rose-500 to-pink-500 px-4 pb-2 pt-4">
         <h1 className="text-lg font-bold text-white">工作台</h1>
-        <p className="mt-0.5 text-xs text-white/85">住家服务履约与记录</p>
+        <p className="mt-0.5 text-xs text-white/85">服务履约与业务管理</p>
       </div>
 
-      <main className="space-y-4 px-4 py-4 pb-24">
-        <>
+      {/* Tab Navigation */}
+      <div className="bg-gradient-to-b from-rose-500/10 to-transparent">
+        <WorkbenchTabs
+          tabs={workbenchTabsList}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
+      </div>
+
+      {/* Tab Content */}
+      <main className="pb-24">
+        {/* Service Tab */}
+        {activeTab === "service" && (
+          <div className="space-y-4 px-4 py-4">
             {/* Current Service Info */}
-            <Card className="border-0 shadow-sm bg-gradient-to-r from-amber-50 to-orange-50">
+            <Card className="border-0 shadow-sm bg-gradient-to-r from-rose-50 to-pink-50">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-3">
                   <div>
@@ -71,10 +102,10 @@ export function TalentWorkbenchPage() {
                   <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{currentService.address}</span>
                 </div>
                 <div className="mt-3 flex items-center gap-2">
-                  <div className="flex-1 h-2 bg-amber-200/50 rounded-full overflow-hidden">
-                    <div className="h-full bg-amber-500 rounded-full" style={{ width: `${(currentService.daysCompleted / currentService.totalDays) * 100}%` }} />
+                  <div className="flex-1 h-2 bg-rose-200/50 rounded-full overflow-hidden">
+                    <div className="h-full bg-rose-500 rounded-full" style={{ width: `${(currentService.daysCompleted / currentService.totalDays) * 100}%` }} />
                   </div>
-                  <span className="text-xs font-medium text-amber-600">{currentService.daysCompleted}/{currentService.totalDays}天</span>
+                  <span className="text-xs font-medium text-rose-600">{currentService.daysCompleted}/{currentService.totalDays}天</span>
                 </div>
               </CardContent>
             </Card>
@@ -95,7 +126,7 @@ export function TalentWorkbenchPage() {
             <Card className="border-0 shadow-sm">
               <CardHeader className="pb-2">
                 <CardTitle className="text-base flex items-center justify-between">
-                  <span className="flex items-center gap-2"><ClipboardList className="w-4 h-4 text-amber-500" />今日任务</span>
+                  <span className="flex items-center gap-2"><ClipboardList className="w-4 h-4 text-rose-500" />今日任务</span>
                   <span className="text-xs text-muted-foreground font-normal">{completedTasks}/{dailyTasks.length}</span>
                 </CardTitle>
               </CardHeader>
@@ -111,34 +142,72 @@ export function TalentWorkbenchPage() {
             </Card>
 
             {/* Quick Actions */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               <Card className="border-0 shadow-sm cursor-pointer hover:shadow-md transition-shadow" onClick={() => setShowDailyLog(true)}>
-                <CardContent className="p-4 flex items-center gap-3">
+                <CardContent className="p-3 flex flex-col items-center gap-2">
                   <div className="w-10 h-10 bg-pink-100 rounded-xl flex items-center justify-center">
                     <FileText className="w-5 h-5 text-pink-500" />
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">填写日报</p>
-                    <p className="text-xs text-muted-foreground">记录今日护理</p>
-                  </div>
+                  <p className="text-xs font-medium text-foreground">填写日报</p>
                 </CardContent>
               </Card>
               <Card className="border-0 shadow-sm cursor-pointer hover:shadow-md transition-shadow" onClick={() => setShowMealUpload(true)}>
-                <CardContent className="p-4 flex items-center gap-3">
+                <CardContent className="p-3 flex flex-col items-center gap-2">
                   <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
                     <Camera className="w-5 h-5 text-orange-500" />
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">餐食记录</p>
-                    <p className="text-xs text-muted-foreground">上传月子餐照片</p>
+                  <p className="text-xs font-medium text-foreground">餐食记录</p>
+                </CardContent>
+              </Card>
+              <Card className="border-0 shadow-sm cursor-pointer hover:shadow-md transition-shadow" onClick={() => alert("出示销卡二维码")}>
+                <CardContent className="p-3 flex flex-col items-center gap-2">
+                  <div className="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center">
+                    <QrCode className="w-5 h-5 text-violet-500" />
                   </div>
+                  <p className="text-xs font-medium text-foreground">销卡</p>
                 </CardContent>
               </Card>
             </div>
-        </>
+          </div>
+        )}
+
+        {/* Orders Tab */}
+        {activeTab === "orders" && (
+          <div className="py-4">
+            <WorkbenchOrdersTab onCreatePrivateOrder={onCreatePrivateOrder} />
+          </div>
+        )}
+
+        {/* Contracts Tab */}
+        {activeTab === "contracts" && (
+          <div className="py-4">
+            <WorkbenchContractsTab />
+          </div>
+        )}
+
+        {/* Insurance Tab */}
+        {activeTab === "insurance" && (
+          <div className="py-4">
+            <WorkbenchInsuranceTab />
+          </div>
+        )}
+
+        {/* Logs Tab */}
+        {activeTab === "logs" && (
+          <div className="py-4">
+            <WorkbenchLogsTab />
+          </div>
+        )}
+
+        {/* Schedule Tab */}
+        {activeTab === "schedule" && (
+          <div className="py-4">
+            <WorkbenchScheduleTab />
+          </div>
+        )}
       </main>
 
-      {/* Daily Log Sheet (Domestic) */}
+      {/* Daily Log Sheet */}
       <Sheet open={showDailyLog} onOpenChange={setShowDailyLog}>
         <SheetContent side="right" className="flex flex-col min-h-0">
           <SheetHeader className="pb-3 border-b border-border"><SheetTitle className="text-base">今日护理日报</SheetTitle></SheetHeader>
@@ -170,7 +239,7 @@ export function TalentWorkbenchPage() {
               </div>
             </div>
           </div>
-          <div className="pt-4 border-t border-border"><Button className="w-full bg-amber-500 hover:bg-amber-600" onClick={() => setShowDailyLog(false)}>提交日报</Button></div>
+          <div className="pt-4 border-t border-border"><Button className="w-full bg-rose-500 hover:bg-rose-600" onClick={() => setShowDailyLog(false)}>提交日报</Button></div>
         </SheetContent>
       </Sheet>
 
@@ -184,14 +253,14 @@ export function TalentWorkbenchPage() {
                 <Card key={meal} className="border-0 shadow-sm">
                   <CardContent className="p-3">
                     <p className="text-sm font-medium text-foreground mb-2">{meal}</p>
-                    <div className="aspect-square bg-muted/50 rounded-lg flex items-center justify-center border-2 border-dashed border-border cursor-pointer hover:border-amber-500 transition-colors">
+                    <div className="aspect-square bg-muted/50 rounded-lg flex items-center justify-center border-2 border-dashed border-border cursor-pointer hover:border-rose-500 transition-colors">
                       <div className="text-center"><Camera className="w-6 h-6 mx-auto text-muted-foreground" /><p className="text-xs text-muted-foreground mt-1">点击上传</p></div>
                     </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
-            <Button className="w-full bg-amber-500 hover:bg-amber-600" onClick={() => setShowMealUpload(false)}><Upload className="w-4 h-4 mr-2" />提交餐食记录</Button>
+            <Button className="w-full bg-rose-500 hover:bg-rose-600" onClick={() => setShowMealUpload(false)}><Upload className="w-4 h-4 mr-2" />提交餐食记录</Button>
           </div>
         </SheetContent>
       </Sheet>
@@ -207,7 +276,7 @@ export function TalentWorkbenchPage() {
                   <p className="font-medium text-sm text-foreground mb-2">{record.date}</p>
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-2 text-teal-600"><LogIn className="w-4 h-4" /><span>上户 {record.checkIn}</span></div>
-                    <div className="flex items-center gap-2 text-amber-600"><LogOut className="w-4 h-4" /><span>下户 {record.checkOut}</span></div>
+                    <div className="flex items-center gap-2 text-rose-600"><LogOut className="w-4 h-4" /><span>下户 {record.checkOut}</span></div>
                   </div>
                   <div className="flex items-center gap-1 text-xs text-muted-foreground mt-2"><MapPin className="w-3 h-3" /><span>{record.location}</span></div>
                 </CardContent>
@@ -216,7 +285,6 @@ export function TalentWorkbenchPage() {
           </div>
         </SheetContent>
       </Sheet>
-
     </div>
   )
 }

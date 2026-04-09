@@ -4,8 +4,8 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   FileText,
@@ -17,13 +17,22 @@ import {
   AlertCircle,
   Camera,
   Edit3,
-  ChevronRight,
   User,
   Stethoscope,
-  ClipboardList,
   CreditCard,
   QrCode,
+  ClipboardList,
+  FileSignature,
+  Shield,
+  CalendarDays,
+  LogIn,
+  LogOut,
 } from "lucide-react"
+import { WorkbenchOrdersTab } from "./workbench-orders-tab"
+import { WorkbenchContractsTab } from "./workbench-contracts-tab"
+import { WorkbenchInsuranceTab } from "./workbench-insurance-tab"
+import { WorkbenchLogsTab } from "./workbench-logs-tab"
+import { WorkbenchScheduleTab } from "./workbench-schedule-tab"
 
 interface ServiceRecord {
   id: string
@@ -39,6 +48,7 @@ interface ServiceRecord {
 
 interface TechnicianWorkbenchPageProps {
   onOpenCardDeduction?: () => void
+  onCreatePrivateOrder?: () => void
 }
 
 const STATUS_ORDER: Record<ServiceRecord["status"], number> = {
@@ -47,11 +57,30 @@ const STATUS_ORDER: Record<ServiceRecord["status"], number> = {
   completed: 2,
 }
 
-export function TechnicianWorkbenchPage({ onOpenCardDeduction }: TechnicianWorkbenchPageProps) {
-  const [activeTab, setActiveTab] = useState("today")
+type WorkbenchTab = "service" | "orders" | "contracts" | "insurance" | "logs" | "schedule"
+
+const TABS: { id: WorkbenchTab; label: string; icon: typeof Stethoscope }[] = [
+  { id: "service", label: "服务", icon: Stethoscope },
+  { id: "orders", label: "订单", icon: ClipboardList },
+  { id: "contracts", label: "合同", icon: FileSignature },
+  { id: "insurance", label: "保险", icon: Shield },
+  { id: "logs", label: "日志", icon: FileText },
+  { id: "schedule", label: "档期", icon: CalendarDays },
+]
+
+const punchRecords = [
+  { date: "2026-04-09", checkIn: "08:30", checkOut: "17:30", location: "朝阳区建国路88号" },
+  { date: "2026-04-08", checkIn: "08:45", checkOut: "18:00", location: "海淀区中关村大街66号" },
+  { date: "2026-04-07", checkIn: "09:00", checkOut: "17:00", location: "西城区金融街18号" },
+  { date: "2026-04-05", checkIn: "08:30", checkOut: "16:30", location: "东城区王府井大街99号" },
+]
+
+export function TechnicianWorkbenchPage({ onOpenCardDeduction, onCreatePrivateOrder }: TechnicianWorkbenchPageProps) {
+  const [activeTab, setActiveTab] = useState<WorkbenchTab>("service")
   const [showServiceDetail, setShowServiceDetail] = useState(false)
   const [showServiceLog, setShowServiceLog] = useState(false)
   const [showStartQr, setShowStartQr] = useState(false)
+  const [showPunchRecords, setShowPunchRecords] = useState(false)
   const [selectedService, setSelectedService] = useState<ServiceRecord | null>(null)
 
   const todayServicesRaw: ServiceRecord[] = [
@@ -59,7 +88,7 @@ export function TechnicianWorkbenchPage({ onOpenCardDeduction }: TechnicianWorkb
       id: "1",
       customerName: "王女士",
       serviceName: "产后腹直肌修复",
-      serviceDate: "2026-01-22",
+      serviceDate: "2026-04-09",
       serviceTime: "09:00-10:30",
       address: "朝阳区建国路88号",
       phone: "138****8888",
@@ -70,7 +99,7 @@ export function TechnicianWorkbenchPage({ onOpenCardDeduction }: TechnicianWorkb
       id: "2",
       customerName: "李女士",
       serviceName: "盆底肌康复训练",
-      serviceDate: "2026-01-22",
+      serviceDate: "2026-04-09",
       serviceTime: "14:00-15:30",
       address: "海淀区中关村大街66号",
       phone: "139****9999",
@@ -81,7 +110,7 @@ export function TechnicianWorkbenchPage({ onOpenCardDeduction }: TechnicianWorkb
       id: "3",
       customerName: "张女士",
       serviceName: "乳腺疏通护理",
-      serviceDate: "2026-01-22",
+      serviceDate: "2026-04-09",
       serviceTime: "16:00-17:00",
       address: "西城区金融街18号",
       phone: "136****6666",
@@ -93,31 +122,6 @@ export function TechnicianWorkbenchPage({ onOpenCardDeduction }: TechnicianWorkb
   const todayServices = [...todayServicesRaw].sort(
     (a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status],
   )
-
-  const historyServices: ServiceRecord[] = [
-    {
-      id: "4",
-      customerName: "赵女士",
-      serviceName: "产后腹直肌修复",
-      serviceDate: "2026-01-21",
-      serviceTime: "10:00-11:30",
-      address: "东城区王府井大街99号",
-      phone: "135****5555",
-      status: "completed",
-      items: [{ name: "修复精油", quantity: 1 }],
-    },
-    {
-      id: "5",
-      customerName: "刘女士",
-      serviceName: "骨盆修复",
-      serviceDate: "2026-01-20",
-      serviceTime: "15:00-16:30",
-      address: "丰台区丽泽路55号",
-      phone: "137****7777",
-      status: "completed",
-      items: [{ name: "骨盆带", quantity: 1 }, { name: "一次性床单", quantity: 2 }],
-    },
-  ]
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -240,78 +244,114 @@ export function TechnicianWorkbenchPage({ onOpenCardDeduction }: TechnicianWorkb
       {/* Header */}
       <div className="bg-gradient-to-r from-teal-500 to-emerald-500 px-4 pb-3 pt-4 text-white safe-area-top">
         <h1 className="text-lg font-bold">服务工作台</h1>
-        <p className="mt-0.5 text-xs opacity-90">管理履约、销卡与服务记录</p>
+        <p className="mt-0.5 text-xs opacity-90">管理服务、订单、合同与档期</p>
       </div>
 
-      {/* Stats + 销卡入口 */}
-      <div className="-mt-3 space-y-2 px-3 pb-2">
-        {onOpenCardDeduction && (
-          <Button
-            type="button"
-            className="h-10 w-full gap-2 bg-white text-teal-700 shadow-md hover:bg-teal-50"
-            variant="secondary"
-            onClick={onOpenCardDeduction}
-          >
-            <CreditCard className="h-4 w-4" />
-            套卡销卡（查询卡号 / 扫码核销）
-          </Button>
-        )}
-        <Card className="border border-border/80 shadow-md">
-          <CardContent className="p-3">
-            <div className="grid grid-cols-3 gap-2">
-              <div className="text-center">
-                <div className="mx-auto mb-1 flex h-10 w-10 items-center justify-center rounded-full bg-amber-100">
-                  <AlertCircle className="h-5 w-5 text-amber-600" />
-                </div>
-                <p className="text-xl font-bold text-foreground">1</p>
-                <p className="text-[10px] text-muted-foreground">待服务</p>
-              </div>
-              <div className="text-center">
-                <div className="mx-auto mb-1 flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
-                  <Stethoscope className="h-5 w-5 text-blue-600" />
-                </div>
-                <p className="text-xl font-bold text-foreground">1</p>
-                <p className="text-[10px] text-muted-foreground">服务中</p>
-              </div>
-              <div className="text-center">
-                <div className="mx-auto mb-1 flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
-                  <CheckCircle2 className="h-5 w-5 text-green-600" />
-                </div>
-                <p className="text-xl font-bold text-foreground">28</p>
-                <p className="text-[10px] text-muted-foreground">本月完成</p>
+      {/* Tab Bar */}
+      <div className="-mt-1 px-3">
+        <div className="flex gap-0.5 overflow-x-auto rounded-lg bg-white p-1 shadow-md scrollbar-hide">
+          {TABS.map((tab) => {
+            const Icon = tab.icon
+            const isActive = activeTab === tab.id
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex flex-1 flex-col items-center gap-0.5 rounded-md px-1.5 py-1.5 text-[10px] font-medium transition-colors ${
+                  isActive
+                    ? "bg-teal-500 text-white shadow-sm"
+                    : "text-muted-foreground hover:bg-muted/50"
+                }`}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                {tab.label}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Tab Content */}
+      <div className="px-3 pt-3 pb-4">
+        {activeTab === "service" && (
+          <>
+            {/* Stats + 销卡入口 */}
+            <div className="space-y-2 pb-3">
+              {onOpenCardDeduction && (
+                <Button
+                  type="button"
+                  className="h-10 w-full gap-2 bg-white text-teal-700 shadow-sm hover:bg-teal-50"
+                  variant="secondary"
+                  onClick={onOpenCardDeduction}
+                >
+                  <CreditCard className="h-4 w-4" />
+                  套卡销卡（查询卡号 / 扫码核销）
+                </Button>
+              )}
+              <Card className="border border-border/80 shadow-sm">
+                <CardContent className="p-3">
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="text-center">
+                      <div className="mx-auto mb-1 flex h-10 w-10 items-center justify-center rounded-full bg-amber-100">
+                        <AlertCircle className="h-5 w-5 text-amber-600" />
+                      </div>
+                      <p className="text-xl font-bold text-foreground">1</p>
+                      <p className="text-[10px] text-muted-foreground">待服务</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="mx-auto mb-1 flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+                        <Stethoscope className="h-5 w-5 text-blue-600" />
+                      </div>
+                      <p className="text-xl font-bold text-foreground">1</p>
+                      <p className="text-[10px] text-muted-foreground">服务中</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="mx-auto mb-1 flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
+                        <CheckCircle2 className="h-5 w-5 text-green-600" />
+                      </div>
+                      <p className="text-xl font-bold text-foreground">28</p>
+                      <p className="text-[10px] text-muted-foreground">本月完成</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Punch Clock */}
+              <div className="grid grid-cols-2 gap-3">
+                <Button className="h-14 bg-teal-500 hover:bg-teal-600 flex flex-col gap-1">
+                  <LogIn className="w-5 h-5" />
+                  <span className="text-xs">签到打卡</span>
+                </Button>
+                <Button variant="outline" className="h-14 flex flex-col gap-1 bg-transparent" onClick={() => setShowPunchRecords(true)}>
+                  <Clock className="w-5 h-5" />
+                  <span className="text-xs">打卡记录</span>
+                </Button>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      </div>
 
-      {/* Service List */}
-      <div className="px-3 pb-4">
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="h-9 w-full bg-muted/60 p-0.5">
-            <TabsTrigger value="today" className="flex-1 text-xs">
-              今日服务
-            </TabsTrigger>
-            <TabsTrigger value="history" className="flex-1 text-xs">
-              历史记录
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="today" className="mt-3">
+            {/* Today Services */}
+            <p className="mb-2 text-sm font-medium text-foreground">今日服务</p>
             {todayServices.map((service) => (
               <ServiceCard key={service.id} service={service} />
             ))}
-          </TabsContent>
+          </>
+        )}
 
-          <TabsContent value="history" className="mt-3">
-            {historyServices.map((service) => (
-              <ServiceCard key={service.id} service={service} showActions={true} />
-            ))}
-          </TabsContent>
-        </Tabs>
+        {activeTab === "orders" && (
+          <WorkbenchOrdersTab onCreatePrivateOrder={onCreatePrivateOrder} />
+        )}
+
+        {activeTab === "contracts" && <WorkbenchContractsTab />}
+
+        {activeTab === "insurance" && <WorkbenchInsuranceTab />}
+
+        {activeTab === "logs" && <WorkbenchLogsTab />}
+
+        {activeTab === "schedule" && <WorkbenchScheduleTab />}
       </div>
 
-      {/* 开始服务 — 销卡二维码（雇主扫码核销） */}
+      {/* 销卡二维码 Dialog */}
       <Dialog open={showStartQr} onOpenChange={setShowStartQr}>
         <DialogContent className="max-w-[90vw] rounded-xl sm:max-w-sm">
           <DialogHeader>
@@ -333,12 +373,7 @@ export function TechnicianWorkbenchPage({ onOpenCardDeduction }: TechnicianWorkb
             <p className="text-center text-[11px] text-muted-foreground">
               演示环境为占位图；上线后展示真实销卡二维码
             </p>
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full"
-              onClick={() => setShowStartQr(false)}
-            >
+            <Button type="button" variant="outline" className="w-full" onClick={() => setShowStartQr(false)}>
               关闭
             </Button>
           </div>
@@ -464,6 +499,38 @@ export function TechnicianWorkbenchPage({ onOpenCardDeduction }: TechnicianWorkb
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Punch Records Sheet */}
+      <Sheet open={showPunchRecords} onOpenChange={setShowPunchRecords}>
+        <SheetContent side="right" className="flex flex-col min-h-0">
+          <SheetHeader className="pb-4 border-b border-border">
+            <SheetTitle>打卡记录</SheetTitle>
+          </SheetHeader>
+          <div className="flex-1 min-h-0 py-4 space-y-3 overflow-y-auto">
+            {punchRecords.map((record, i) => (
+              <Card key={i} className="border-0 shadow-sm">
+                <CardContent className="p-3">
+                  <p className="font-medium text-sm text-foreground mb-2">{record.date}</p>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2 text-teal-600">
+                      <LogIn className="w-4 h-4" />
+                      <span>签到 {record.checkIn}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-rose-600">
+                      <LogOut className="w-4 h-4" />
+                      <span>签退 {record.checkOut}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground mt-2">
+                    <MapPin className="w-3 h-3" />
+                    <span>{record.location}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   )
 }

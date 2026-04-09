@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import { Wallet, Plus, Minus, Clock, CheckCircle2, AlertCircle, ChevronRight } from 'lucide-react'
+import { Wallet, Plus, Minus, Clock, CheckCircle2, AlertCircle, ChevronLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface DepositRecord {
@@ -78,7 +78,14 @@ export function TalentDepositPage() {
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-6 space-y-4">
-        <h1 className="text-lg font-bold">保证金管理</h1>
+        <div className="flex items-center gap-3">
+          {onBack && (
+            <button onClick={onBack} className="text-white hover:opacity-80">
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+          )}
+          <h1 className="text-lg font-bold">保证金管理</h1>
+        </div>
         <div className="grid grid-cols-3 gap-3">
           <div className="text-center">
             <p className="text-xs opacity-80">可用余额</p>

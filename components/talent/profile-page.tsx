@@ -10,6 +10,7 @@ import {
   Star, Award, ChevronRight, Settings, Heart, HelpCircle,
   FileText, Shield, Bell, LogOut, Wallet, Calendar,
   UserCheck, BookOpen, Phone, MapPin, Edit, FileCheck, Gift, TrendingUp,
+  ShoppingBag, ShieldCheck, MessageSquare, ClipboardList, Image,
 } from "lucide-react"
 
 const profileData = {
@@ -42,9 +43,20 @@ const menuGroups = [
       { icon: TrendingUp, label: "收入明细", desc: "本月收入", color: "text-emerald-600", bg: "bg-emerald-100", action: "income" },
       { icon: Calendar, label: "服务记录", desc: "共86单", color: "text-blue-600", bg: "bg-blue-100" },
       { icon: FileCheck, label: "我的合同", desc: "3份合同", color: "text-indigo-600", bg: "bg-indigo-100", action: "contracts" },
-      { icon: Gift, label: "下户单", desc: "待签署", color: "text-rose-600", bg: "bg-rose-100", action: "discharge" },
-      { icon: Award, label: "我的证书", desc: "4本证书", color: "text-amber-600", bg: "bg-amber-100" },
+      { icon: ShoppingBag, label: "私有订单", desc: "2个订单", color: "text-rose-600", bg: "bg-rose-100" },
+      { icon: Gift, label: "下户单", desc: "待签署", color: "text-pink-600", bg: "bg-pink-100", action: "discharge" },
+      { icon: Award, label: "我的证书", desc: "4本证书", color: "text-amber-600", bg: "bg-amber-100", action: "certificates" },
       { icon: BookOpen, label: "学习记录", desc: "3门课程", color: "text-purple-600", bg: "bg-purple-100" },
+      { icon: Image, label: "我的简历", desc: "编辑与分享", color: "text-cyan-600", bg: "bg-cyan-100", action: "resume-edit" },
+    ],
+  },
+  {
+    title: "保障与背调",
+    items: [
+      { icon: Shield, label: "保险管理", desc: "2份保单", color: "text-green-600", bg: "bg-green-100" },
+      { icon: ClipboardList, label: "档期管理", desc: "查看档期", color: "text-blue-600", bg: "bg-blue-100" },
+      { icon: ShieldCheck, label: "征信查询", desc: "已通过", color: "text-teal-600", bg: "bg-teal-100", action: "background-check" },
+      { icon: MessageSquare, label: "投诉建议", desc: "", color: "text-orange-600", bg: "bg-orange-100", action: "complaints" },
     ],
   },
   {
@@ -72,7 +84,7 @@ export function TalentProfilePage({ onOpenSubPage }: { onOpenSubPage?: (page: st
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-gradient-to-br from-amber-500 via-orange-500 to-amber-600 pt-4 pb-8 px-4 safe-area-top">
+      <div className="bg-gradient-to-br from-rose-500 via-pink-500 to-rose-600 pt-4 pb-8 px-4 safe-area-top">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-lg font-bold text-white">我的</h1>
           <Button size="sm" variant="ghost" className="text-white hover:bg-white/20">
@@ -84,7 +96,7 @@ export function TalentProfilePage({ onOpenSubPage }: { onOpenSubPage?: (page: st
         <div className="flex items-center gap-4">
           <Avatar className="w-18 h-18 border-3 border-white/30 shadow-lg">
             <AvatarImage src={profileData.avatar || "/placeholder.svg"} />
-            <AvatarFallback className="bg-amber-100 text-amber-600 text-xl">{profileData.name[0]}</AvatarFallback>
+            <AvatarFallback className="bg-rose-100 text-rose-600 text-xl">{profileData.name[0]}</AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
@@ -103,7 +115,7 @@ export function TalentProfilePage({ onOpenSubPage }: { onOpenSubPage?: (page: st
               <span>{profileData.phone}</span>
             </div>
           </div>
-          <Button size="sm" variant="ghost" className="text-white hover:bg-white/20 shrink-0">
+          <Button size="sm" variant="ghost" className="text-white hover:bg-white/20 shrink-0" onClick={() => onOpenSubPage?.("resume-edit")}>
             <Edit className="w-4 h-4" />
           </Button>
         </div>
@@ -119,7 +131,7 @@ export function TalentProfilePage({ onOpenSubPage }: { onOpenSubPage?: (page: st
                 <p className="text-[10px] text-muted-foreground mt-0.5">本月收入</p>
               </div>
               <div className="p-3 text-center">
-                <p className="text-base font-bold text-amber-600">¥{(profileData.totalIncome / 10000).toFixed(1)}万</p>
+                <p className="text-base font-bold text-rose-600">¥{(profileData.totalIncome / 10000).toFixed(1)}万</p>
                 <p className="text-[10px] text-muted-foreground mt-0.5">累计收入</p>
               </div>
               <div className="p-3 text-center">
@@ -184,8 +196,8 @@ export function TalentProfilePage({ onOpenSubPage }: { onOpenSubPage?: (page: st
             {profileData.certificates.map((cert, i) => (
               <Card key={i} className="border-0 shadow-sm">
                 <CardContent className="p-4 flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-amber-100 to-orange-50 rounded-xl flex items-center justify-center">
-                    <Award className="w-6 h-6 text-amber-500" />
+                  <div className="w-12 h-12 bg-gradient-to-br from-rose-100 to-pink-50 rounded-xl flex items-center justify-center">
+                    <Award className="w-6 h-6 text-rose-500" />
                   </div>
                   <div className="flex-1">
                     <h4 className="font-medium text-sm text-foreground">{cert.name}</h4>
